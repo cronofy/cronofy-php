@@ -73,8 +73,8 @@ class Cronofy{
 		$headers[] = 'Host: api.cronofy.com';
 		$headers[] = 'Content-Type: application/json; charset=utf-8';
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($curl, CURLOPT_USERAGENT, self.USERAGENT);
-		
+		curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+
 		$postfields = array(
 			'client_id' => $this->client_id,
 			'client_secret' => $this->client_secret,
@@ -114,8 +114,8 @@ class Cronofy{
 		$headers[] = 'Host: api.cronofy.com';
 		$headers[] = 'Content-Type: application/json; charset=utf-8';
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($curl, CURLOPT_USERAGENT, self.USERAGENT);
-		
+		curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+
 		$postfields = array(
 			'client_id' => $this->client_id,
 			'client_secret' => $this->client_secret,
@@ -154,8 +154,8 @@ class Cronofy{
 		$headers[] = 'Host: api.cronofy.com';
 		$headers[] = 'Content-Type: application/json; charset=utf-8';
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($curl, CURLOPT_USERAGENT, self.USERAGENT);
-		
+		curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+
 		$postfields = array(
 			'client_id' => $this->client_id,
 			'client_secret' => $this->client_secret,
@@ -180,7 +180,7 @@ class Cronofy{
 		$headers[] = 'Authorization: Bearer '.$this->access_token;
 		$headers[] = 'Host: api.cronofy.com';
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($curl, CURLOPT_USERAGENT, self.USERAGENT);
+		curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
 
 		$result = curl_exec($curl);
 		$result = json_decode($result, true);
@@ -226,7 +226,7 @@ class Cronofy{
 		$headers[] = 'Authorization: Bearer '.$this->access_token;
 		$headers[] = 'Host: api.cronofy.com';
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($curl, CURLOPT_USERAGENT, self.USERAGENT);
+		curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
 
 		$result = curl_exec($curl);
 		$result = json_decode($result,true);
@@ -258,8 +258,8 @@ class Cronofy{
 		$headers[] = 'Host: api.cronofy.com';
 		$headers[] = 'Content-Type: application/json; charset=utf-8';
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($curl, CURLOPT_USERAGENT, self.USERAGENT);
-		
+		curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+
 		curl_setopt($curl, CURLOPT_POST, 1);
 		$postfields = array(
 			'event_id' => $params['event_id'],
@@ -300,8 +300,8 @@ class Cronofy{
 		$headers[] = 'Host: api.cronofy.com';
 		$headers[] = 'Content-Type: application/json; charset=utf-8';
 		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($curl, CURLOPT_USERAGENT, self.USERAGENT);
-		
+		curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+
 		curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
 		$postfields = array('event_id' => $params['event_id']);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($postfields));
