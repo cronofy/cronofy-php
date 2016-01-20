@@ -120,7 +120,7 @@ class Cronofy{
 			'client_id' => $this->client_id,
 			'client_secret' => $this->client_secret,
 			'grant_type' => 'refresh_token',
-			'refresh_tokens' => $this->refresh_token
+			'refresh_token' => $this->refresh_token
 		);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($postfields));
 		
