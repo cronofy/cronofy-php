@@ -1,7 +1,7 @@
 <?php
 
 class Cronofy{
-	const USERAGENT = 'Cronofy PHP';
+	const USERAGENT = 'Cronofy PHP 0.2';
 
 	var $client_id;
 
