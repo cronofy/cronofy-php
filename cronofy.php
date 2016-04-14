@@ -89,7 +89,7 @@ class Cronofy{
 			$this->refresh_token = $tokens->refresh_token;
 			return true;
 		}else{
-			return $token->error;
+			return $tokens->error;
 		}
 	}
 	function refresh_token($client_id, $client_secret, $refresh_token){
@@ -129,7 +129,7 @@ class Cronofy{
 			$this->refresh_token = $tokens->refresh_token;
 			return true;
 		}else{
-			return $token->error;
+			return $tokens->error;
 		}
 	}
 	function revoke_authorization($client_id, $client_secret, $token){
@@ -162,8 +162,8 @@ class Cronofy{
 		$result = curl_exec($curl);
 		curl_close($curl);
 		return $result;
-
 	}
+
 	function list_calendars(){
 		/*
 			returns $result - Array of calendars. Details are available in the Cronofy API Documentation
@@ -266,7 +266,9 @@ class Cronofy{
 		);
 
 		if(!empty($params['tzid'])){$postfields['tzid']=$params['tzid'];}
-		if(!empty($params['location.description'])){$postfields['location.description']=$params['location.description'];}
+		if(!empty($params['location']['description'])){
+            $postfields['location']['description']=$params['location']['description'];
+        }
 
 		curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($postfields));
 
@@ -312,5 +314,3 @@ class Cronofy{
 		}
 	}
 }
-
-?>
