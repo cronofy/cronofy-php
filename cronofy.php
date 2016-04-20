@@ -257,6 +257,53 @@ class Cronofy
         return $result;
     }
 
+    function free_busy($params)
+    {
+        /*
+          Date from : The minimum date from which to return free-busy information. Defaults to 16 days in the past. OPTIONAL
+          Date to : The date to return free-busy information up until. Defaults to 201 days in the future. OPTIONAL
+          String tzid : A string representing a known time zone identifier from the IANA Time Zone Database. REQUIRED
+          Boolean include_managed : Indiciates whether events that you are managing for the account should be included or excluded from the results. Defaults to include only non-managed events. OPTIONAL
+          Array calendar_ids : Restricts the returned free-busy information to those within the set of specified calendar_ids. Defaults to returning free-busy information from all of a user's calendars. OPTIONAL
+          Boolean localized_times : Indicates whether the free-busy information should have their start and end times returned with any available localization information. Defaults to returning start and end times as simple Time values. OPTIONAL
+
+          returns $result - Array of events
+         */
+        $url = "https://api.cronofy.com/v1/free_busy?tzid=" . urlencode($params['tzid']);
+        if (!empty($params['from'])) {
+            $url.="&from=" . $params['from'];
+        }
+        if (!empty($params['to'])) {
+            $url.="&to=" . $params['to'];
+        }
+        if (!empty($params['include_managed'])) {
+            $url.="&include_managed=" . $params['include_managed'];
+        }
+        if (!empty($params['localized_times'])) {
+            $url.="&localized_times=" . $params['localized_times'];
+        }
+        if (!empty($params['calendar_ids'])) {
+            foreach ($params['calendar_ids'] as $calendar_id) {
+                $url.="&calendar_ids[]=" . $calendar_id;
+            }
+        }
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+        $headers = array();
+        $headers[] = 'Authorization: Bearer ' . $this->access_token;
+        $headers[] = 'Host: api.cronofy.com';
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+
+        $result = curl_exec($curl);
+        $result = json_decode($result, true);
+        curl_close($curl);
+        return $result;
+    }
+
     function upsert_event($params)
     {
         /*
