@@ -1,17 +1,28 @@
 <?php
 
+class CronofyException extends Exception
+{
+
+}
+
 class Cronofy
 {
 
-    const USERAGENT = 'Cronofy PHP 0.2';
+    const USERAGENT = 'Cronofy PHP 0.3';
+    const API_ROOT_URL = 'https://api.cronofy.com';
+    const API_VERSION = 'v1';
 
     var $client_id;
     var $client_secret;
     var $access_token;
     var $refresh_token;
 
-    function __construct($client_id = false, $client_secret = false, $access_token = false, $refresh_token = false /* , $params = array() */)
+    function __construct($client_id = false, $client_secret = false, $access_token = false, $refresh_token = false)
     {
+        if (!function_exists('curl_init')) {
+            throw new CronofyException("missing cURL extension", 1);
+        }
+
         if (!empty($client_id)) {
             $this->client_id = $client_id;
         }
@@ -26,7 +37,65 @@ class Cronofy
         }
     }
 
-    function getAuthorizationURL($client_id, $params)
+    function http_get($url, array $headers = array())
+    {
+        if (filter_var($url, FILTER_VALIDATE_URL)===false) {
+            throw new CronofyException('invalid URL');
+        }
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+        $result = curl_exec($curl);
+        if (curl_errno($curl) > 0) {
+            throw new CronofyException(curl_error($curl), 2);
+        }
+        curl_close($curl);
+        return $result;
+    }
+
+    function http_post($url, array $params, array $headers = array())
+    {
+        if (filter_var($url, FILTER_VALIDATE_URL)===false) {
+            throw new CronofyException('invalid URL');
+        }
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
+        $result = curl_exec($curl);
+        if (curl_errno($curl) > 0) {
+            throw new CronofyException(curl_error($curl), 3);
+        }
+        curl_close($curl);
+        return $result;
+    }
+
+    function http_delete($url, array $params, array $headers = array())
+    {
+        if (filter_var($url, FILTER_VALIDATE_URL)===false) {
+            throw new CronofyException('invalid URL');
+        }
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
+        $result = curl_exec($curl);
+        if (curl_errno($curl) > 0) {
+            throw new CronofyException(curl_error($curl), 4);
+        }
+        curl_close($curl);
+        return $result;
+    }
+
+    function getAuthorizationURL($params)
     {
         /*
           String $client_id : The client ID provided by Cronofy to authenticate your OAuth Client. Authenticates you as a trusted client. REQUIRED
@@ -40,7 +109,6 @@ class Cronofy
           String $url : The URL to authorize your access to the Cronofy API
          */
 
-
         $scope_list = join(" ", $params['scope']);
 
         $url = "https://app.cronofy.com/oauth/authorize?response_type=code&client_id=" . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list;
@@ -53,7 +121,7 @@ class Cronofy
         return $url;
     }
 
-    function request_token($client_id, $client_secret, $params)
+    function request_token($params)
     {
         /*
           String $client_id : The client ID provided by Cronofy to authenticate your OAuth Client. Authenticates you as a trusted client. REQUIRED
@@ -65,16 +133,11 @@ class Cronofy
           Response :
           true if successful, error string if not
          */
-        $curl = curl_init();
-        $url = "https://api.cronofy.com/oauth/token";
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $url = self::API_ROOT_URL . "/oauth/token";
 
         $headers = array();
         $headers[] = 'Host: api.cronofy.com';
         $headers[] = 'Content-Type: application/json; charset=utf-8';
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
 
         $postfields = array(
             'client_id' => $this->client_id,
@@ -83,11 +146,10 @@ class Cronofy
             'code' => $params['code'],
             'redirect_uri' => $params['redirect_uri']
         );
-        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($postfields));
 
-        $result = curl_exec($curl);
+        $result = $this->http_post($url, $postfields, $headers);
+
         $tokens = json_decode($result);
-        curl_close($curl);
 
         if (!empty($tokens->access_token)) {
             $this->access_token = $tokens->access_token;
@@ -98,7 +160,7 @@ class Cronofy
         }
     }
 
-    function refresh_token($client_id, $client_secret, $refresh_token)
+    function refresh_token()
     {
         /*
           String $client_id : The client ID provided by Cronofy to authenticate your OAuth Client. Authenticates you as a trusted client. REQUIRED
@@ -108,16 +170,11 @@ class Cronofy
           Response :
           true if successful, error string if not
          */
-        $curl = curl_init();
-        $url = "https://api.cronofy.com/oauth/token";
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $url = self::API_ROOT_URL . "/oauth/token";
 
         $headers = array();
         $headers[] = 'Host: api.cronofy.com';
         $headers[] = 'Content-Type: application/json; charset=utf-8';
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
 
         $postfields = array(
             'client_id' => $this->client_id,
@@ -125,12 +182,10 @@ class Cronofy
             'grant_type' => 'refresh_token',
             'refresh_token' => $this->refresh_token
         );
-        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($postfields));
 
-        $result = curl_exec($curl);
+        $result = $this->http_post($url, $postfields, $headers);
 
         $tokens = json_decode($result);
-        curl_close($curl);
         if (!empty($tokens->access_token)) {
             $this->access_token = $tokens->access_token;
             $this->refresh_token = $tokens->refresh_token;
@@ -150,26 +205,54 @@ class Cronofy
           Response :
           HTTP Response
          */
-        $curl = curl_init();
-        $url = "https://api.cronofy.com/oauth/token/revoke";
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $url = self::API_ROOT_URL . "/oauth/token/revoke";
 
         $headers = array();
         $headers[] = 'Host: api.cronofy.com';
         $headers[] = 'Content-Type: application/json; charset=utf-8';
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
 
         $postfields = array(
             'client_id' => $this->client_id,
             'client_secret' => $this->client_secret,
             'token' => $token
         );
-        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($postfields));
 
-        $result = curl_exec($curl);
-        curl_close($curl);
+        $result = $this->http_post($url, $postfields, $headers);
+
+        return $result;
+    }
+
+    function get_account()
+    {
+        /*
+          returns $result - info for the user logged in. Details are available in the Cronofy API Documentation
+         */
+        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/account";
+
+        $headers = array();
+        $headers[] = 'Authorization: Bearer ' . $this->access_token;
+        $headers[] = 'Host: api.cronofy.com';
+
+        $result = $this->http_get($url, $headers);
+        $result = json_decode($result, true);
+
+        return $result;
+    }
+
+    function get_profiles()
+    {
+        /*
+          returns $result - list of all the authenticated user's calendar profiles. Details are available in the Cronofy API Documentation
+         */
+        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/profiles";
+
+        $headers = array();
+        $headers[] = 'Authorization: Bearer ' . $this->access_token;
+        $headers[] = 'Host: api.cronofy.com';
+
+        $result = $this->http_get($url, $headers);
+        $result = json_decode($result, true);
+
         return $result;
     }
 
@@ -178,19 +261,15 @@ class Cronofy
         /*
           returns $result - Array of calendars. Details are available in the Cronofy API Documentation
          */
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, "https://api.cronofy.com/v1/calendars");
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/calendars";
 
         $headers = array();
         $headers[] = 'Authorization: Bearer ' . $this->access_token;
         $headers[] = 'Host: api.cronofy.com';
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
 
-        $result = curl_exec($curl);
+        $result = $this->http_get($url, $headers);
         $result = json_decode($result, true);
-        curl_close($curl);
+
         return $result;
     }
 
@@ -210,7 +289,7 @@ class Cronofy
 
           returns $result - Array of events
          */
-        $url = "https://api.cronofy.com/v1/events?tzid=" . urlencode($params['tzid']);
+        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/events?tzid=" . urlencode($params['tzid']);
         if (!empty($params['from'])) {
             $url.="&from=" . $params['from'];
         }
@@ -241,19 +320,13 @@ class Cronofy
             }
         }
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
         $headers = array();
         $headers[] = 'Authorization: Bearer ' . $this->access_token;
         $headers[] = 'Host: api.cronofy.com';
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
 
-        $result = curl_exec($curl);
+        $result = $this->http_get($url, $headers);
         $result = json_decode($result, true);
-        curl_close($curl);
+
         return $result;
     }
 
@@ -269,7 +342,7 @@ class Cronofy
 
           returns $result - Array of events
          */
-        $url = "https://api.cronofy.com/v1/free_busy?tzid=" . urlencode($params['tzid']);
+        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/free_busy?tzid=" . urlencode($params['tzid']);
         if (!empty($params['from'])) {
             $url.="&from=" . $params['from'];
         }
@@ -288,19 +361,13 @@ class Cronofy
             }
         }
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
         $headers = array();
         $headers[] = 'Authorization: Bearer ' . $this->access_token;
         $headers[] = 'Host: api.cronofy.com';
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
 
-        $result = curl_exec($curl);
+        $result = $this->http_get($url, $headers);
         $result = json_decode($result, true);
-        curl_close($curl);
+
         return $result;
     }
 
@@ -319,19 +386,13 @@ class Cronofy
 
           returns true on success, error message on failure
          */
-        $url = "https://api.cronofy.com/v1/calendars/" . $params['calendar_id'] . "/events";
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events";
 
         $headers = array();
         $headers[] = 'Authorization: Bearer ' . $this->access_token;
         $headers[] = 'Host: api.cronofy.com';
         $headers[] = 'Content-Type: application/json; charset=utf-8';
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
 
-        curl_setopt($curl, CURLOPT_POST, 1);
         $postfields = array(
             'event_id' => $params['event_id'],
             'summary' => $params['summary'],
@@ -347,10 +408,8 @@ class Cronofy
             $postfields['location']['description'] = $params['location']['description'];
         }
 
-        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($postfields));
+        $result = $this->http_post($url, $postfields, $headers);
 
-        $result = curl_exec($curl);
-        curl_close($curl);
         if (empty($result)) {
             return true;
         } else {
@@ -366,24 +425,16 @@ class Cronofy
 
           returns true on success, error message on failure
          */
-        $url = "https://api.cronofy.com/v1/calendars/" . $params['calendar_id'] . "/events";
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events";
 
         $headers = array();
         $headers[] = 'Authorization: Bearer ' . $this->access_token;
         $headers[] = 'Host: api.cronofy.com';
         $headers[] = 'Content-Type: application/json; charset=utf-8';
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
 
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
         $postfields = array('event_id' => $params['event_id']);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($postfields));
 
-        $result = curl_exec($curl);
-        curl_close($curl);
+        $result = $this->http_delete($url, $postfields, $headers);
 
         if (empty($result)) {
             return true;
