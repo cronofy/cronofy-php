@@ -39,7 +39,7 @@ class Cronofy
 
     function http_get($url, array $headers = array())
     {
-        if (filter_var($url, FILTER_VALIDATE_URL)) {
+        if (filter_var($url, FILTER_VALIDATE_URL)===false) {
             throw new CronofyException('invalid URL');
         }
         $curl = curl_init();
@@ -57,7 +57,7 @@ class Cronofy
 
     function http_post($url, array $params, array $headers = array())
     {
-        if (filter_var($url, FILTER_VALIDATE_URL)) {
+        if (filter_var($url, FILTER_VALIDATE_URL)===false) {
             throw new CronofyException('invalid URL');
         }
         $curl = curl_init();
@@ -77,7 +77,7 @@ class Cronofy
 
     function http_delete($url, array $params, array $headers = array())
     {
-        if (filter_var($url, FILTER_VALIDATE_URL)) {
+        if (filter_var($url, FILTER_VALIDATE_URL)===false) {
             throw new CronofyException('invalid URL');
         }
         $curl = curl_init();
