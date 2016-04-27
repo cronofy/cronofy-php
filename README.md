@@ -25,7 +25,7 @@ $params = array(
 	'redirect_uri' => $redirect_uri,
 	'scope' => array('read_account','list_calendars','read_events','create_event','delete_event')
 );
-$auth = $cronofy->getAuthorizationURL($client_id, $params);
+$auth = $cronofy->getAuthorizationURL($params);
 ```
 
 The redirect URI is a page on your website that will handle the OAuth 2.0
@@ -40,7 +40,7 @@ $params = array(
 	'code' => $code
 );
 
-$token=$cronofy->request_token($client_id, $client_secret, $params);
+$token=$cronofy->request_token($params);
 
 ```
 
