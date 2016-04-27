@@ -195,7 +195,7 @@ class Cronofy
         }
     }
 
-    function revoke_authorization($client_id, $client_secret, $token)
+    function revoke_authorization($token)
     {
         /*
           String $client_id : The client ID provided by Cronofy to authenticate your OAuth Client. Authenticates you as a trusted client. REQUIRED
