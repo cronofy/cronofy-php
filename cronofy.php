@@ -413,7 +413,7 @@ class Cronofy
         if (empty($result)) {
             return true;
         } else {
-            return $result;
+            return json_decode($result, true);
         }
     }
 
@@ -439,7 +439,7 @@ class Cronofy
         if (empty($result)) {
             return true;
         } else {
-            return $result;
+            return json_decode($result, true);
         }
     }
 
