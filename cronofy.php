@@ -203,7 +203,7 @@ class Cronofy
           String token : Either the refresh_token or access_token for the authorization you wish to revoke. REQUIRED
 
           Response :
-          HTTP Response
+          true if successful, error string if not
          */
         $url = self::API_ROOT_URL . "/oauth/token/revoke";
 
@@ -219,7 +219,11 @@ class Cronofy
 
         $result = $this->http_post($url, $postfields, $headers);
 
-        return $result;
+        if (empty($result)) {
+            return true;
+        } else {
+            return json_decode($result)->error;
+        }
     }
 
     function get_account()
@@ -384,7 +388,7 @@ class Cronofy
           String location.description : The String describing the event's location. OPTIONAL
 
 
-          returns true on success, error message on failure
+          returns true on success, associative array of errors on failure
          */
         $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events";
 
@@ -423,7 +427,7 @@ class Cronofy
           calendar_id : The calendar_id of the calendar you wish the event to be added to. REQUIRED
           String event_id : The String that uniquely identifies the event. REQUIRED
 
-          returns true on success, error message on failure
+          returns true on success, associative array of errors on failure
          */
         $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events";
 
