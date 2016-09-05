@@ -98,7 +98,6 @@ class Cronofy
     function getAuthorizationURL($params)
     {
         /*
-          String $client_id : The client ID provided by Cronofy to authenticate your OAuth Client. Authenticates you as a trusted client. REQUIRED
           Array $params : An array of additional paramaters
           redirect_uri : String The HTTP or HTTPS URI you wish the user's authorization request decision to be redirected to. REQUIRED
           scope : An array of scopes to be granted by the access token. Possible scopes detailed in the Cronofy API documentation. REQUIRED
@@ -124,8 +123,6 @@ class Cronofy
     function request_token($params)
     {
         /*
-          String $client_id : The client ID provided by Cronofy to authenticate your OAuth Client. Authenticates you as a trusted client. REQUIRED
-          String $client_secret : The client_secret issued to you by Cronofy to authenticate your OAuth Client. Authenticates you as a trusted client along with your client_id. REQUIRED
           Array $params : An array of additional paramaters
           redirect_uri : String The HTTP or HTTPS URI you wish the user's authorization request decision to be redirected to. REQUIRED
           code: The short-lived, single-use code issued to you when the user authorized your access to their account as part of an Authorization  REQUIRED
@@ -163,8 +160,6 @@ class Cronofy
     function refresh_token()
     {
         /*
-          String $client_id : The client ID provided by Cronofy to authenticate your OAuth Client. Authenticates you as a trusted client. REQUIRED
-          String $client_secret : The client_secret issued to you by Cronofy to authenticate your OAuth Client. Authenticates you as a trusted client along with your client_id. REQUIRED
           String $refresh_token : The refresh_token issued to you when the user authorized your access to their account. REQUIRED
 
           Response :
@@ -198,8 +193,6 @@ class Cronofy
     function revoke_authorization($token)
     {
         /*
-          String $client_id : The client ID provided by Cronofy to authenticate your OAuth Client. Authenticates you as a trusted client. REQUIRED
-          String $client_secret : The client_secret issued to you by Cronofy to authenticate your OAuth Client. Authenticates you as a trusted client along with your client_id. REQUIRED
           String token : Either the refresh_token or access_token for the authorization you wish to revoke. REQUIRED
 
           Response :
