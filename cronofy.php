@@ -429,12 +429,33 @@ class Cronofy
         $headers[] = 'Host: api.cronofy.com';
         $headers[] = 'Content-Type: application/json; charset=utf-8';
 
-        $postfields = array();
-        if($params['external'] == true){
-          $postfields['event_uid'] = $params['event_uid'];
+        $postfields = array('event_id' => $params['event_id']);
+
+        $result = $this->http_delete($url, $postfields, $headers);
+
+        if (empty($result)) {
+            return true;
         } else {
-          $postfields['event_id'] = $params['event_id'];
+            return json_decode($result, true);
         }
+    }
+
+    function delete_external_event($params)
+    {
+        /*
+          calendar_id : The calendar_id of the calendar you wish the event to be added to. REQUIRED
+          String event_uid : The String that uniquely identifies the event. REQUIRED
+
+          returns true on success, associative array of errors on failure
+         */
+        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events";
+
+        $headers = array();
+        $headers[] = 'Authorization: Bearer ' . $this->access_token;
+        $headers[] = 'Host: api.cronofy.com';
+        $headers[] = 'Content-Type: application/json; charset=utf-8';
+
+        $postfields = array('event_uid' => $params['event_uid']);
 
         $result = $this->http_delete($url, $postfields, $headers);
 
