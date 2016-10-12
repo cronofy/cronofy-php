@@ -417,7 +417,7 @@ class Cronofy
     function delete_event($params)
     {
         /*
-          calendar_id : The calendar_id of the calendar you wish the event to be added to. REQUIRED
+          calendar_id : The calendar_id of the calendar you wish the event to be removed from. REQUIRED
           String event_id : The String that uniquely identifies the event. REQUIRED
 
           returns true on success, associative array of errors on failure
@@ -443,7 +443,7 @@ class Cronofy
     function delete_external_event($params)
     {
         /*
-          calendar_id : The calendar_id of the calendar you wish the event to be added to. REQUIRED
+          calendar_id : The calendar_id of the calendar you wish the event to be removed from. REQUIRED
           String event_uid : The String that uniquely identifies the event. REQUIRED
 
           returns true on success, associative array of errors on failure
