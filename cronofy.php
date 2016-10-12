@@ -429,7 +429,12 @@ class Cronofy
         $headers[] = 'Host: api.cronofy.com';
         $headers[] = 'Content-Type: application/json; charset=utf-8';
 
-        $postfields = array('event_id' => $params['event_id']);
+        $postfields = array();
+        if($params['external'] == true){
+          $postfields['event_uid'] = $params['event_uid'];
+        } else {
+          $postfields['event_id'] = $params['event_id'];
+        }
 
         $result = $this->http_delete($url, $postfields, $headers);
 
