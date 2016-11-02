@@ -132,9 +132,7 @@ class Cronofy
          */
         $url = self::API_ROOT_URL . "/oauth/token";
 
-        $headers = array();
-        $headers[] = 'Host: api.cronofy.com';
-        $headers[] = 'Content-Type: application/json; charset=utf-8';
+        $headers = $this->get_auth_headers();
 
         $postfields = array(
             'client_id' => $this->client_id,
@@ -167,9 +165,7 @@ class Cronofy
          */
         $url = self::API_ROOT_URL . "/oauth/token";
 
-        $headers = array();
-        $headers[] = 'Host: api.cronofy.com';
-        $headers[] = 'Content-Type: application/json; charset=utf-8';
+        $headers = $this->get_auth_headers();
 
         $postfields = array(
             'client_id' => $this->client_id,
@@ -200,9 +196,7 @@ class Cronofy
          */
         $url = self::API_ROOT_URL . "/oauth/token/revoke";
 
-        $headers = array();
-        $headers[] = 'Host: api.cronofy.com';
-        $headers[] = 'Content-Type: application/json; charset=utf-8';
+        $headers = $this->get_auth_headers();
 
         $postfields = array(
             'client_id' => $this->client_id,
@@ -224,11 +218,9 @@ class Cronofy
         /*
           returns $result - info for the user logged in. Details are available in the Cronofy API Documentation
          */
-        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/account";
+        $url = $this->api_url("/account");
 
-        $headers = array();
-        $headers[] = 'Authorization: Bearer ' . $this->access_token;
-        $headers[] = 'Host: api.cronofy.com';
+        $headers = $this->get_auth_headers();
 
         $result = $this->http_get($url, $headers);
         $result = json_decode($result, true);
@@ -241,11 +233,9 @@ class Cronofy
         /*
           returns $result - list of all the authenticated user's calendar profiles. Details are available in the Cronofy API Documentation
          */
-        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/profiles";
+        $url = $this->api_url("/profiles");
 
-        $headers = array();
-        $headers[] = 'Authorization: Bearer ' . $this->access_token;
-        $headers[] = 'Host: api.cronofy.com';
+        $headers = $this->get_auth_headers();
 
         $result = $this->http_get($url, $headers);
         $result = json_decode($result, true);
@@ -258,11 +248,9 @@ class Cronofy
         /*
           returns $result - Array of calendars. Details are available in the Cronofy API Documentation
          */
-        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/calendars";
+        $url = $this->api_url("/calendars");
 
-        $headers = array();
-        $headers[] = 'Authorization: Bearer ' . $this->access_token;
-        $headers[] = 'Host: api.cronofy.com';
+        $headers = $this->get_auth_headers();
 
         $result = $this->http_get($url, $headers);
         $result = json_decode($result, true);
@@ -286,7 +274,7 @@ class Cronofy
 
           returns $result - Array of events
          */
-        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/events?tzid=" . urlencode($params['tzid']);
+        $url = $this->api_url("/events?tzid=" . urlencode($params['tzid']));
         if (!empty($params['from'])) {
             $url.="&from=" . $params['from'];
         }
@@ -317,9 +305,7 @@ class Cronofy
             }
         }
 
-        $headers = array();
-        $headers[] = 'Authorization: Bearer ' . $this->access_token;
-        $headers[] = 'Host: api.cronofy.com';
+        $headers = $this->get_auth_headers();
 
         $result = $this->http_get($url, $headers);
         $result = json_decode($result, true);
@@ -339,7 +325,7 @@ class Cronofy
 
           returns $result - Array of events
          */
-        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/free_busy?tzid=" . urlencode($params['tzid']);
+        $url = $this->api_url("/free_busy?tzid=" . urlencode($params['tzid']));
         if (!empty($params['from'])) {
             $url.="&from=" . $params['from'];
         }
@@ -358,9 +344,7 @@ class Cronofy
             }
         }
 
-        $headers = array();
-        $headers[] = 'Authorization: Bearer ' . $this->access_token;
-        $headers[] = 'Host: api.cronofy.com';
+        $headers = $this->get_auth_headers();
 
         $result = $this->http_get($url, $headers);
         $result = json_decode($result, true);
@@ -383,12 +367,9 @@ class Cronofy
 
           returns true on success, associative array of errors on failure
          */
-        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events";
+        $url = $this->api_url("/calendars/" . $params['calendar_id'] . "/events");
 
-        $headers = array();
-        $headers[] = 'Authorization: Bearer ' . $this->access_token;
-        $headers[] = 'Host: api.cronofy.com';
-        $headers[] = 'Content-Type: application/json; charset=utf-8';
+        $headers = $this->get_auth_headers(true);
 
         $postfields = array(
             'event_id' => $params['event_id'],
@@ -422,12 +403,9 @@ class Cronofy
 
           returns true on success, associative array of errors on failure
          */
-        $url = self::API_ROOT_URL . "/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events";
+        $url = $this->api_url("/calendars/" . $params['calendar_id'] . "/events");
 
-        $headers = array();
-        $headers[] = 'Authorization: Bearer ' . $this->access_token;
-        $headers[] = 'Host: api.cronofy.com';
-        $headers[] = 'Content-Type: application/json; charset=utf-8';
+        $headers = $this->get_auth_headers(true);
 
         $postfields = array('event_id' => $params['event_id']);
 
@@ -440,4 +418,20 @@ class Cronofy
         }
     }
 
+    private function api_url($method){
+        return self::API_ROOT_URL . "/" . self::API_VERSION . $method;
+    }
+
+    private function get_auth_headers($with_content_headers = false){
+        $headers = array();
+
+        $headers[] = 'Authorization: Bearer ' . $this->access_token;
+        $headers[] = 'Host: api.cronofy.com';
+
+        if($with_content_headers){
+            $headers[] = 'Content-Type: application/json; charset=utf-8';
+        }
+
+        return $headers;
+    }
 }
