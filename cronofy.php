@@ -67,6 +67,7 @@ class Cronofy
         curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
+        curl_setopt($curl, CURLOPT_VERBOSE, true);
         $result = curl_exec($curl);
         if (curl_errno($curl) > 0) {
             throw new CronofyException(curl_error($curl), 3);
@@ -412,6 +413,26 @@ class Cronofy
         $result = $this->http_delete($url, $postfields, $headers);
 
         if (empty($result)) {
+            return true;
+        } else {
+            return json_decode($result, true);
+        }
+    }
+
+    function create_channel($params){
+        /*
+          String callback_url : The URL that is notified whenever a change is made. REQUIRED
+        */
+
+        $url = $this->api_url("/channels");
+
+        $headers = $this->get_auth_headers(true);
+
+        $postfields = array('callback_url' => $params['callback_url']);
+
+        $result = $this->http_post($url, $postfields, $headers);
+
+        if(empty($result)) {
             return true;
         } else {
             return json_decode($result, true);
