@@ -459,6 +459,26 @@ class Cronofy
         }
     }
 
+    function close_channel($params){
+        /*
+          channel_id : The ID of the channel to be closed. REQUIRED
+
+          returns $result - Array of channels. Details are available in the Cronofy API Documentation
+         */
+
+        $url = $this->api_url("/channels/" . $params['channel_id']);
+
+        $headers = $this->get_auth_headers();
+
+        $result = $this->http_delete($url, array(), $headers);
+
+        if(empty($result)) {
+            return true;
+        } else {
+            return json_decode($result, true);
+        }
+    }
+
     private function api_url($method){
         return self::API_ROOT_URL . "/" . self::API_VERSION . $method;
     }
