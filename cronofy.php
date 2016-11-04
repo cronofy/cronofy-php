@@ -303,7 +303,7 @@ class Cronofy
     function delete_event($params)
     {
         /*
-          calendar_id : The calendar_id of the calendar you wish the event to be added to. REQUIRED
+          calendar_id : The calendar_id of the calendar you wish the event to be removed from. REQUIRED
           String event_id : The String that uniquely identifies the event. REQUIRED
 
           returns true on success, associative array of errors on failure
@@ -340,6 +340,19 @@ class Cronofy
         return $this->http_delete("/" . self::API_VERSION . "/channels/" . $params['channel_id']);
     }
 
+    function delete_external_event($params)
+    {
+        /*
+          calendar_id : The calendar_id of the calendar you wish the event to be removed from. REQUIRED
+          String event_uid : The String that uniquely identifies the event. REQUIRED
+
+          returns true on success, associative array of errors on failure
+         */
+        $postfields = array('event_uid' => $params['event_uid']);
+
+        return $this->http_delete("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
+    }
+    
     function authorize_with_service_account($params){
         /*
           email : The email of the user to be authorized. REQUIRED
