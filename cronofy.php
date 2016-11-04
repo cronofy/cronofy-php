@@ -479,6 +479,29 @@ class Cronofy
         }
     }
 
+    function authorize_with_service_account($params){
+        /*
+          email : The email of the user to be authorized. REQUIRED
+          scope : The scopes to authorize for the user. REQUIRED
+          callback_url : The URL to return to after authorization. REQUIRED
+         */
+        if(isset($params["scope"]) && gettype($params["scope"]) == "array") {
+            $params["scope"] = join(" ", $params["scope"]);
+        }
+
+        $url = $this->api_url("/service_account_authorizations");
+
+        $headers = $this->get_auth_headers(true);
+
+        $result = $this->http_post($url, $params, $headers);
+
+        if(empty($result)){
+            return true;
+        } else {
+            return json_decode($result, true);
+        }
+    }
+
     private function api_url($method){
         return self::API_ROOT_URL . "/" . self::API_VERSION . $method;
     }
