@@ -6,30 +6,31 @@ class CronofyException extends Exception
 {
     private $error_details;
 
-    public function __construct($message, $code, $error_details = null){
+    public function __construct($message, $code, $error_details = null)
+    {
         $this->error_details = $error_details;
 
         parent::__construct($message, $code, null);
     }
 
-    public function error_details(){
+    public function error_details()
+    {
         return $this->error_details;
     }
 }
 
 class Cronofy
 {
-
     const USERAGENT = 'Cronofy PHP 0.4';
     const API_ROOT_URL = 'https://api.cronofy.com';
     const API_VERSION = 'v1';
 
-    var $client_id;
-    var $client_secret;
-    var $access_token;
-    var $refresh_token;
+    public $client_id;
+    public $client_secret;
+    public $access_token;
+    public $refresh_token;
 
-    function __construct($client_id = false, $client_secret = false, $access_token = false, $refresh_token = false)
+    public function __construct($client_id = false, $client_secret = false, $access_token = false, $refresh_token = false)
     {
         if (!function_exists('curl_init')) {
             throw new CronofyException("missing cURL extension", 1);
@@ -49,7 +50,7 @@ class Cronofy
         }
     }
 
-    function http_get($path, array $params = array())
+    public function http_get($path, array $params = array())
     {
         $url = $this->api_url($path);
         $url .= $this->url_params($params);
@@ -73,7 +74,7 @@ class Cronofy
         return $this->handle_response($result, $status_code);
     }
 
-    function http_post($path, array $params = array())
+    public function http_post($path, array $params = array())
     {
         $url = $this->api_url($path);
 
@@ -99,7 +100,7 @@ class Cronofy
         return $this->handle_response($result, $status_code);
     }
 
-    function http_delete($path, array $params = array())
+    public function http_delete($path, array $params = array())
     {
         $url = $this->api_url($path);
 
@@ -124,7 +125,7 @@ class Cronofy
         return $this->handle_response($result, $status_code);
     }
 
-    function getAuthorizationURL($params)
+    public function getAuthorizationURL($params)
     {
         /*
           Array $params : An array of additional paramaters
@@ -149,7 +150,7 @@ class Cronofy
         return $url;
     }
 
-    function request_token($params)
+    public function request_token($params)
     {
         /*
           Array $params : An array of additional paramaters
@@ -178,7 +179,7 @@ class Cronofy
         }
     }
 
-    function refresh_token()
+    public function refresh_token()
     {
         /*
           String $refresh_token : The refresh_token issued to you when the user authorized your access to their account. REQUIRED
@@ -204,7 +205,7 @@ class Cronofy
         }
     }
 
-    function revoke_authorization($token)
+    public function revoke_authorization($token)
     {
         /*
           String token : Either the refresh_token or access_token for the authorization you wish to revoke. REQUIRED
@@ -221,7 +222,7 @@ class Cronofy
         return $this->http_post("/oauth/token/revoke", $postfields);
     }
 
-    function get_account()
+    public function get_account()
     {
         /*
           returns $result - info for the user logged in. Details are available in the Cronofy API Documentation
@@ -229,7 +230,7 @@ class Cronofy
         return $this->http_get("/" . self::API_VERSION . "/account");
     }
 
-    function get_profiles()
+    public function get_profiles()
     {
         /*
           returns $result - list of all the authenticated user's calendar profiles. Details are available in the Cronofy API Documentation
@@ -237,7 +238,7 @@ class Cronofy
         return $this->http_get("/" . self::API_VERSION . "/profiles");
     }
 
-    function list_calendars()
+    public function list_calendars()
     {
         /*
           returns $result - Array of calendars. Details are available in the Cronofy API Documentation
@@ -245,7 +246,7 @@ class Cronofy
         return $this->http_get("/" . self::API_VERSION . "/calendars");
     }
 
-    function read_events($params)
+    public function read_events($params)
     {
         /*
           Date from : The minimum date from which to return events. Defaults to 16 days in the past. OPTIONAL
@@ -264,7 +265,7 @@ class Cronofy
         return $this->http_get("/" . self::API_VERSION . "/events", $params);
     }
 
-    function free_busy($params)
+    public function free_busy($params)
     {
         /*
           Date from : The minimum date from which to return free-busy information. Defaults to 16 days in the past. OPTIONAL
@@ -279,7 +280,7 @@ class Cronofy
         return $this->http_get("/" . self::API_VERSION . "/free_busy", $params);
     }
 
-    function upsert_event($params)
+    public function upsert_event($params)
     {
         /*
           calendar_id : The calendar_id of the calendar you wish the event to be added to. REQUIRED
@@ -312,7 +313,7 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
     }
 
-    function delete_event($params)
+    public function delete_event($params)
     {
         /*
           calendar_id : The calendar_id of the calendar you wish the event to be removed from. REQUIRED
@@ -325,7 +326,8 @@ class Cronofy
         return $this->http_delete("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
     }
 
-    function create_channel($params){
+    public function create_channel($params)
+    {
         /*
           String callback_url : The URL that is notified whenever a change is made. REQUIRED
 
@@ -336,14 +338,16 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/channels", $postfields);
     }
 
-    function list_channels(){
+    public function list_channels()
+    {
         /*
           returns $result - Array of channels. Details are available in the Cronofy API Documentation
          */
         return $this->http_get("/" . self::API_VERSION . "/channels");
     }
 
-    function close_channel($params){
+    public function close_channel($params)
+    {
         /*
           channel_id : The ID of the channel to be closed. REQUIRED
 
@@ -352,7 +356,7 @@ class Cronofy
         return $this->http_delete("/" . self::API_VERSION . "/channels/" . $params['channel_id']);
     }
 
-    function delete_external_event($params)
+    public function delete_external_event($params)
     {
         /*
           calendar_id : The calendar_id of the calendar you wish the event to be removed from. REQUIRED
@@ -365,64 +369,70 @@ class Cronofy
         return $this->http_delete("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
     }
 
-    function authorize_with_service_account($params){
+    public function authorize_with_service_account($params)
+    {
         /*
           email : The email of the user to be authorized. REQUIRED
           scope : The scopes to authorize for the user. REQUIRED
           callback_url : The URL to return to after authorization. REQUIRED
          */
-        if(isset($params["scope"]) && gettype($params["scope"]) == "array") {
+        if (isset($params["scope"]) && gettype($params["scope"]) == "array") {
             $params["scope"] = join(" ", $params["scope"]);
         }
 
         return $this->http_post("/" . self::API_VERSION . "/service_account_authorizations", $params);
     }
 
-    private function api_url($path){
+    private function api_url($path)
+    {
         return self::API_ROOT_URL . $path;
     }
 
-    private function url_params($params){
-        if(count($params) == 0){
+    private function url_params($params)
+    {
+        if (count($params) == 0) {
             return "";
         }
         $str_params = array();
 
-        foreach($params as $key => $val){
+        foreach ($params as $key => $val) {
             array_push($str_params, $key . "=" . urlencode($val));
         }
 
         return "?" . join("&", $str_params);
     }
 
-    private function get_auth_headers($with_content_headers = false){
+    private function get_auth_headers($with_content_headers = false)
+    {
         $headers = array();
 
         $headers[] = 'Authorization: Bearer ' . $this->access_token;
         $headers[] = 'Host: api.cronofy.com';
 
-        if($with_content_headers){
+        if ($with_content_headers) {
             $headers[] = 'Content-Type: application/json; charset=utf-8';
         }
 
         return $headers;
     }
 
-    function parsed_response($response){
-      $json_decoded = json_decode($response, true);
+    public function parsed_response($response)
+    {
+        $json_decoded = json_decode($response, true);
 
-      if(json_last_error() != JSON_ERROR_NONE) {
-        return $response;
-      }
+        if (json_last_error() != JSON_ERROR_NONE) {
+            return $response;
+        }
 
-      return $json_decoded;
+        return $json_decoded;
     }
 
-    function handle_response($result, $status_code){
-      if($status_code >= 200 && $status_code < 300){
-        return $this->parsed_response($result);
-      }
+    public function handle_response($result, $status_code)
+    {
+        if ($status_code >= 200 && $status_code < 300) {
+            return $this->parsed_response($result);
+        }
 
-      throw new CronofyException($GLOBALS['http_codes'][$status_code], $status_code, $this->parsed_response($result));
+        throw new CronofyException($GLOBALS['http_codes'][$status_code], $status_code, $this->parsed_response($result));
     }
 }
