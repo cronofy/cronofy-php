@@ -1,15 +1,27 @@
 <?php
 
+include "status-codes.php";
+
 class CronofyException extends Exception
 {
+    private $error_details;
 
+    public function __construct($message, $code, $error_details = null){
+        $this->error_details = $error_details;
+
+        parent::__construct($message, $code, null);
+    }
+
+    public function error_details(){
+        return $this->error_details;
+    }
 }
 
 class Cronofy
 {
 
-    const USERAGENT = 'Cronofy PHP 1.0';
-    const API_ROOT_URL = 'http://local.cronofy.com';
+    const USERAGENT = 'Cronofy PHP 0.4';
+    const API_ROOT_URL = 'https://api.cronofy.com';
     const API_VERSION = 'v1';
 
     var $client_id;
@@ -37,9 +49,9 @@ class Cronofy
         }
     }
 
-    function http_get($method, array $params = array())
+    function http_get($path, array $params = array())
     {
-        $url = $this->api_url($method);
+        $url = $this->api_url($path);
         $url .= $this->url_params($params);
 
         if (filter_var($url, FILTER_VALIDATE_URL)===false) {
@@ -61,9 +73,9 @@ class Cronofy
         return $this->handle_response($result, $status_code);
     }
 
-    function http_post($method, array $params = array())
+    function http_post($path, array $params = array())
     {
-        $url = $this->api_url($method);
+        $url = $this->api_url($path);
 
         if (filter_var($url, FILTER_VALIDATE_URL)===false) {
             throw new CronofyException('invalid URL');
@@ -87,9 +99,9 @@ class Cronofy
         return $this->handle_response($result, $status_code);
     }
 
-    function http_delete($method, array $params = array())
+    function http_delete($path, array $params = array())
     {
-        $url = $this->api_url($method);
+        $url = $this->api_url($path);
 
         if (filter_var($url, FILTER_VALIDATE_URL)===false) {
             throw new CronofyException('invalid URL');
@@ -352,7 +364,7 @@ class Cronofy
 
         return $this->http_delete("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
     }
-    
+
     function authorize_with_service_account($params){
         /*
           email : The email of the user to be authorized. REQUIRED
@@ -366,8 +378,8 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/service_account_authorizations", $params);
     }
 
-    private function api_url($method){
-        return self::API_ROOT_URL . $method;
+    private function api_url($path){
+        return self::API_ROOT_URL . $path;
     }
 
     private function url_params($params){
@@ -407,30 +419,10 @@ class Cronofy
     }
 
     function handle_response($result, $status_code){
-      switch($status_code){
-        case 400:
-          throw new CronofyException("Bad request", 400);
-          break;
-        case 401:
-          throw new CronofyException("Unauthorized", 403);
-          break;
-        case 403:
-          throw new CronofyException("Forbidden", 403);
-          break;
-        case 404:
-          throw new CronofyException("Not found", 404);
-          break;
-        case 422:
-          throw new CronofyException("Unprocessable", 422);
-          break;
-        case 429:
-          throw new CronofyException("Too many requests", 429);
-          break;
-        case 500:
-          throw new CronofyException("Server error", 500);
-          break;
+      if($status_code >= 200 && $status_code < 300){
+        return $this->parsed_response($result);
       }
 
-      return $this->parsed_response($result);
+      throw new CronofyException($GLOBALS['http_codes'][$status_code], $status_code, $this->parsed_response($result));
     }
 }
