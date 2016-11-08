@@ -2,7 +2,7 @@
     "name": "Cronofy - one API for all the calendars",
     "description": "PHP wrapper for Cronofy's unified calendar API",
     "require": {
-        "php": "^5.3.3 || ^7.0",
+        "php": "^5.3.3 || ^7.0"
     },
     "authors": [
         {
@@ -19,5 +19,5 @@
         "authorization",
         "authentication"
     ],
-    "minimum-stability": "beta",
+    "minimum-stability": "beta"
 }
