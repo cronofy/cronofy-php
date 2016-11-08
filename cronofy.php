@@ -396,7 +396,13 @@ class Cronofy
         $str_params = array();
 
         foreach ($params as $key => $val) {
-            array_push($str_params, $key . "=" . urlencode($val));
+            if(gettype($val) == "array"){
+                for($i = 0; $i < count($val); $i++){
+                    array_push($str_params, $key . "[]=" . urlencode($val[$i]));
+                }
+            } else {
+                array_push($str_params, $key . "=" . urlencode($val));
+            }
         }
 
         return "?" . join("&", $str_params);
