@@ -1,5 +1,5 @@
 {
-    "name": "Cronofy - one API for all the calendars",
+    "name": "cronofy/cronofy",
     "description": "PHP wrapper for Cronofy's unified calendar API",
     "require": {
         "php": "^5.3.3 || ^7.0"
