@@ -50,7 +50,7 @@ class Cronofy
         }
     }
 
-    public function http_get($path, array $params = array())
+    private function http_get($path, array $params = array())
     {
         $url = $this->api_url($path);
         $url .= $this->url_params($params);
@@ -74,7 +74,7 @@ class Cronofy
         return $this->handle_response($result, $status_code);
     }
 
-    public function http_post($path, array $params = array())
+    private function http_post($path, array $params = array())
     {
         $url = $this->api_url($path);
 
@@ -100,7 +100,7 @@ class Cronofy
         return $this->handle_response($result, $status_code);
     }
 
-    public function http_delete($path, array $params = array())
+    private function http_delete($path, array $params = array())
     {
         $url = $this->api_url($path);
 
@@ -416,7 +416,7 @@ class Cronofy
         return $headers;
     }
 
-    public function parsed_response($response)
+    private function parsed_response($response)
     {
         $json_decoded = json_decode($response, true);
 
@@ -427,7 +427,7 @@ class Cronofy
         return $json_decoded;
     }
 
-    public function handle_response($result, $status_code)
+    private function handle_response($result, $status_code)
     {
         if ($status_code >= 200 && $status_code < 300) {
             return $this->parsed_response($result);
