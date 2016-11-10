@@ -116,6 +116,28 @@ $delete = $cronofy->delete_external_event($params);
 
 ```
 
+## Elevated permissions
+
+To elevate a client's permissions for a user's calendar(s):
+
+```php
+$cronofy = new Cronofy("clientId", "ClientSecret", "AccessToken", "RefreshToken");
+
+$params = array(
+	array(
+			'calendar_id' => 'calendarID_1',
+			'permission_level' => 'unrestricted'
+		),
+	array(
+			'calendar_id' => 'calendarID_2',
+			'permission_level' => 'unrestricted'
+		)
+);
+
+$delete = $cronofy->elevated_permissions($params);
+
+```
+
 ## Links
 
  * [API documentation](https://www.cronofy.com/developers/api)
