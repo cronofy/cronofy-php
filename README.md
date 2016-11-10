@@ -138,6 +138,25 @@ $delete = $cronofy->elevated_permissions($params);
 
 ```
 
+## Authorize with a Service Account
+
+To authorize a user's account using a service account:
+
+```php
+$cronofy = new Cronofy("clientId", "ClientSecret", "AccessToken", "RefreshToken");
+
+$params = array(
+	'email' => $email,
+	'callback_url' => $callback_url,
+	'scope' => array('read_account','list_calendars','read_events','create_event','delete_event')
+);
+
+$delete = $cronofy->authorize_with_service_account($params);
+
+```
+
+Note: You will need to use a Service Account access token to perform this action.
+
 ## Links
 
  * [API documentation](https://www.cronofy.com/developers/api)
