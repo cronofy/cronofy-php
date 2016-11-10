@@ -76,7 +76,7 @@ $params = array(
 	'description' => 'some event data here',
 	'start' => '2015-12-07T09:00:00Z',
 	'end' => '2015-12-08T10:00:00Z'
-	
+
 );
 $new_event = $cronofy->upsert_event($params);
 
@@ -97,6 +97,22 @@ $params = array(
 );
 
 $delete = $cronofy->delete_event($params);
+
+```
+
+## Delete external events
+
+To delete an external event from a user's calendar:
+
+```php
+$cronofy = new Cronofy("clientId", "ClientSecret", "AccessToken", "RefreshToken");
+
+$params = array(
+	'calendar_id' => 'calendarID',
+	'event_uid' => 'EventUID'
+);
+
+$delete = $cronofy->delete_external_event($params);
 
 ```
 
