@@ -134,7 +134,7 @@ $params = array(
 		)
 );
 
-$delete = $cronofy->elevated_permissions($params);
+$response = $cronofy->elevated_permissions($params);
 
 ```
 
@@ -151,7 +151,7 @@ $params = array(
 	'scope' => array('read_account','list_calendars','read_events','create_event','delete_event')
 );
 
-$delete = $cronofy->authorize_with_service_account($params);
+$response = $cronofy->authorize_with_service_account($params);
 
 ```
 
