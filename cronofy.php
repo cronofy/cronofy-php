@@ -383,6 +383,15 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/service_account_authorizations", $params);
     }
 
+    public function elevated_permissions($params)
+    {
+        /*
+          permissions : The permissions to elevate to. Should be in an array of `array($calendar_id, $permission_level)`. REQUIRED
+          redirect_uri : The application's redirect URI. REQUIRED
+         */
+        return $this->http_post("/" . self::API_VERSION . "/permissions", $params);
+    }
+
     private function api_url($path)
     {
         return self::API_ROOT_URL . $path;
