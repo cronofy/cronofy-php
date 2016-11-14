@@ -392,6 +392,15 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/permissions", $params);
     }
 
+    public function create_calendar($params)
+    {
+        /*
+          profile_id : The ID for the profile on which to create the calendar. REQUIRED
+          name : The name for the created calendar. REQUIRED
+         */
+        return $this->http_post("/" . self::API_VERSION . "/calendars", $params);
+    }
+
     private function api_url($path)
     {
         return self::API_ROOT_URL . $path;

@@ -157,6 +157,22 @@ $response = $cronofy->authorize_with_service_account($params);
 
 Note: You will need to use a Service Account access token to perform this action.
 
+## Create a Calendar
+
+To create a calendar for a user's account profile:
+
+```php
+$cronofy = new Cronofy("ClientId", "ClientSecret", "AccessToken", "RefreshToken");
+
+$params = array(
+	'profile_id' => $account_profile_id,
+	'name' => $new_calendar_name
+);
+
+$response = $cronofy->create_calendar($params);
+
+```
+
 ## Links
 
  * [API documentation](https://www.cronofy.com/developers/api)
