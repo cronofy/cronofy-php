@@ -21,7 +21,7 @@ class CronofyException extends Exception
 
 class Cronofy
 {
-    const USERAGENT = 'Cronofy PHP 0.4';
+    const USERAGENT = 'Cronofy PHP 0.5';
     const API_ROOT_URL = 'https://api.cronofy.com';
     const API_VERSION = 'v1';
 
@@ -262,7 +262,9 @@ class Cronofy
 
           returns $result - Array of events
          */
-        return $this->http_get("/" . self::API_VERSION . "/events", $params);
+        $url = $this->api_url("/" . self::API_VERSION . "/events");
+
+        return new PagedResultIterator("events", $this->get_auth_headers(), $url, $this->url_params($params));
     }
 
     public function free_busy($params)
@@ -277,7 +279,9 @@ class Cronofy
 
           returns $result - Array of events
          */
-        return $this->http_get("/" . self::API_VERSION . "/free_busy", $params);
+        $url = $this->api_url("/" . self::API_VERSION . "/free_busy");
+
+        return new PagedResultIterator("free_busy", $this->get_auth_headers(), $url, $this->url_params($params));
     }
 
     public function upsert_event($params)
@@ -459,4 +463,51 @@ class Cronofy
 
         throw new CronofyException($GLOBALS['http_codes'][$status_code], $status_code, $this->parsed_response($result));
     }
+}
+
+class PagedResultIterator
+{
+  private $items_key;
+  private $auth_headers;
+  private $url;
+  private $url_params;
+
+  public function __construct($items_key, $auth_headers, $url, $url_params){
+    $this->items_key = $items_key;
+    $this->auth_headers = $auth_headers;
+    $this->url = $url;
+    $this->url_params = $url_params;
+    $this->first_page = $this->get_page($url, $url_params);
+  }
+
+  public function each(){
+    $page = $this->first_page;
+
+    for($i = 0; $i < count($page[$this->items_key]); $i++){
+      yield $page[$this->items_key][$i];
+    }
+
+    while(isset($page["pages"]["next_page"])){
+      $page = $this->get_page($page["pages"]["next_page"]);
+
+      for($i = 0; $i < count($page[$this->items_key]); $i++){
+        yield $page[$this->items_key][$i];
+      }
+    }
+  }
+
+  private function get_page($url, $url_params=""){
+    $curl = curl_init();
+
+    curl_setopt($curl, CURLOPT_URL, $url.$url_params);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, $this->auth_headers);
+    curl_setopt($curl, CURLOPT_USERAGENT, Cronofy::USERAGENT);
+    $result = curl_exec($curl);
+    if (curl_errno($curl) > 0) {
+      throw new CronofyException(curl_error($curl), 2);
+    }
+
+    return json_decode($result, true);
+  }
 }

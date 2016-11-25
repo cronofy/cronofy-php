@@ -60,6 +60,22 @@ $cronofy = new Cronofy("clientId", "ClientSecret", "AccessToken", "RefreshToken"
 $calendar = $cronofy->list_calendars();
 ```
 
+## Read events
+
+[API documentation](https://www.cronofy.com/developers/api/#read-events)
+
+Get a list of all the user's events:
+
+```php
+$cronofy = new Cronofy("clientId", "ClientSecret", "AccessToken", "RefreshToken");
+
+$events = $cronofy->read_events();
+
+foreach($events->each() as $event){
+	// process event
+}
+```
+
 ## Create or update events
 
 [API documentation](https://www.cronofy.com/developers/api/#upsert-event)
