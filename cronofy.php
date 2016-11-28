@@ -19,7 +19,7 @@ class CronofyException extends Exception
 
 class Cronofy
 {
-    const USERAGENT = 'Cronofy PHP 0.5';
+    const USERAGENT = 'Cronofy PHP 0.6';
     const API_ROOT_URL = 'https://api.cronofy.com';
     const API_VERSION = 'v1';
 
@@ -139,6 +139,33 @@ class Cronofy
         $scope_list = join(" ", $params['scope']);
 
         $url = "https://app.cronofy.com/oauth/authorize?response_type=code&client_id=" . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list;
+        if (!empty($params['state'])) {
+            $url.="&state=" . $params['state'];
+        }
+        if (!empty($params['avoid_linking'])) {
+            $url.="&avoid_linking=" . $params['avoid_linking'];
+        }
+        return $url;
+    }
+
+    public function getEnterpriseConnectAuthorizationUrl($params)
+    {
+        /*
+          Array $params : An array of additional parameters
+          redirect_uri : String. The HTTP or HTTPS URI you wish the user's authorization request decision to be redirected to. REQUIRED
+          scope : Array. An array of scopes to be granted by the access token. Possible scopes detailed in the Cronofy API documentation. REQUIRED
+          delegated_scope : Array. An array of scopes to be granted that will be allowed to be granted to the account's users. REQUIRED
+          state : String. A value that will be returned to you unaltered along with the user's authorization request decsion. OPTIONAL
+          avoid_linking : Boolean when true means we will avoid linking calendar accounts together under one set of credentials. OPTIONAL
+
+          Response :
+          $url : String. The URL to authorize your enterprise connect access to the Cronofy API
+         */
+
+        $scope_list = join(" ", $params['scope']);
+        $delegated_scope_list = join(" ", $params['delegated_scope']);
+
+        $url = "https://app.cronofy.com/enterprise_connect/oauth/authorize?response_type=code&client_id=" . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list . "&delegated_scope=" . $delegated_scope_list;
         if (!empty($params['state'])) {
             $url.="&state=" . $params['state'];
         }
