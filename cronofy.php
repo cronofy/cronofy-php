@@ -162,15 +162,12 @@ class Cronofy
           $url : String. The URL to authorize your enterprise connect access to the Cronofy API
          */
 
-        $scope_list = join(" ", $params['scope']);
-        $delegated_scope_list = join(" ", $params['delegated_scope']);
+        $scope_list = rawurlencode(join(" ", $params['scope']));
+        $delegated_scope_list = rawurlencode(join(" ", $params['delegated_scope']));
 
         $url = "https://app.cronofy.com/enterprise_connect/oauth/authorize?response_type=code&client_id=" . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list . "&delegated_scope=" . $delegated_scope_list;
         if (!empty($params['state'])) {
-            $url.="&state=" . $params['state'];
-        }
-        if (!empty($params['avoid_linking'])) {
-            $url.="&avoid_linking=" . $params['avoid_linking'];
+            $url.="&state=" . rawurlencode($params['state']);
         }
         return $url;
     }
