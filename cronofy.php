@@ -156,7 +156,6 @@ class Cronofy
           scope : Array. An array of scopes to be granted by the access token. Possible scopes detailed in the Cronofy API documentation. REQUIRED
           delegated_scope : Array. An array of scopes to be granted that will be allowed to be granted to the account's users. REQUIRED
           state : String. A value that will be returned to you unaltered along with the user's authorization request decsion. OPTIONAL
-          avoid_linking : Boolean when true means we will avoid linking calendar accounts together under one set of credentials. OPTIONAL
 
           Response :
           $url : String. The URL to authorize your enterprise connect access to the Cronofy API
