@@ -74,7 +74,7 @@ $events = $cronofy->read_events();
 foreach($events->each() as $event){
 	// process event
 }
-```
+``t `
 
 ## Create or update events
 
@@ -129,6 +129,17 @@ $params = array(
 );
 
 $delete = $cronofy->delete_external_event($params);
+
+```
+
+## Delete all events
+
+To delete all of a client's events from a user's calendar:
+
+```php
+$cronofy = new Cronofy("clientId", "ClientSecret", "AccessToken", "RefreshToken");
+
+$delete = $cronofy->delete_all_events();
 
 ```
 
