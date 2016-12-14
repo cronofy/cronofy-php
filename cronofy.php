@@ -436,6 +436,14 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/calendars", $params);
     }
 
+    public function user_info()
+    {
+        /*
+          returns true on success, associative array of errors on failure
+         */
+        return $this->http_get("/" . self::API_VERSION . "/userinfo");
+    }
+
     private function api_url($path)
     {
         return self::API_ROOT_URL . $path;
