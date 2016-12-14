@@ -313,8 +313,8 @@ class Cronofy
           String summary : The String to use as the summary, sometimes referred to as the name, of the event. REQUIRED
           String description : The String to use as the description, sometimes referred to as the notes, of the event. REQUIRED
           String tzid : A String representing a known time zone identifier from the IANA Time Zone Database. OPTIONAL
-          Time start: The start time can be provided as a simple Time string or an object with two attributes, time and tzid. REQUIRED
-          Time end: The end time can be provided as a simple Time string or an object with two attributes, time and tzid. REQUIRED
+          Time start: The start time or date can be provided as a simple Time string, Date string, or an object with the required attributes of date and tzid, and optional time. REQUIRED
+          Time end: The end time or date can be provided as a simple Time string, or an object with the required attributes of date and tzid, and optional time. REQUIRED
           String location.description : The String describing the event's location. OPTIONAL
           String url : A String to represent the event's URL. OPTIONAL
 
