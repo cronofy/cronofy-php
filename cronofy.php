@@ -351,6 +351,16 @@ class Cronofy
         return $this->http_delete("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
     }
 
+    public function delete_all_events()
+    {
+        /*
+          returns true on success, associative array of errors on failure
+         */
+        $postfields = array('delete_all' => true);
+
+        return $this->http_delete("/" . self::API_VERSION . "/events/", $postfields);
+    }
+
     public function create_channel($params)
     {
         /*
