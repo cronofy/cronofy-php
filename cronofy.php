@@ -426,6 +426,20 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/calendars", $params);
     }
 
+    public function change_participation_status($params)
+    {
+        /*
+          calendar_id : The ID of the calendar holding the event. REQUIRED
+          event_uid : The UID of the event to chang ethe participation status of. REQUIRED
+          status : The new participation status for the event. Accepted values are: accepted, tentative, declined. REQUIRED
+         */
+        $postfields = array(
+            "status" => $params["status"]
+        );
+
+        return $this->http_post("/" . self::API_VERSION . "/calendars/" . $params["calendar_id"] . "/events/" . $params["event_uid"] . "/participation_status", $postfields);
+    }
+
     private function api_url($path)
     {
         return self::API_ROOT_URL . $path;
