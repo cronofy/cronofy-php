@@ -316,7 +316,8 @@ class Cronofy
           Time start: The start time can be provided as a simple Time string or an object with two attributes, time and tzid. REQUIRED
           Time end: The end time can be provided as a simple Time string or an object with two attributes, time and tzid. REQUIRED
           String location.description : The String describing the event's location. OPTIONAL
-
+          String location.lat : The String describing the event's latitude. OPTIONAL
+          String location.long : The String describing the event's longitude. OPTIONAL
 
           returns true on success, associative array of errors on failure
          */
@@ -331,8 +332,8 @@ class Cronofy
         if (!empty($params['tzid'])) {
             $postfields['tzid'] = $params['tzid'];
         }
-        if (!empty($params['location']['description'])) {
-            $postfields['location']['description'] = $params['location']['description'];
+        if (!empty($params['location'])) {
+          $postfields['location'] = $params['location'];
         }
 
         return $this->http_post("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
