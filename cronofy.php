@@ -333,7 +333,7 @@ class Cronofy
             $postfields['tzid'] = $params['tzid'];
         }
         if (!empty($params['location'])) {
-          $postfields['location'] = $params['location'];
+            $postfields['location'] = $params['location'];
         }
 
         return $this->http_post("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
