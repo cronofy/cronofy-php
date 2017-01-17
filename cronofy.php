@@ -285,7 +285,7 @@ class Cronofy
          */
         $url = $this->api_url("/" . self::API_VERSION . "/events");
 
-        return new PagedResultIterator("events", $this->get_auth_headers(), $url, $this->url_params($params));
+        return new PagedResultIterator($this, "events", $this->get_auth_headers(), $url, $this->url_params($params));
     }
 
     public function free_busy($params)
@@ -302,7 +302,7 @@ class Cronofy
          */
         $url = $this->api_url("/" . self::API_VERSION . "/free_busy");
 
-        return new PagedResultIterator("free_busy", $this->get_auth_headers(), $url, $this->url_params($params));
+        return new PagedResultIterator($this, "free_busy", $this->get_auth_headers(), $url, $this->url_params($params));
     }
 
     public function upsert_event($params)
@@ -318,6 +318,8 @@ class Cronofy
           String location.description : The String describing the event's location. OPTIONAL
           String location.lat : The String describing the event's latitude. OPTIONAL
           String location.long : The String describing the event's longitude. OPTIONAL
+          Array reminders : An array of arrays detailing a length of time and a quantity. OPTIONAL
+                            for example: array(array("minutes" => 30), array("minutes" => 1440))
 
           returns true on success, associative array of errors on failure
          */
@@ -334,6 +336,9 @@ class Cronofy
         }
         if (!empty($params['location'])) {
             $postfields['location'] = $params['location'];
+        }
+        if(!empty($params['reminders'])) {
+            $postfields['reminders'] = $params['reminders'];
         }
 
         return $this->http_post("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
@@ -491,7 +496,7 @@ class Cronofy
         return $json_decoded;
     }
 
-    private function handle_response($result, $status_code)
+    public function handle_response($result, $status_code)
     {
         if ($status_code >= 200 && $status_code < 300) {
             return $this->parsed_response($result);
@@ -561,12 +566,14 @@ class Cronofy
 
 class PagedResultIterator
 {
+  private $cronofy;
   private $items_key;
   private $auth_headers;
   private $url;
   private $url_params;
 
-  public function __construct($items_key, $auth_headers, $url, $url_params){
+  public function __construct($cronofy, $items_key, $auth_headers, $url, $url_params){
+    $this->cronofy = $cronofy;
     $this->items_key = $items_key;
     $this->auth_headers = $auth_headers;
     $this->url = $url;
@@ -601,7 +608,9 @@ class PagedResultIterator
     if (curl_errno($curl) > 0) {
       throw new CronofyException(curl_error($curl), 2);
     }
+    $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
 
-    return json_decode($result, true);
+    return $this->cronofy->handle_response($result, $status_code);
   }
 }
