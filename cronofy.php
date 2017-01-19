@@ -19,7 +19,7 @@ class CronofyException extends Exception
 
 class Cronofy
 {
-    const USERAGENT = 'Cronofy PHP 0.7';
+    const USERAGENT = 'Cronofy PHP 0.8';
     const API_ROOT_URL = 'https://api.cronofy.com';
     const API_VERSION = 'v1';
 
@@ -444,6 +444,33 @@ class Cronofy
         );
 
         return $this->http_post("/" . self::API_VERSION . "/calendars/" . $params["calendar_id"] . "/events/" . $params["event_uid"] . "/participation_status", $postfields);
+    }
+
+    public function availability($params)
+    {
+        /*
+          participants : An array of the groups of participants whose availability should be taken into account. REQUIRED
+                         for example: array(
+                                        array("members" => array(
+                                          array("sub" => "acc_567236000909002"),
+                                          array("sub" => "acc_678347111010113")
+                                        ), "required" => "all")
+                                      )
+          required_duration : Duration that an available period must last to be considered viable. REQUIRED
+                         for example: array("minutes" => 60)
+          available_periods : An array of available periods within which suitable matches may be found. REQUIRED
+                         for example: array(
+                                        array("start" => "2017-01-01T09:00:00Z", "end" => "2017-01-01T18:00:00Z"),
+                                        array("start" => "2017-01-02T09:00:00Z", "end" => "2017-01-02T18:00:00Z")
+                                      )
+         */
+        $postfields = array(
+            "participants" => $params["participants"],
+            "required_duration" => $params["required_duration"],
+            "available_periods" => $params["available_periods"]
+        );
+
+        return $this->http_post("/" . self::API_VERSION . "/availability", $postfields);
     }
 
     private function api_url($path)
