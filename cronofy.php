@@ -448,16 +448,16 @@ class Cronofy
     public function availability($params)
     {
         /*
-          participants : Array of member arrays and the required number of people to be available from each array. REQUIRED
+          participants : An array of the groups of participants whose availability should be taken into account. REQUIRED
                          for example: array(
                                         array("members" => array(
                                           array("sub" => "acc_567236000909002"),
                                           array("sub" => "acc_678347111010113")
                                         ), "required" => "all")
                                       )
-          required_duration : Array detailing required period duration. REQUIRED
+          required_duration : Duration that an available period must last to be considered viable. REQUIRED
                          for example: array("minutes" => 60)
-          available_periods : Array of periods within which to look for availability. REQUIED
+          available_periods : An array of available periods within which suitable matches may be found. REQUIRED
                          for example: array(
                                         array("start" => "2017-01-01T09:00:00Z", "end" => "2017-01-01T18:00:00Z"),
                                         array("start" => "2017-01-02T09:00:00Z", "end" => "2017-01-02T18:00:00Z")
