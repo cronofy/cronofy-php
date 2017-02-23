@@ -19,7 +19,7 @@ class CronofyException extends Exception
 
 class Cronofy
 {
-    const USERAGENT = 'Cronofy PHP 0.8';
+    const USERAGENT = 'Cronofy PHP 0.9';
     const API_VERSION = 'v1';
 
     public $api_root_url;
