@@ -53,18 +53,18 @@ class Cronofy
         $this->set_urls();
     }
 
-    public function set_data_centre($data_centre)
+    public function set_data_center($data_center)
     {
-        $this->set_urls($data_centre);
+        $this->set_urls($data_center);
     }
 
-    private function set_urls($data_centre = false)
+    private function set_urls($data_center = false)
     {
-        $data_centre_addin = $data_centre ? '-' . $data_centre : '';
+        $data_center_addin = $data_center ? '-' . $data_center : '';
 
-        $this->api_root_url = "https://api$data_centre_addin.cronofy.com";
-        $this->app_root_url = "https://app$data_centre_addin.cronofy.com";
-        $this->host_domain = "local$data_centre_addin.cronofy.com";
+        $this->api_root_url = "https://api$data_center_addin.cronofy.com";
+        $this->app_root_url = "https://app$data_center_addin.cronofy.com";
+        $this->host_domain = "local$data_center_addin.cronofy.com";
     }
 
     private function http_get($path, array $params = array())
