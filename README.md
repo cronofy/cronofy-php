@@ -189,6 +189,17 @@ $response = $cronofy->create_calendar($params);
 
 ```
 
+## Using an Alternative Data Center
+
+To use an alternative data center:
+
+```php
+$cronofy = new Cronofy("ClientId", "ClientSecret", "AccessToken", "RefreshToken");
+
+$cronofy->set_data_center("DataCenter");
+
+```
+
 ## Links
 
  * [API documentation](https://www.cronofy.com/developers/api)
