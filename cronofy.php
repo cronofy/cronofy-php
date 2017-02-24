@@ -19,9 +19,12 @@ class CronofyException extends Exception
 
 class Cronofy
 {
-    const USERAGENT = 'Cronofy PHP 0.8';
-    const API_ROOT_URL = 'https://api.cronofy.com';
+    const USERAGENT = 'Cronofy PHP 0.9';
     const API_VERSION = 'v1';
+
+    public $api_root_url;
+    public $app_root_url;
+    public $host_domain;
 
     public $client_id;
     public $client_secret;
@@ -46,6 +49,22 @@ class Cronofy
         if (!empty($refresh_token)) {
             $this->refresh_token = $refresh_token;
         }
+
+        $this->set_urls();
+    }
+
+    public function set_data_center($data_center)
+    {
+        $this->set_urls($data_center);
+    }
+
+    private function set_urls($data_center = false)
+    {
+        $data_center_addin = $data_center ? '-' . $data_center : '';
+
+        $this->api_root_url = "https://api$data_center_addin.cronofy.com";
+        $this->app_root_url = "https://app$data_center_addin.cronofy.com";
+        $this->host_domain = "api$data_center_addin.cronofy.com";
     }
 
     private function http_get($path, array $params = array())
@@ -138,7 +157,7 @@ class Cronofy
 
         $scope_list = join(" ", $params['scope']);
 
-        $url = "https://app.cronofy.com/oauth/authorize?response_type=code&client_id=" . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list;
+        $url = $this->app_root_url . "/oauth/authorize?response_type=code&client_id=" . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list;
         if (!empty($params['state'])) {
             $url.="&state=" . $params['state'];
         }
@@ -164,7 +183,7 @@ class Cronofy
         $scope_list = rawurlencode(join(" ", $params['scope']));
         $delegated_scope_list = rawurlencode(join(" ", $params['delegated_scope']));
 
-        $url = "https://app.cronofy.com/enterprise_connect/oauth/authorize?response_type=code&client_id=" . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list . "&delegated_scope=" . $delegated_scope_list;
+        $url = $this->app_root_url . "/enterprise_connect/oauth/authorize?response_type=code&client_id=" . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list . "&delegated_scope=" . $delegated_scope_list;
         if (!empty($params['state'])) {
             $url.="&state=" . rawurlencode($params['state']);
         }
@@ -475,7 +494,7 @@ class Cronofy
 
     private function api_url($path)
     {
-        return self::API_ROOT_URL . $path;
+        return $this->api_root_url . $path;
     }
 
     private function url_params($params)
@@ -503,7 +522,7 @@ class Cronofy
         $headers = array();
 
         $headers[] = 'Authorization: Bearer ' . $this->access_token;
-        $headers[] = 'Host: api.cronofy.com';
+        $headers[] = 'Host: ' . $this->host_domain;
 
         if ($with_content_headers) {
             $headers[] = 'Content-Type: application/json; charset=utf-8';
