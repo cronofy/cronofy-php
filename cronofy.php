@@ -64,7 +64,7 @@ class Cronofy
 
         $this->api_root_url = "https://api$data_center_addin.cronofy.com";
         $this->app_root_url = "https://app$data_center_addin.cronofy.com";
-        $this->host_domain = "local$data_center_addin.cronofy.com";
+        $this->host_domain = "api$data_center_addin.cronofy.com";
     }
 
     private function http_get($path, array $params = array())
