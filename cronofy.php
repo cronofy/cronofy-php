@@ -339,6 +339,7 @@ class Cronofy
           String location.long : The String describing the event's longitude. OPTIONAL
           Array reminders : An array of arrays detailing a length of time and a quantity. OPTIONAL
                             for example: array(array("minutes" => 30), array("minutes" => 1440))
+          String transparency : The transparency of the event. Accepted values are "transparent" and "opaque". OPTIONAL
 
           returns true on success, associative array of errors on failure
          */
@@ -358,6 +359,9 @@ class Cronofy
         }
         if(!empty($params['reminders'])) {
             $postfields['reminders'] = $params['reminders'];
+        }
+        if(!empty($params['transparency'])) {
+            $postfields['transparency'] = $params['transparency'];
         }
 
         return $this->http_post("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
