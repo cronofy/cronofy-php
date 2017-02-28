@@ -23,5 +23,6 @@
         "authorization",
         "authentication"
     ],
-    "minimum-stability": "beta"
+    "minimum-stability": "beta",
+    "license": "MIT"
 }
