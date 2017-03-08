@@ -299,6 +299,7 @@ class Cronofy
           Boolean only_managed : Indicates whether only events that you are managing for the account should be included in the results. OPTIONAL
           Array calendar_ids : Restricts the returned events to those within the set of specified calendar_ids. Defaults to returning events from all of a user's calendars. OPTIONAL
           Boolean localized_times : Indicates whether the events should have their start and end times returned with any available localization information. Defaults to returning start and end times as simple Time values. OPTIONAL
+          Boolean include_geo : Indicates whether the events should have their location's latitude and longitude returned where available. OPTIONAL
 
           returns $result - Array of events
          */
