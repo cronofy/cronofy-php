@@ -31,31 +31,26 @@ class Cronofy
     public $access_token;
     public $refresh_token;
 
-    public function __construct($client_id = false, $client_secret = false, $access_token = false, $refresh_token = false)
+    public function __construct($config = array())
     {
         if (!function_exists('curl_init')) {
             throw new CronofyException("missing cURL extension", 1);
         }
 
-        if (!empty($client_id)) {
-            $this->client_id = $client_id;
+        if (!empty($config["client_id"])) {
+            $this->client_id = $config["client_id"];
         }
-        if (!empty($client_secret)) {
-            $this->client_secret = $client_secret;
+        if (!empty($config["client_secret"])) {
+            $this->client_secret = $config["client_secret"];
         }
-        if (!empty($access_token)) {
-            $this->access_token = $access_token;
+        if (!empty($config["access_token"])) {
+            $this->access_token = $config["access_token"];
         }
-        if (!empty($refresh_token)) {
-            $this->refresh_token = $refresh_token;
+        if (!empty($config["refresh_token"])) {
+            $this->refresh_token = $config["refresh_token"];
         }
 
-        $this->set_urls();
-    }
-
-    public function set_data_center($data_center)
-    {
-        $this->set_urls($data_center);
+        $this->set_urls(isset($config["data_center"]) ? $config["data_center"] : false);
     }
 
     private function set_urls($data_center = false)
