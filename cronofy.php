@@ -456,6 +456,15 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/calendars", $params);
     }
 
+    public function resources()
+    {
+      /*
+        returns $result - Array of resources. Details
+        are available in the Cronofy API Documentation
+       */
+      return $this->http_get('/' . self::API_VERSION . "/resources");
+    }
+    
     public function change_participation_status($params)
     {
         /*
