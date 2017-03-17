@@ -341,6 +341,9 @@ class Cronofy
           Array reminders : An array of arrays detailing a length of time and a quantity. OPTIONAL
                             for example: array(array("minutes" => 30), array("minutes" => 1440))
           String transparency : The transparency of the event. Accepted values are "transparent" and "opaque". OPTIONAL
+          Array attendees : An array of "invite" and "reject" arrays which are lists of attendees to invite and remove from the event. OPTIONAL
+                            for example: array("invite" => array(array("email" => "new_invitee@test.com", "display_name" => "New Invitee"))
+                                               "reject" => array(array("email" => "old_invitee@test.com", "display_name" => "Old Invitee")))
 
           returns true on success, associative array of errors on failure
          */
@@ -363,6 +366,9 @@ class Cronofy
         }
         if(!empty($params['transparency'])) {
             $postfields['transparency'] = $params['transparency'];
+        }
+        if(!empty($params['attendees'])) {
+            $postfields['attendees'] = $params['attendees'];
         }
 
         return $this->http_post("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
