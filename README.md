@@ -20,7 +20,7 @@ Generate a link for a user to grant access to their calendars:
 ```php
 $redirect_uri = "http://yoursite.dev/oauth2/callback";
 
-$cronofy = new Cronofy("clientId");
+$cronofy = new Cronofy(array("client_id" => "clientId"));
 $params = array(
 	'redirect_uri' => $redirect_uri,
 	'scope' => array('read_account','list_calendars','read_events','create_event','delete_event')
@@ -33,7 +33,10 @@ callback and receive a `code` parameter. You can then use that code to retrieve
 an OAuth token granting access to the user's Cronofy account:
 
 ```php
-$cronofy = new Cronofy("clientId", "ClientSecret");
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret"
+));
 
 $params = array(
 	'redirect_uri' => $redirect_uri,
@@ -56,7 +59,13 @@ access to be granted.
 Get a list of all the user's calendars:
 
 ```php
-$cronofy = new Cronofy("clientId", "ClientSecret", "AccessToken", "RefreshToken");
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken"
+));
+
 $calendar = $cronofy->list_calendars();
 ```
 
@@ -67,7 +76,12 @@ $calendar = $cronofy->list_calendars();
 Get a list of all the user's events:
 
 ```php
-$cronofy = new Cronofy("clientId", "ClientSecret", "AccessToken", "RefreshToken");
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken"
+));
 
 $events = $cronofy->read_events();
 
@@ -83,7 +97,12 @@ foreach($events->each() as $event){
 To create/update an event in the user's calendar:
 
 ```php
-$cronofy = new Cronofy("clientId", "ClientSecret", "AccessToken", "RefreshToken");
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken"
+));
 
 $params = array(
 	'calendar_id' => 'calendarID',
@@ -105,7 +124,12 @@ $new_event = $cronofy->upsert_event($params);
 To delete an event from user's calendar:
 
 ```php
-$cronofy = new Cronofy("clientId", "ClientSecret", "AccessToken", "RefreshToken");
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken"
+));
 
 $params = array(
 	'calendar_id' => 'calendarID',
@@ -121,7 +145,12 @@ $delete = $cronofy->delete_event($params);
 To delete an external event from a user's calendar:
 
 ```php
-$cronofy = new Cronofy("clientId", "ClientSecret", "AccessToken", "RefreshToken");
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken"
+));
 
 $params = array(
 	'calendar_id' => 'calendarID',
@@ -137,7 +166,12 @@ $delete = $cronofy->delete_external_event($params);
 To elevate a client's permissions for a user's calendar(s):
 
 ```php
-$cronofy = new Cronofy("clientId", "ClientSecret", "AccessToken", "RefreshToken");
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken"
+));
 
 $params = array(
 	array(
@@ -159,7 +193,12 @@ $response = $cronofy->elevated_permissions($params);
 To authorize a user's account using a service account:
 
 ```php
-$cronofy = new Cronofy("clientId", "ClientSecret", "AccessToken", "RefreshToken");
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken"
+));
 
 $params = array(
 	'email' => $email,
@@ -178,7 +217,12 @@ Note: You will need to use a Service Account access token to perform this action
 To create a calendar for a user's account profile:
 
 ```php
-$cronofy = new Cronofy("ClientId", "ClientSecret", "AccessToken", "RefreshToken");
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken"
+));
 
 $params = array(
 	'profile_id' => $account_profile_id,
@@ -194,9 +238,13 @@ $response = $cronofy->create_calendar($params);
 To use an alternative data center:
 
 ```php
-$cronofy = new Cronofy("ClientId", "ClientSecret", "AccessToken", "RefreshToken");
-
-$cronofy->set_data_center("DataCenter");
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken",
+  "data_center" => "DataCenter"
+));
 
 ```
 
