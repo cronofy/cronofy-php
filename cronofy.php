@@ -497,6 +497,34 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/availability", $postfields);
     }
 
+    public function add_to_calendar($params)
+    {
+        /*
+          client_id : The client's ID
+          client_secret : The client's secret
+          oauth: An object of redirect_uri and scope following the event creation
+                 for example: array(
+                                "redirect_uri" => "http://test.com/",
+                                "scope" => "test_scope"
+                              )
+          event: An object with an event's details
+                 for example: array(
+                                "event_id" => "test_event_id",
+                                "summary" => "Add to Calendar test event",
+                                "start" => "2017-01-01T12:00:00Z",
+                                "end" => "2017-01-01T15:00:00Z"
+                              )
+         */
+        $postfields = array(
+          "client_id" => $params["client_id"],
+          "client_secret" => $params["client_secret"],
+          "oauth" => $params["oauth"],
+          "event" => $params["event"],
+        );
+
+        return $this->http_post("/" . self::API_VERSION . "/add_to_calendar", $postfields);
+    }
+
     private function api_url($path)
     {
         return $this->api_root_url . $path;
