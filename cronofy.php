@@ -495,8 +495,6 @@ class Cronofy
     public function add_to_calendar($params)
     {
         /*
-          client_id : The client's ID
-          client_secret : The client's secret
           oauth: An object of redirect_uri and scope following the event creation
                  for example: array(
                                 "redirect_uri" => "http://test.com/",
@@ -511,8 +509,8 @@ class Cronofy
                               )
          */
         $postfields = array(
-          "client_id" => $params["client_id"],
-          "client_secret" => $params["client_secret"],
+          "client_id" => $this->client_id,
+          "client_secret" => $this->client_secret,
           "oauth" => $params["oauth"],
           "event" => $params["event"],
         );
