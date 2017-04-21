@@ -513,12 +513,45 @@ class Cronofy
                                 "start" => "2017-01-01T12:00:00Z",
                                 "end" => "2017-01-01T15:00:00Z"
                               )
+          availability: An object holding the event's availability information
+                 for example: array(
+                                "participants" => array(
+                                  array(
+                                    "members" => array(
+                                      array(
+                                        "sub" => "acc_567236000909002"
+                                        "calendar_ids" => array("cal_n23kjnwrw2_jsdfjksn234")
+                                      )
+                                    ),
+                                    "required" => "all"
+                                  )
+                                ),
+                                "required_duration" => array(
+                                  "minutes" => 60
+                                ),
+                                "available_periods" => array(
+                                  array(
+                                    "start" => "2017-01-01T09:00:00Z",
+                                    "end" => "2017-01-01T17:00:00Z"
+                                  )
+                                )
+                              )
+          target_calendars: An object holding the calendars for the event to be inserted into
+                  for example: array(
+                    array(
+                      "sub" => "acc_567236000909002",
+                      "calendar_id" => "cal_n23kjnwrw2_jsdfjksn234"
+                    )
+                  )
          */
+
         $postfields = array(
           "client_id" => $this->client_id,
           "client_secret" => $this->client_secret,
           "oauth" => $params["oauth"],
           "event" => $params["event"],
+          "availability" => $params["availability"],
+          "target_calendars" => $params["target_calendars"],
         );
 
         return $this->http_post("/" . self::API_VERSION . "/add_to_calendar", $postfields);
