@@ -2,6 +2,10 @@
 
 [Cronofy](https://www.cronofy.com) - one API for all the calendars (Google, iCloud, Exchange, Office 365, Outlook.com)
 
+## Sample Application
+
+To see this API wrapper in action see our sample app [here](https://github.com/cronofy/cronofy-php-sample-app)
+
 ## Usage
 
 In order to use the Cronofy API you will need to [create a developer account](https://app.cronofy.com/sign_up/new).
