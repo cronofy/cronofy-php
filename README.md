@@ -87,7 +87,11 @@ $cronofy = new Cronofy(array(
   "refresh_token" => "RefreshToken"
 ));
 
-$events = $cronofy->read_events();
+$params = array(
+	'tzid' => 'Etc/UTC'
+);
+
+$events = $cronofy->read_events($params);
 
 foreach($events->each() as $event){
 	// process event
