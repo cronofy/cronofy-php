@@ -2,7 +2,7 @@
 
 class CronofyException extends Exception
 {
-    private $error_details;
+    protected $error_details;
 
     public function __construct($message, $code, $error_details = null)
     {
@@ -53,7 +53,7 @@ class Cronofy
         $this->set_urls(isset($config["data_center"]) ? $config["data_center"] : false);
     }
 
-    private function set_urls($data_center = false)
+    protected function set_urls($data_center = false)
     {
         $data_center_addin = $data_center ? '-' . $data_center : '';
 
@@ -62,7 +62,7 @@ class Cronofy
         $this->host_domain = "api$data_center_addin.cronofy.com";
     }
 
-    private function http_get($path, array $params = array())
+    protected function http_get($path, array $params = array())
     {
         $url = $this->api_url($path);
         $url .= $this->url_params($params);
@@ -86,7 +86,7 @@ class Cronofy
         return $this->handle_response($result, $status_code);
     }
 
-    private function http_post($path, array $params = array())
+    protected function http_post($path, array $params = array())
     {
         $url = $this->api_url($path);
 
@@ -112,7 +112,7 @@ class Cronofy
         return $this->handle_response($result, $status_code);
     }
 
-    private function http_delete($path, array $params = array())
+    protected function http_delete($path, array $params = array())
     {
         $url = $this->api_url($path);
 
@@ -557,12 +557,12 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/add_to_calendar", $postfields);
     }
 
-    private function api_url($path)
+    protected function api_url($path)
     {
         return $this->api_root_url . $path;
     }
 
-    private function url_params($params)
+    protected function url_params($params)
     {
         if (count($params) == 0) {
             return "";
@@ -582,7 +582,7 @@ class Cronofy
         return "?" . join("&", $str_params);
     }
 
-    private function get_auth_headers($with_content_headers = false)
+    protected function get_auth_headers($with_content_headers = false)
     {
         $headers = array();
 
@@ -596,7 +596,7 @@ class Cronofy
         return $headers;
     }
 
-    private function parsed_response($response)
+    protected function parsed_response($response)
     {
         $json_decoded = json_decode($response, true);
 
@@ -616,7 +616,7 @@ class Cronofy
         throw new CronofyException($this->http_codes[$status_code], $status_code, $this->parsed_response($result));
     }
 
-    private $http_codes = array(
+    protected $http_codes = array(
       100 => 'Continue',
       101 => 'Switching Protocols',
       102 => 'Processing',
@@ -677,11 +677,11 @@ class Cronofy
 
 class PagedResultIterator
 {
-  private $cronofy;
-  private $items_key;
-  private $auth_headers;
-  private $url;
-  private $url_params;
+  protected $cronofy;
+  protected $items_key;
+  protected $auth_headers;
+  protected $url;
+  protected $url_params;
 
   public function __construct($cronofy, $items_key, $auth_headers, $url, $url_params){
     $this->cronofy = $cronofy;
@@ -708,7 +708,7 @@ class PagedResultIterator
     }
   }
 
-  private function get_page($url, $url_params=""){
+  protected function get_page($url, $url_params=""){
     $curl = curl_init();
 
     curl_setopt($curl, CURLOPT_URL, $url.$url_params);
