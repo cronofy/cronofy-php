@@ -30,6 +30,7 @@ class Cronofy
     public $client_secret;
     public $access_token;
     public $refresh_token;
+    public $expires_in;
 
     public function __construct($config = array())
     {
@@ -208,6 +209,7 @@ class Cronofy
         if (!empty($tokens["access_token"])) {
             $this->access_token = $tokens["access_token"];
             $this->refresh_token = $tokens["refresh_token"];
+            $this->expires_in = $tokens["expires_in"];
             return true;
         } else {
             return $tokens["error"];
@@ -234,6 +236,7 @@ class Cronofy
         if (!empty($tokens["access_token"])) {
             $this->access_token = $tokens["access_token"];
             $this->refresh_token = $tokens["refresh_token"];
+            $this->expires_in = $tokens["expires_in"];
             return true;
         } else {
             return $tokens["error"];
