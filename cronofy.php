@@ -50,6 +50,9 @@ class Cronofy
         if (!empty($config["refresh_token"])) {
             $this->refresh_token = $config["refresh_token"];
         }
+        if (!empty($config["expires_in"])) {
+            $this->refresh_token = $config["expires_in"];
+        }
 
         $this->set_urls(isset($config["data_center"]) ? $config["data_center"] : false);
     }
