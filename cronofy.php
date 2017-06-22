@@ -561,7 +561,7 @@ class Cronofy
           "tzid" => $params["tzid"],
         );
 
-        return $this->http_post("/" . self::API_VERSION . "/real-time-scheduling", $postfields);
+        return $this->http_post("/" . self::API_VERSION . "/real_time_scheduling", $postfields);
     }
 
     public function add_to_calendar($params)
