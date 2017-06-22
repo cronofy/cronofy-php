@@ -271,6 +271,15 @@ class Cronofy
         return $this->http_get("/" . self::API_VERSION . "/account");
     }
 
+
+    public function get_userinfo()
+    {
+        /*
+          returns $result - userinfo for the user logged in. Details are available in the Cronofy API Documentation
+         */
+        return $this->http_get("/" . self::API_VERSION . "/userinfo");
+    }
+
     public function get_profiles()
     {
         /*
