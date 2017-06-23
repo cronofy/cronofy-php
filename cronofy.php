@@ -271,6 +271,15 @@ class Cronofy
         return $this->http_get("/" . self::API_VERSION . "/account");
     }
 
+
+    public function get_userinfo()
+    {
+        /*
+          returns $result - userinfo for the user logged in. Details are available in the Cronofy API Documentation
+         */
+        return $this->http_get("/" . self::API_VERSION . "/userinfo");
+    }
+
     public function get_profiles()
     {
         /*
@@ -504,7 +513,7 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/availability", $postfields);
     }
 
-    public function add_to_calendar($params)
+    public function real_time_scheduling($params)
     {
         /*
           oauth: An object of redirect_uri and scope following the event creation
@@ -516,8 +525,6 @@ class Cronofy
                  for example: array(
                                 "event_id" => "test_event_id",
                                 "summary" => "Add to Calendar test event",
-                                "start" => "2017-01-01T12:00:00Z",
-                                "end" => "2017-01-01T15:00:00Z"
                               )
           availability: An object holding the event's availability information
                  for example: array(
@@ -549,6 +556,8 @@ class Cronofy
                       "calendar_id" => "cal_n23kjnwrw2_jsdfjksn234"
                     )
                   )
+          tzid: the timezone to create the event in
+                for example:  'Europe/London'
          */
 
         $postfields = array(
@@ -558,6 +567,34 @@ class Cronofy
           "event" => $params["event"],
           "availability" => $params["availability"],
           "target_calendars" => $params["target_calendars"],
+          "tzid" => $params["tzid"],
+        );
+
+        return $this->http_post("/" . self::API_VERSION . "/real_time_scheduling", $postfields);
+    }
+
+    public function add_to_calendar($params)
+    {
+        /*
+          oauth: An object of redirect_uri and scope following the event creation
+                 for example: array(
+                                "redirect_uri" => "http://test.com/",
+                                "scope" => "test_scope"
+                              )
+          event: An object with an event's details
+                 for example: array(
+                                "event_id" => "test_event_id",
+                                "summary" => "Add to Calendar test event",
+                                "start" => "2017-01-01T12:00:00Z",
+                                "end" => "2017-01-01T15:00:00Z"
+                              )
+         */
+
+        $postfields = array(
+          "client_id" => $this->client_id,
+          "client_secret" => $this->client_secret,
+          "oauth" => $params["oauth"],
+          "event" => $params["event"],
         );
 
         return $this->http_post("/" . self::API_VERSION . "/add_to_calendar", $postfields);
