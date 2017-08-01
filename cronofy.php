@@ -149,6 +149,7 @@ class Cronofy
           scope : An array of scopes to be granted by the access token. Possible scopes detailed in the Cronofy API documentation. REQUIRED
           state : String A value that will be returned to you unaltered along with the user's authorization request decision. OPTIONAL
           avoid_linking : Boolean when true means we will avoid linking calendar accounts together under one set of credentials. OPTIONAL
+          link_token : String The link token to explicitly link to a pre-existing account. OPTIONAL
 
           Response :
           String $url : The URL to authorize your access to the Cronofy API
@@ -163,6 +164,10 @@ class Cronofy
         if (!empty($params['avoid_linking'])) {
             $url.="&avoid_linking=" . $params['avoid_linking'];
         }
+        if (!empty($params['link_token'])) {
+            $url.="&link_token=" . $params['link_token'];
+        }
+
         return $url;
     }
 
@@ -217,6 +222,14 @@ class Cronofy
         } else {
             return $tokens["error"];
         }
+    }
+
+    public function request_link_token()
+    {
+        /*
+          returns $result - The link_token to explicitly link to a pre-existing account. Details are available in the Cronofy API Documentation
+         */
+        return $this->http_post('/' . self::API_VERSION . '/link_tokens');
     }
 
     public function refresh_token()
