@@ -1,19 +1,13 @@
 {
     "name": "cronofy/cronofy",
     "description": "PHP wrapper for Cronofy's unified calendar API",
-    "version": "v0.14.0",
+    "version": "v0.15.0",
     "require": {
         "php": "^5.3.3 || ^7.0"
     },
     "autoload":{
         "files": ["cronofy.php"]
     },
-    "authors": [
-        {
-            "name": "Harry Boyes",
-            "email": "harry@cronofy.com"
-        }
-    ],
     "keywords": [
         "cronofy",
         "calendar",
