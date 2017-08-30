@@ -276,6 +276,14 @@ class Cronofy
         return $this->http_post("/oauth/token/revoke", $postfields);
     }
 
+    public function revoke_profile($profile_id)
+    {
+        /*
+          String profile_id : The profile_id of the profile you wish to revoke access to. REQUIRED
+         */
+        return $this->http_post("/" . self::API_VERSION . "/profiles/" . $profile_id . "/revoke");
+    }
+
     public function get_account()
     {
         /*
