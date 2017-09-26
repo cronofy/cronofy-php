@@ -426,7 +426,11 @@ class Cronofy
           returns $result - Details of new channel. Details are available in the Cronofy API Documentation
         */
         $postfields = array('callback_url' => $params['callback_url']);
-
+        
+        if(!empty($params['filters'])) {
+            $postfields['filters'] = $params['filters'];
+        }
+        
         return $this->http_post("/" . self::API_VERSION . "/channels", $postfields);
     }
 
