@@ -66,7 +66,17 @@ class Cronofy
         $this->host_domain = "api$data_center_addin.cronofy.com";
     }
 
+    private function api_key_http_get($path, array $params = array())
+    {
+        base_http_get($path, $this->get_api_key_auth_headers(), $params);
+    }
+
     private function http_get($path, array $params = array())
+    {
+        base_http_get($path, $this->get_auth_headers(), $params);
+    }
+
+    private function base_http_get($path, $auth_headers, array $params = array())
     {
         $url = $this->api_url($path);
         $url .= $this->url_params($params);
@@ -78,7 +88,7 @@ class Cronofy
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $this->get_auth_headers());
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
         curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
         $result = curl_exec($curl);
         if (curl_errno($curl) > 0) {
@@ -90,7 +100,17 @@ class Cronofy
         return $this->handle_response($result, $status_code);
     }
 
+    private function api_key_http_post($path, array $params = array())
+    {
+        base_http_post($path, $this->get_api_key_auth_headers(true), $params);
+    }
+
     private function http_post($path, array $params = array())
+    {
+        base_http_post($path, $this->get_auth_headers(true), $params);
+    }
+
+    private function base_http_post($path, $auth_headers, array $params = array())
     {
         $url = $this->api_url($path);
 
@@ -101,7 +121,7 @@ class Cronofy
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $this->get_auth_headers(true));
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
         curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
@@ -426,11 +446,11 @@ class Cronofy
           returns $result - Details of new channel. Details are available in the Cronofy API Documentation
         */
         $postfields = array('callback_url' => $params['callback_url']);
-        
+
         if(!empty($params['filters'])) {
             $postfields['filters'] = $params['filters'];
         }
-        
+
         return $this->http_post("/" . self::API_VERSION . "/channels", $postfields);
     }
 
@@ -505,7 +525,7 @@ class Cronofy
        */
       return $this->http_get('/' . self::API_VERSION . "/resources");
     }
-    
+
     public function change_participation_status($params)
     {
         /*
@@ -634,6 +654,49 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/add_to_calendar", $postfields);
     }
 
+    public function create_smart_invite($params)
+    {
+        /*
+          Array event: An object with an event's details REQUIRED
+                 for example: array(
+                                "event_id" => "test_event_id",
+                                "summary" => "Add to Calendar test event",
+                                "start" => "2017-01-01T12:00:00Z",
+                                "end" => "2017-01-01T15:00:00Z"
+                              )
+          Array recipient: An object with recipient details REQUIRED
+                     for example: array(
+                         "email" => "example@example.com"
+                     )
+          String smart_event_id: A string representing the id for the smart invite. REQUIRED
+          String callback_url : The URL that is notified whenever a change is made. REQUIRED
+         */
+
+        $postfields = array(
+          "recipient" => $params["recipient"],
+          "event" => $params["event"],
+          "smart_event_id" => $params["smart_event_id"],
+          "callback_url" => $params["callback_url"],
+        );
+
+        return $this->api_key_http_post("/" . self::API_VERSION . "/smart_invites", $postfields);
+    }
+
+    public function get_smart_invite($smart_event_id, $recipient_email)
+    {
+        /*
+          String smart_event_id: A string representing the id for the smart invite. REQUIRED
+          String recipient_email: A string representing the email of the recipient to get status for. REQUIRED
+         */
+
+        $url_params = array(
+            "smart_event_id" => $smart_event_id,
+            "recipient_email" => $recipient_email,
+        );
+
+        return $this->api_key_http_get("/" . self::API_VERSION . "/smart_invites", $url_params);
+    }
+
     private function api_url($path)
     {
         return $this->api_root_url . $path;
@@ -657,6 +720,20 @@ class Cronofy
         }
 
         return "?" . join("&", $str_params);
+    }
+
+    private function get_api_key_auth_headers($with_content_headers = false)
+    {
+        $headers = array();
+
+        $headers[] = 'Authorization: Bearer ' . $this->client_secret;
+        $headers[] = 'Host: ' . $this->host_domain;
+
+        if ($with_content_headers) {
+            $headers[] = 'Content-Type: application/json; charset=utf-8';
+        }
+
+        return $headers;
     }
 
     private function get_auth_headers($with_content_headers = false)
