@@ -700,7 +700,6 @@ class Cronofy
         /*
           Array event: An object with an event's details REQUIRED
                  for example: array(
-                                "event_id" => "test_event_id",
                                 "summary" => "Add to Calendar test event",
                                 "start" => "2017-01-01T12:00:00Z",
                                 "end" => "2017-01-01T15:00:00Z"
@@ -709,29 +708,29 @@ class Cronofy
                      for example: array(
                          "email" => "example@example.com"
                      )
-          String smart_event_id: A string representing the id for the smart invite. REQUIRED
+          String smart_invite_id: A string representing the id for the smart invite. REQUIRED
           String callback_url : The URL that is notified whenever a change is made. REQUIRED
          */
 
         $postfields = array(
           "recipient" => $params["recipient"],
           "event" => $params["event"],
-          "smart_event_id" => $params["smart_event_id"],
+          "smart_invite_id" => $params["smart_invite_id"],
           "callback_url" => $params["callback_url"],
         );
 
         return $this->api_key_http_post("/" . self::API_VERSION . "/smart_invites", $postfields);
     }
 
-    public function get_smart_invite($smart_event_id, $recipient_email)
+    public function get_smart_invite($smart_invite_id, $recipient_email)
     {
         /*
-          String smart_event_id: A string representing the id for the smart invite. REQUIRED
+          String smart_invite_id: A string representing the id for the smart invite. REQUIRED
           String recipient_email: A string representing the email of the recipient to get status for. REQUIRED
          */
 
         $url_params = array(
-            "smart_event_id" => $smart_event_id,
+            "smart_invite_id" => $smart_invite_id,
             "recipient_email" => $recipient_email,
         );
 
