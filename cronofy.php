@@ -17,6 +17,75 @@ class CronofyException extends Exception
     }
 }
 
+interface HttpRequest
+{
+    public function http_get($url, array $auth_headers);
+    public function http_post($url, array $params, array $auth_headers);
+    public function http_delete($url, array $params, array $auth_headers);
+}
+
+class CurlRequest implements HttpRequest
+{
+    const USERAGENT = 'Cronofy PHP 0.15.0';
+    const API_VERSION = 'v1';
+
+    public function http_get($url, array $auth_headers)
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
+        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+        $result = curl_exec($curl);
+        if (curl_errno($curl) > 0) {
+            throw new CronofyException(curl_error($curl), 2);
+        }
+        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+
+        return array($result, $status_code);
+    }
+
+    public function http_post($url, array $params, array $auth_headers)
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
+        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
+        curl_setopt($curl, CURLOPT_VERBOSE, true);
+        $result = curl_exec($curl);
+        if (curl_errno($curl) > 0) {
+            throw new CronofyException(curl_error($curl), 3);
+        }
+        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+
+        return array($result, $status_code);
+    }
+
+    public function http_delete($url, array $params, array $auth_headers)
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
+        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
+        $result = curl_exec($curl);
+        if (curl_errno($curl) > 0) {
+            throw new CronofyException(curl_error($curl), 4);
+        }
+        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+
+        return array($result, $status_code);
+    }
+}
+
 class Cronofy
 {
     const USERAGENT = 'Cronofy PHP 0.15.0';
@@ -31,6 +100,7 @@ class Cronofy
     public $access_token;
     public $refresh_token;
     public $expires_in;
+    public $http_client;
 
     public function __construct($config = array())
     {
@@ -54,6 +124,12 @@ class Cronofy
             $this->expires_in = $config["expires_in"];
         }
 
+        if(!empty($config["http_client"])) {
+            $this->http_client = $config["http_client"];
+        } else {
+            $this->http_client = new CurlRequest();
+        }
+
         $this->set_urls(isset($config["data_center"]) ? $config["data_center"] : false);
     }
 
@@ -66,17 +142,7 @@ class Cronofy
         $this->host_domain = "api$data_center_addin.cronofy.com";
     }
 
-    private function api_key_http_get($path, array $params = array())
-    {
-        base_http_get($path, $this->get_api_key_auth_headers(), $params);
-    }
-
-    private function http_get($path, array $params = array())
-    {
-        base_http_get($path, $this->get_auth_headers(), $params);
-    }
-
-    private function base_http_get($path, $auth_headers, array $params = array())
+    private function base_http_get($path, array $auth_headers, array $params)
     {
         $url = $this->api_url($path);
         $url .= $this->url_params($params);
@@ -85,29 +151,19 @@ class Cronofy
             throw new CronofyException('invalid URL');
         }
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
-        $result = curl_exec($curl);
-        if (curl_errno($curl) > 0) {
-            throw new CronofyException(curl_error($curl), 2);
-        }
-        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
+        list ($result, $status_code) = $this->http_client->http_get($url, $auth_headers);
 
         return $this->handle_response($result, $status_code);
     }
 
-    private function api_key_http_post($path, array $params = array())
+    private function api_key_http_get($path, array $params = array())
     {
-        base_http_post($path, $this->get_api_key_auth_headers(true), $params);
+        return $this->base_http_get($path, $this->get_api_key_auth_headers(), $params);
     }
 
-    private function http_post($path, array $params = array())
+    private function http_get($path, array $params = array())
     {
-        base_http_post($path, $this->get_auth_headers(true), $params);
+        return $this->base_http_get($path, $this->get_auth_headers(), $params);
     }
 
     private function base_http_post($path, $auth_headers, array $params = array())
@@ -118,22 +174,19 @@ class Cronofy
             throw new CronofyException('invalid URL');
         }
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
-        curl_setopt($curl, CURLOPT_VERBOSE, true);
-        $result = curl_exec($curl);
-        if (curl_errno($curl) > 0) {
-            throw new CronofyException(curl_error($curl), 3);
-        }
-        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
+        list ($result, $status_code) = $this->http_client->http_post($url, $params, $auth_headers);
 
         return $this->handle_response($result, $status_code);
+    }
+
+    private function http_post($path, array $params = array())
+    {
+        return $this->base_http_post($path, $this->get_auth_headers(true), $params);
+    }
+
+    private function api_key_http_post($path, array $params = array())
+    {
+        return $this->base_http_post($path, $this->get_api_key_auth_headers(true), $params);
     }
 
     private function http_delete($path, array $params = array())
@@ -144,19 +197,7 @@ class Cronofy
             throw new CronofyException('invalid URL');
         }
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $this->get_auth_headers(true));
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
-        $result = curl_exec($curl);
-        if (curl_errno($curl) > 0) {
-            throw new CronofyException(curl_error($curl), 4);
-        }
-        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
+        list ($status_code, $result) = $this->http_client->http_post($url, $params, $auth_headers);
 
         return $this->handle_response($result, $status_code);
     }
