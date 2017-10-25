@@ -26,8 +26,11 @@ interface HttpRequest
 
 class CurlRequest implements HttpRequest
 {
-    const USERAGENT = 'Cronofy PHP 0.15.0';
-    const API_VERSION = 'v1';
+    public $useragent;
+
+    public function __construct($useragent) {
+        $this->useragent = $useragent;
+    }
 
     public function http_get($url, array $auth_headers)
     {
@@ -35,7 +38,7 @@ class CurlRequest implements HttpRequest
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+        curl_setopt($curl, CURLOPT_USERAGENT, $this->useragent);
         $result = curl_exec($curl);
         if (curl_errno($curl) > 0) {
             throw new CronofyException(curl_error($curl), 2);
@@ -52,7 +55,7 @@ class CurlRequest implements HttpRequest
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+        curl_setopt($curl, CURLOPT_USERAGENT, $this->useragent);
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
         curl_setopt($curl, CURLOPT_VERBOSE, true);
@@ -72,7 +75,7 @@ class CurlRequest implements HttpRequest
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
+        curl_setopt($curl, CURLOPT_USERAGENT, $this->useragent);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
         $result = curl_exec($curl);
@@ -127,7 +130,7 @@ class Cronofy
         if(!empty($config["http_client"])) {
             $this->http_client = $config["http_client"];
         } else {
-            $this->http_client = new CurlRequest();
+            $this->http_client = new CurlRequest(self::USERAGENT);
         }
 
         $this->set_urls(isset($config["data_center"]) ? $config["data_center"] : false);
