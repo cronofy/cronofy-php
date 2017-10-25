@@ -17,6 +17,78 @@ class CronofyException extends Exception
     }
 }
 
+interface HttpRequest
+{
+    public function http_get($url, array $auth_headers);
+    public function http_post($url, array $params, array $auth_headers);
+    public function http_delete($url, array $params, array $auth_headers);
+}
+
+class CurlRequest implements HttpRequest
+{
+    public $useragent;
+
+    public function __construct($useragent) {
+        $this->useragent = $useragent;
+    }
+
+    public function http_get($url, array $auth_headers)
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
+        curl_setopt($curl, CURLOPT_USERAGENT, $this->useragent);
+        $result = curl_exec($curl);
+        if (curl_errno($curl) > 0) {
+            throw new CronofyException(curl_error($curl), 2);
+        }
+        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+
+        return array($result, $status_code);
+    }
+
+    public function http_post($url, array $params, array $auth_headers)
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
+        curl_setopt($curl, CURLOPT_USERAGENT, $this->useragent);
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
+        curl_setopt($curl, CURLOPT_VERBOSE, true);
+        $result = curl_exec($curl);
+        if (curl_errno($curl) > 0) {
+            throw new CronofyException(curl_error($curl), 3);
+        }
+        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+
+        return array($result, $status_code);
+    }
+
+    public function http_delete($url, array $params, array $auth_headers)
+    {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
+        curl_setopt($curl, CURLOPT_USERAGENT, $this->useragent);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
+        $result = curl_exec($curl);
+        if (curl_errno($curl) > 0) {
+            throw new CronofyException(curl_error($curl), 4);
+        }
+        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+
+        return array($result, $status_code);
+    }
+}
+
 class Cronofy
 {
     const USERAGENT = 'Cronofy PHP 0.15.0';
@@ -31,6 +103,7 @@ class Cronofy
     public $access_token;
     public $refresh_token;
     public $expires_in;
+    public $http_client;
 
     public function __construct($config = array())
     {
@@ -54,6 +127,12 @@ class Cronofy
             $this->expires_in = $config["expires_in"];
         }
 
+        if(!empty($config["http_client"])) {
+            $this->http_client = $config["http_client"];
+        } else {
+            $this->http_client = new CurlRequest(self::USERAGENT);
+        }
+
         $this->set_urls(isset($config["data_center"]) ? $config["data_center"] : false);
     }
 
@@ -66,7 +145,7 @@ class Cronofy
         $this->host_domain = "api$data_center_addin.cronofy.com";
     }
 
-    private function http_get($path, array $params = array())
+    private function base_http_get($path, array $auth_headers, array $params)
     {
         $url = $this->api_url($path);
         $url .= $this->url_params($params);
@@ -75,22 +154,22 @@ class Cronofy
             throw new CronofyException('invalid URL');
         }
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $this->get_auth_headers());
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
-        $result = curl_exec($curl);
-        if (curl_errno($curl) > 0) {
-            throw new CronofyException(curl_error($curl), 2);
-        }
-        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
+        list ($result, $status_code) = $this->http_client->http_get($url, $auth_headers);
 
         return $this->handle_response($result, $status_code);
     }
 
-    private function http_post($path, array $params = array())
+    private function api_key_http_get($path, array $params = array())
+    {
+        return $this->base_http_get($path, $this->get_api_key_auth_headers(), $params);
+    }
+
+    private function http_get($path, array $params = array())
+    {
+        return $this->base_http_get($path, $this->get_auth_headers(), $params);
+    }
+
+    private function base_http_post($path, $auth_headers, array $params = array())
     {
         $url = $this->api_url($path);
 
@@ -98,22 +177,19 @@ class Cronofy
             throw new CronofyException('invalid URL');
         }
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $this->get_auth_headers(true));
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
-        curl_setopt($curl, CURLOPT_VERBOSE, true);
-        $result = curl_exec($curl);
-        if (curl_errno($curl) > 0) {
-            throw new CronofyException(curl_error($curl), 3);
-        }
-        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
+        list ($result, $status_code) = $this->http_client->http_post($url, $params, $auth_headers);
 
         return $this->handle_response($result, $status_code);
+    }
+
+    private function http_post($path, array $params = array())
+    {
+        return $this->base_http_post($path, $this->get_auth_headers(true), $params);
+    }
+
+    private function api_key_http_post($path, array $params = array())
+    {
+        return $this->base_http_post($path, $this->get_api_key_auth_headers(true), $params);
     }
 
     private function http_delete($path, array $params = array())
@@ -124,19 +200,7 @@ class Cronofy
             throw new CronofyException('invalid URL');
         }
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $this->get_auth_headers(true));
-        curl_setopt($curl, CURLOPT_USERAGENT, self::USERAGENT);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
-        $result = curl_exec($curl);
-        if (curl_errno($curl) > 0) {
-            throw new CronofyException(curl_error($curl), 4);
-        }
-        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
+        list ($status_code, $result) = $this->http_client->http_post($url, $params, $auth_headers);
 
         return $this->handle_response($result, $status_code);
     }
@@ -426,11 +490,11 @@ class Cronofy
           returns $result - Details of new channel. Details are available in the Cronofy API Documentation
         */
         $postfields = array('callback_url' => $params['callback_url']);
-        
+
         if(!empty($params['filters'])) {
             $postfields['filters'] = $params['filters'];
         }
-        
+
         return $this->http_post("/" . self::API_VERSION . "/channels", $postfields);
     }
 
@@ -505,7 +569,7 @@ class Cronofy
        */
       return $this->http_get('/' . self::API_VERSION . "/resources");
     }
-    
+
     public function change_participation_status($params)
     {
         /*
@@ -634,6 +698,48 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/add_to_calendar", $postfields);
     }
 
+    public function create_smart_invite($params)
+    {
+        /*
+          Array event: An object with an event's details REQUIRED
+                 for example: array(
+                                "summary" => "Add to Calendar test event",
+                                "start" => "2017-01-01T12:00:00Z",
+                                "end" => "2017-01-01T15:00:00Z"
+                              )
+          Array recipient: An object with recipient details REQUIRED
+                     for example: array(
+                         "email" => "example@example.com"
+                     )
+          String smart_invite_id: A string representing the id for the smart invite. REQUIRED
+          String callback_url : The URL that is notified whenever a change is made. REQUIRED
+         */
+
+        $postfields = array(
+          "recipient" => $params["recipient"],
+          "event" => $params["event"],
+          "smart_invite_id" => $params["smart_invite_id"],
+          "callback_url" => $params["callback_url"],
+        );
+
+        return $this->api_key_http_post("/" . self::API_VERSION . "/smart_invites", $postfields);
+    }
+
+    public function get_smart_invite($smart_invite_id, $recipient_email)
+    {
+        /*
+          String smart_invite_id: A string representing the id for the smart invite. REQUIRED
+          String recipient_email: A string representing the email of the recipient to get status for. REQUIRED
+         */
+
+        $url_params = array(
+            "smart_invite_id" => $smart_invite_id,
+            "recipient_email" => $recipient_email,
+        );
+
+        return $this->api_key_http_get("/" . self::API_VERSION . "/smart_invites", $url_params);
+    }
+
     private function api_url($path)
     {
         return $this->api_root_url . $path;
@@ -657,6 +763,20 @@ class Cronofy
         }
 
         return "?" . join("&", $str_params);
+    }
+
+    private function get_api_key_auth_headers($with_content_headers = false)
+    {
+        $headers = array();
+
+        $headers[] = 'Authorization: Bearer ' . $this->client_secret;
+        $headers[] = 'Host: ' . $this->host_domain;
+
+        if ($with_content_headers) {
+            $headers[] = 'Content-Type: application/json; charset=utf-8';
+        }
+
+        return $headers;
     }
 
     private function get_auth_headers($with_content_headers = false)
