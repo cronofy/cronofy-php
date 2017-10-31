@@ -26,8 +26,8 @@ $redirect_uri = "http://yoursite.dev/oauth2/callback";
 
 $cronofy = new Cronofy(array("client_id" => "clientId"));
 $params = array(
-	'redirect_uri' => $redirect_uri,
-	'scope' => array('read_account','list_calendars','read_events','create_event','delete_event')
+  'redirect_uri' => $redirect_uri,
+  'scope' => array('read_account','list_calendars','read_events','create_event','delete_event')
 );
 $auth = $cronofy->getAuthorizationURL($params);
 ```
@@ -43,8 +43,8 @@ $cronofy = new Cronofy(array(
 ));
 
 $params = array(
-	'redirect_uri' => $redirect_uri,
-	'code' => $code
+  'redirect_uri' => $redirect_uri,
+  'code' => $code
 );
 
 $token=$cronofy->request_token($params);
@@ -88,13 +88,13 @@ $cronofy = new Cronofy(array(
 ));
 
 $params = array(
-	'tzid' => 'Etc/UTC'
+  'tzid' => 'Etc/UTC'
 );
 
 $events = $cronofy->read_events($params);
 
 foreach($events->each() as $event){
-	// process event
+  // process event
 }
 ```
 
@@ -113,13 +113,12 @@ $cronofy = new Cronofy(array(
 ));
 
 $params = array(
-	'calendar_id' => 'calendarID',
-	'event_id' => 'event_test_12345679',
-	'summary' => 'test event 2',
-	'description' => 'some event data here',
-	'start' => '2015-12-07T09:00:00Z',
-	'end' => '2015-12-08T10:00:00Z'
-
+  'calendar_id' => 'calendarID',
+  'event_id' => 'event_test_12345679',
+  'summary' => 'test event 2',
+  'description' => 'some event data here',
+  'start' => '2015-12-07T09:00:00Z',
+  'end' => '2015-12-08T10:00:00Z'
 );
 $new_event = $cronofy->upsert_event($params);
 
@@ -140,8 +139,8 @@ $cronofy = new Cronofy(array(
 ));
 
 $params = array(
-	'calendar_id' => 'calendarID',
-	'event_id' => 'EventID'
+  'calendar_id' => 'calendarID',
+  'event_id' => 'EventID'
 );
 
 $delete = $cronofy->delete_event($params);
@@ -161,8 +160,8 @@ $cronofy = new Cronofy(array(
 ));
 
 $params = array(
-	'calendar_id' => 'calendarID',
-	'event_uid' => 'EventUID'
+  'calendar_id' => 'calendarID',
+  'event_uid' => 'EventUID'
 );
 
 $delete = $cronofy->delete_external_event($params);
@@ -182,14 +181,17 @@ $cronofy = new Cronofy(array(
 ));
 
 $params = array(
-	array(
-			'calendar_id' => 'calendarID_1',
-			'permission_level' => 'unrestricted'
-		),
-	array(
-			'calendar_id' => 'calendarID_2',
-			'permission_level' => 'unrestricted'
-		)
+  'permissions' => array(
+    array(
+      'calendar_id' => 'calendarID_1',
+      'permission_level' => 'unrestricted'
+    ),
+    array(
+      'calendar_id' => 'calendarID_2',
+      'permission_level' => 'unrestricted'
+    )
+  ),
+  'redirect_uri' => 'http://yoursite.dev/elevate/callback'
 );
 
 $response = $cronofy->elevated_permissions($params);
@@ -209,9 +211,9 @@ $cronofy = new Cronofy(array(
 ));
 
 $params = array(
-	'email' => $email,
-	'callback_url' => $callback_url,
-	'scope' => array('read_account','list_calendars','read_events','create_event','delete_event')
+  'email' => $email,
+  'callback_url' => $callback_url,
+  'scope' => array('read_account','list_calendars','read_events','create_event','delete_event')
 );
 
 $response = $cronofy->authorize_with_service_account($params);
@@ -233,8 +235,8 @@ $cronofy = new Cronofy(array(
 ));
 
 $params = array(
-	'profile_id' => $account_profile_id,
-	'name' => $new_calendar_name
+  'profile_id' => $account_profile_id,
+  'name' => $new_calendar_name
 );
 
 $response = $cronofy->create_calendar($params);
