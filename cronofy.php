@@ -191,8 +191,8 @@ class Cronofy
     {
         return $this->base_http_post($path, $this->get_api_key_auth_headers(true), $params);
     }
-
-    private function http_delete($path, array $params = array())
+    
+    private function base_http_delete($path, $auth_headers, array $params = array())
     {
         $url = $this->api_url($path);
 
@@ -200,11 +200,16 @@ class Cronofy
             throw new CronofyException('invalid URL');
         }
 
-        list ($status_code, $result) = $this->http_client->http_post($url, $params, $auth_headers);
+        list ($result, $status_code) = $this->http_client->http_delete($url, $params, $auth_headers);
 
         return $this->handle_response($result, $status_code);
     }
 
+    private function http_delete($path, array $params = array())
+    {
+        return $this->base_http_delete($path, $this->get_auth_headers(true), $params);
+    }
+    
     public function getAuthorizationURL($params)
     {
         /*
