@@ -44,6 +44,39 @@ class CronofyTest extends TestCase
         $this->assertNotNull($actual);
     }
 
+    public function testDeleteEvent()
+    {
+        $params = array("event_id" => "evt_456");
+
+        $http = $this->createMock('HttpRequest');
+        $http->expects($this->once())
+            ->method('http_delete')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/v1/calendars/cal_123/events'),
+                $this->equalTo($params),
+                $this->equalTo(array(
+                    'Authorization: Bearer accessToken',
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8',
+                ))
+            )
+            ->will($this->returnValue(array("{'foo': 'bar'}", 200)));
+
+        $cronofy = new Cronofy(array(
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => $http,
+        ));
+
+        $actual = $cronofy->delete_event(array(
+            "calendar_id" => "cal_123",
+            "event_id" => "evt_456",
+        ));
+        $this->assertNotNull($actual);
+    }
+
     public function testGetSmartInvite()
     {
         $http = $this->createMock('HttpRequest');
