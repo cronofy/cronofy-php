@@ -727,9 +727,24 @@ class Cronofy
           "callback_url" => $params["callback_url"],
         );
 
-        if(!empty($params['method'])) {
-            $postfields['method'] = $params['method'];
-        }
+        return $this->api_key_http_post("/" . self::API_VERSION . "/smart_invites", $postfields);
+    }
+
+    public function cancel_smart_invite($params)
+    {
+        /*
+          Array recipient: An object with recipient details REQUIRED
+                     for example: array(
+                         "email" => "example@example.com"
+                     )
+          String smart_invite_id: A string representing the id for the smart invite. REQUIRED
+         */
+
+        $postfields = array(
+          "recipient" => $params["recipient"],
+          "smart_invite_id" => $params["smart_invite_id"],
+          "method" => "cancel",
+        );
 
         return $this->api_key_http_post("/" . self::API_VERSION . "/smart_invites", $postfields);
     }

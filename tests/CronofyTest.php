@@ -105,21 +105,13 @@ class CronofyTest extends TestCase
 
     public function testCancelSmartInvite()
     {
-        $event = array(
-            "summary" => "Add to Calendar test event",
-            "start" => "2017-01-01T12:00:00Z",
-            "end" => "2017-01-01T15:00:00Z"
-        );
         $recipient = array("email" => "example@example.com");
         $smart_invite_id = "foo";
-        $callback_url = "http://www.example.com/callback";
 
-        $params = array(
+        $request_params = array(
           "method" => "cancel",
           "recipient" => $recipient,
-          "event" => $event,
           "smart_invite_id" => $smart_invite_id,
-          "callback_url" => $callback_url
         );
 
         $http = $this->createMock('HttpRequest');
@@ -127,7 +119,7 @@ class CronofyTest extends TestCase
             ->method('http_post')
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/smart_invites'),
-                $this->equalTo($params),
+                $this->equalTo($request_params),
                 $this->equalTo(array(
                     'Authorization: Bearer clientSecret',
                     'Host: api.cronofy.com',
@@ -144,7 +136,12 @@ class CronofyTest extends TestCase
             "http_client" => $http,
         ));
 
-        $actual = $cronofy->create_smart_invite($params);
+        $params = array(
+          "recipient" => $recipient,
+          "smart_invite_id" => $smart_invite_id,
+        );
+
+        $actual = $cronofy->cancel_smart_invite($params);
         $this->assertNotNull($actual);
     }
 
