@@ -191,7 +191,7 @@ class Cronofy
     {
         return $this->base_http_post($path, $this->get_api_key_auth_headers(true), $params);
     }
-    
+
     private function base_http_delete($path, $auth_headers, array $params = array())
     {
         $url = $this->api_url($path);
@@ -209,7 +209,7 @@ class Cronofy
     {
         return $this->base_http_delete($path, $this->get_auth_headers(true), $params);
     }
-    
+
     public function getAuthorizationURL($params)
     {
         /*
@@ -725,6 +725,25 @@ class Cronofy
           "event" => $params["event"],
           "smart_invite_id" => $params["smart_invite_id"],
           "callback_url" => $params["callback_url"],
+        );
+
+        return $this->api_key_http_post("/" . self::API_VERSION . "/smart_invites", $postfields);
+    }
+
+    public function cancel_smart_invite($params)
+    {
+        /*
+          Array recipient: An object with recipient details REQUIRED
+                     for example: array(
+                         "email" => "example@example.com"
+                     )
+          String smart_invite_id: A string representing the id for the smart invite. REQUIRED
+         */
+
+        $postfields = array(
+          "recipient" => $params["recipient"],
+          "smart_invite_id" => $params["smart_invite_id"],
+          "method" => "cancel",
         );
 
         return $this->api_key_http_post("/" . self::API_VERSION . "/smart_invites", $postfields);

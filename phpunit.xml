@@ -1,0 +1,7 @@
+<phpunit bootstrap="cronofy.php">
+  <testsuites>
+    <testsuite name="all">
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>
