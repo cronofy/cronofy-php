@@ -263,7 +263,7 @@ $cronofy = new Cronofy(array(
 ```shell
 curl -sS https://getcomposer.org/installer | php
 php composer.phar install
-vendor/bin/phpunit test/*
+vendor/bin/phpunit
 ```
 
 ## Links
