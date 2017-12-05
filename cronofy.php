@@ -942,6 +942,8 @@ class PagedResultIterator
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_HTTPHEADER, $this->auth_headers);
     curl_setopt($curl, CURLOPT_USERAGENT, Cronofy::USERAGENT);
+    // empty string means send all supported encoding types
+    curl_setopt($curl, CURLOPT_ENCODING, '');
     $result = curl_exec($curl);
     if (curl_errno($curl) > 0) {
       throw new CronofyException(curl_error($curl), 2);
