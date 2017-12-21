@@ -446,6 +446,7 @@ class Cronofy
           String location.long : The String describing the event's longitude. OPTIONAL
           Array reminders : An array of arrays detailing a length of time and a quantity. OPTIONAL
                             for example: array(array("minutes" => 30), array("minutes" => 1440))
+          Boolean reminders_create_only: A Boolean specifying whether reminders should only be applied when creating an event. OPTIONAL
           String transparency : The transparency of the event. Accepted values are "transparent" and "opaque". OPTIONAL
           Array attendees : An array of "invite" and "reject" arrays which are lists of attendees to invite and remove from the event. OPTIONAL
                             for example: array("invite" => array(array("email" => "new_invitee@test.com", "display_name" => "New Invitee"))
@@ -469,6 +470,9 @@ class Cronofy
         }
         if(!empty($params['reminders'])) {
             $postfields['reminders'] = $params['reminders'];
+        }
+        if(!empty($params['reminders_create_only'])) {
+            $postfields['reminders_create_only'] = $params['reminders_create_only'];
         }
         if(!empty($params['transparency'])) {
             $postfields['transparency'] = $params['transparency'];
