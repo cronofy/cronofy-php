@@ -230,7 +230,7 @@ class Cronofy
           String $url : The URL to authorize your access to the Cronofy API
          */
 
-        $scope_list = join(" ", $params['scope']);
+        $scope_list = rawurlencode(join(" ", $params['scope']));
 
         $url = $this->app_root_url . "/oauth/authorize?response_type=code&client_id=" . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list;
         if (!empty($params['state'])) {

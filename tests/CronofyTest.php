@@ -15,7 +15,7 @@ class CronofyTest extends TestCase
         );
         $auth = $cronofy->getAuthorizationURL($params);
 
-        $this->assertEquals("https://app.cronofy.com/oauth/authorize?response_type=code&client_id=clientId&redirect_uri=http%3A%2F%2Fyoursite.dev%2Foauth2%2Fcallback&scope=read_account list_calendars", $auth);
+        $this->assertEquals("https://app.cronofy.com/oauth/authorize?response_type=code&client_id=clientId&redirect_uri=http%3A%2F%2Fyoursite.dev%2Foauth2%2Fcallback&scope=read_account%20list_calendars", $auth);
     }
 
     public function testGetAccount()
