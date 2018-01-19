@@ -359,6 +359,32 @@ class Cronofy
         return $this->http_post("/" . self::API_VERSION . "/profiles/" . $profile_id . "/revoke");
     }
 
+    public function application_calendar($application_calendar_id)
+    {
+        /*
+          application_calendar_id : String The identifier for the application calendar to create
+
+          Response :
+          true if successful, error string if not
+         */
+        $postfields = array(
+            'client_id' => $this->client_id,
+            'client_secret' => $this->client_secret,
+            'application_calendar_id' => $application_calendar_id,
+        );
+
+        $tokens = $this->http_post("/v1/application_calendar", $postfields);
+
+        if (!empty($tokens["access_token"])) {
+            $this->access_token = $tokens["access_token"];
+            $this->refresh_token = $tokens["refresh_token"];
+            $this->expires_in = $tokens["expires_in"];
+            return true;
+        } else {
+            return $tokens["error"];
+        }
+    }
+
     public function get_account()
     {
         /*
@@ -817,7 +843,9 @@ class Cronofy
     {
         $headers = array();
 
-        $headers[] = 'Authorization: Bearer ' . $this->access_token;
+        if (isset($this->access_token)) {
+            $headers[] = 'Authorization: Bearer ' . $this->access_token;
+        }
         $headers[] = 'Host: ' . $this->host_domain;
 
         if ($with_content_headers) {
