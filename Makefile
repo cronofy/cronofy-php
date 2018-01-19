@@ -11,7 +11,7 @@ update:
 test: install_dependencies
 	vendor/bin/phpunit
 
-release:
+release: test
 	git push
 	git tag $(CURRENT_VERSION)
 	git push --tags
