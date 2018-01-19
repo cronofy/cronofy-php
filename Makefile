@@ -1,3 +1,5 @@
+CURRENT_VERSION:=$(shell jq ".version" -r composer.json)
+
 all: test
 
 install_dependencies:
@@ -11,5 +13,5 @@ test: install_dependencies
 
 release:
 	git push
-	git tag $(cat composer.json | jq .version -r)
+	git tag $(CURRENT_VERSION)
 	git push --tags
