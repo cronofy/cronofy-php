@@ -54,22 +54,7 @@ class CurlRequest implements HttpRequest
 
     public function get_page($url, array $auth_headers, $url_params = "")
     {
-        $curl = curl_init();
-
-        curl_setopt($curl, CURLOPT_URL, $url.$url_params);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $this->auth_headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, Cronofy::USERAGENT);
-        // empty string means send all supported encoding types
-        curl_setopt($curl, CURLOPT_ENCODING, '');
-        $result = curl_exec($curl);
-        if (curl_errno($curl) > 0) {
-            throw new CronofyException(curl_error($curl), 2);
-        }
-        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
-
-        return array($result, $status_code);
+        return $this->http_get($url.$url_params, $auth_headers);
     }
 
     public function http_post($url, array $params, array $auth_headers)
