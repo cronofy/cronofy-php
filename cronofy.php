@@ -20,6 +20,7 @@ class CronofyException extends Exception
 interface HttpRequest
 {
     public function http_get($url, array $auth_headers);
+    public function get_page($url, array $auth_headers, $url_params = "");
     public function http_post($url, array $params, array $auth_headers);
     public function http_delete($url, array $params, array $auth_headers);
 }
@@ -49,6 +50,11 @@ class CurlRequest implements HttpRequest
         curl_close($curl);
 
         return array($result, $status_code);
+    }
+
+    public function get_page($url, array $auth_headers, $url_params = "")
+    {
+        return $this->http_get($url.$url_params, $auth_headers);
     }
 
     public function http_post($url, array $params, array $auth_headers)
@@ -975,7 +981,7 @@ class Cronofy
     );
 }
 
-class PagedResultIterator
+class PagedResultIterator implements \IteratorAggregate
 {
   private $cronofy;
   private $items_key;
@@ -1008,22 +1014,13 @@ class PagedResultIterator
     }
   }
 
-  private function get_page($url, $url_params=""){
-    $curl = curl_init();
+  public function getIterator() {
+      return $this->each();
+  }
 
-    curl_setopt($curl, CURLOPT_URL, $url.$url_params);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $this->auth_headers);
-    curl_setopt($curl, CURLOPT_USERAGENT, Cronofy::USERAGENT);
-    // empty string means send all supported encoding types
-    curl_setopt($curl, CURLOPT_ENCODING, '');
-    $result = curl_exec($curl);
-    if (curl_errno($curl) > 0) {
-      throw new CronofyException(curl_error($curl), 2);
-    }
-    $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    curl_close($curl);
+  private function get_page($url, $url_params="") {
+      list ($result, $status_code) = $this->cronofy->http_client->get_page($url, $this->auth_headers, $url_params);
 
-    return $this->cronofy->handle_response($result, $status_code);
+      return $this->cronofy->handle_response($result, $status_code);
   }
 }
