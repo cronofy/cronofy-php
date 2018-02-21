@@ -463,7 +463,7 @@ class Cronofy
           calendar_id : The calendar_id of the calendar you wish the event to be added to. REQUIRED
           String event_id : The String that uniquely identifies the event. REQUIRED
           String summary : The String to use as the summary, sometimes referred to as the name, of the event. REQUIRED
-          String description : The String to use as the description, sometimes referred to as the notes, of the event. REQUIRED
+          String description : The String to use as the description, sometimes referred to as the notes, of the event. OPTIONAL
           String tzid : A String representing a known time zone identifier from the IANA Time Zone Database. OPTIONAL
           Time start: The start time can be provided as a simple Time string or an object with two attributes, time and tzid. REQUIRED
           Time end: The end time can be provided as a simple Time string or an object with two attributes, time and tzid. REQUIRED
@@ -483,11 +483,52 @@ class Cronofy
         $postfields = array(
             'event_id' => $params['event_id'],
             'summary' => $params['summary'],
+            'start' => $params['start'],
+            'end' => $params['end']
+        );
+
+        return $this->base_upsert_event($postfields, $params);
+    }
+
+    public function upsert_external_event($params)
+    {
+        /*
+          calendar_id : The calendar_id of the calendar you wish the event to be added to. REQUIRED
+          String event_uid : The String that uniquely identifies the event. REQUIRED
+          String summary : The String to use as the summary, sometimes referred to as the name, of the event. REQUIRED
+          String description : The String to use as the description, sometimes referred to as the notes, of the event. OPTIONAL
+          String tzid : A String representing a known time zone identifier from the IANA Time Zone Database. OPTIONAL
+          Time start: The start time can be provided as a simple Time string or an object with two attributes, time and tzid. REQUIRED
+          Time end: The end time can be provided as a simple Time string or an object with two attributes, time and tzid. REQUIRED
+          String location.description : The String describing the event's location. OPTIONAL
+          String location.lat : The String describing the event's latitude. OPTIONAL
+          String location.long : The String describing the event's longitude. OPTIONAL
+          Array reminders : An array of arrays detailing a length of time and a quantity. OPTIONAL
+                            for example: array(array("minutes" => 30), array("minutes" => 1440))
+          Boolean reminders_create_only: A Boolean specifying whether reminders should only be applied when creating an event. OPTIONAL
+          String transparency : The transparency of the event. Accepted values are "transparent" and "opaque". OPTIONAL
+          Array attendees : An array of "invite" and "reject" arrays which are lists of attendees to invite and remove from the event. OPTIONAL
+                            for example: array("invite" => array(array("email" => "new_invitee@test.com", "display_name" => "New Invitee"))
+                                               "reject" => array(array("email" => "old_invitee@test.com", "display_name" => "Old Invitee")))
+
+          returns true on success, associative array of errors on failure
+         */
+        $postfields = array(
+            'event_uid' => $params['event_uid'],
+            'summary' => $params['summary'],
             'description' => $params['description'],
             'start' => $params['start'],
             'end' => $params['end']
         );
 
+        return $this->base_upsert_event($postfields, $params);
+    }
+
+    private function base_upsert_event($postfields, $params)
+    {
+        if (!empty($params['description'])) {
+            $postfields['description'] = $params['description'];
+        }
         if (!empty($params['tzid'])) {
             $postfields['tzid'] = $params['tzid'];
         }
@@ -519,6 +560,19 @@ class Cronofy
           returns true on success, associative array of errors on failure
          */
         $postfields = array('event_id' => $params['event_id']);
+
+        return $this->http_delete("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
+    }
+
+    public function delete_external_event($params)
+    {
+        /*
+          calendar_id : The calendar_id of the calendar you wish the event to be removed from. REQUIRED
+          String event_uid : The String that uniquely identifies the event. REQUIRED
+
+          returns true on success, associative array of errors on failure
+         */
+        $postfields = array('event_uid' => $params['event_uid']);
 
         return $this->http_delete("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
     }
@@ -555,19 +609,6 @@ class Cronofy
           returns $result - Array of channels. Details are available in the Cronofy API Documentation
          */
         return $this->http_delete("/" . self::API_VERSION . "/channels/" . $params['channel_id']);
-    }
-
-    public function delete_external_event($params)
-    {
-        /*
-          calendar_id : The calendar_id of the calendar you wish the event to be removed from. REQUIRED
-          String event_uid : The String that uniquely identifies the event. REQUIRED
-
-          returns true on success, associative array of errors on failure
-         */
-        $postfields = array('event_uid' => $params['event_uid']);
-
-        return $this->http_delete("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
     }
 
     public function authorize_with_service_account($params)
