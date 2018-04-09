@@ -522,7 +522,6 @@ class Cronofy
         $postfields = array(
             'event_uid' => $params['event_uid'],
             'summary' => $params['summary'],
-            'description' => $params['description'],
             'start' => $params['start'],
             'end' => $params['end']
         );
@@ -546,6 +545,9 @@ class Cronofy
         }
         if(!empty($params['reminders_create_only'])) {
             $postfields['reminders_create_only'] = $params['reminders_create_only'];
+        }
+        if(!empty($params['event_private'])) {
+            $postfields['event_private'] = $params['event_private'];
         }
         if(!empty($params['transparency'])) {
             $postfields['transparency'] = $params['transparency'];
