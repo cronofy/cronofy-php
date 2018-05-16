@@ -803,6 +803,10 @@ class Cronofy
                      )
           String smart_invite_id: A string representing the id for the smart invite. REQUIRED
           String callback_url : The URL that is notified whenever a change is made. REQUIRED
+          Array organizer: An object with recipient details OPTIONAL
+                     for example: array(
+                         "name" => "Smart invite organizer"
+                     )
          */
 
         $postfields = array(
@@ -811,6 +815,11 @@ class Cronofy
           "smart_invite_id" => $params["smart_invite_id"],
           "callback_url" => $params["callback_url"],
         );
+
+        if(!empty($params['organizer'])) {
+            $postfields['organizer'] = $params['organizer'];
+        }
+
 
         return $this->api_key_http_post("/" . self::API_VERSION . "/smart_invites", $postfields);
     }
