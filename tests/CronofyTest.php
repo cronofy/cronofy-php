@@ -224,4 +224,3 @@ class CronofyTest extends TestCase
         $this->assertNotNull($actual);
     }
 }
-?>

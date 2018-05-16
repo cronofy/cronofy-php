@@ -40,4 +40,3 @@ class ApplicationCalendarTest extends TestCase
         $this->assertEquals($cronofy->expires_in, 3600);
     }
 }
-?>
