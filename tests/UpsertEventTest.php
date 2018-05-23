@@ -129,4 +129,3 @@ class UpsertEventTest extends TestCase
         $this->assertNotNull($actual);
     }
 }
-?>

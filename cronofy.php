@@ -29,7 +29,8 @@ class CurlRequest implements HttpRequest
 {
     public $useragent;
 
-    public function __construct($useragent) {
+    public function __construct($useragent)
+    {
         $this->useragent = $useragent;
     }
 
@@ -139,7 +140,7 @@ class Cronofy
             $this->expires_in = $config["expires_in"];
         }
 
-        if(!empty($config["http_client"])) {
+        if (!empty($config["http_client"])) {
             $this->http_client = $config["http_client"];
         } else {
             $this->http_client = new CurlRequest(self::USERAGENT);
@@ -540,19 +541,19 @@ class Cronofy
         if (!empty($params['location'])) {
             $postfields['location'] = $params['location'];
         }
-        if(!empty($params['reminders'])) {
+        if (!empty($params['reminders'])) {
             $postfields['reminders'] = $params['reminders'];
         }
-        if(!empty($params['reminders_create_only'])) {
+        if (!empty($params['reminders_create_only'])) {
             $postfields['reminders_create_only'] = $params['reminders_create_only'];
         }
-        if(!empty($params['event_private'])) {
+        if (!empty($params['event_private'])) {
             $postfields['event_private'] = $params['event_private'];
         }
-        if(!empty($params['transparency'])) {
+        if (!empty($params['transparency'])) {
             $postfields['transparency'] = $params['transparency'];
         }
-        if(!empty($params['attendees'])) {
+        if (!empty($params['attendees'])) {
             $postfields['attendees'] = $params['attendees'];
         }
 
@@ -594,7 +595,7 @@ class Cronofy
         */
         $postfields = array('callback_url' => $params['callback_url']);
 
-        if(!empty($params['filters'])) {
+        if (!empty($params['filters'])) {
             $postfields['filters'] = $params['filters'];
         }
 
@@ -657,7 +658,7 @@ class Cronofy
         returns $result - Array of resources. Details
         are available in the Cronofy API Documentation
        */
-      return $this->http_get('/' . self::API_VERSION . "/resources");
+        return $this->http_get('/' . self::API_VERSION . "/resources");
     }
 
     public function change_participation_status($params)
@@ -803,6 +804,10 @@ class Cronofy
                      )
           String smart_invite_id: A string representing the id for the smart invite. REQUIRED
           String callback_url : The URL that is notified whenever a change is made. REQUIRED
+          Array organizer: An object with recipient details OPTIONAL
+                     for example: array(
+                         "name" => "Smart invite organizer"
+                     )
          */
 
         $postfields = array(
@@ -811,6 +816,10 @@ class Cronofy
           "smart_invite_id" => $params["smart_invite_id"],
           "callback_url" => $params["callback_url"],
         );
+
+        if (!empty($params['organizer'])) {
+            $postfields['organizer'] = $params['organizer'];
+        }
 
         return $this->api_key_http_post("/" . self::API_VERSION . "/smart_invites", $postfields);
     }
@@ -862,8 +871,8 @@ class Cronofy
         $str_params = array();
 
         foreach ($params as $key => $val) {
-            if(gettype($val) == "array"){
-                for($i = 0; $i < count($val); $i++){
+            if (gettype($val) == "array") {
+                for ($i = 0; $i < count($val); $i++) {
                     array_push($str_params, $key . "[]=" . urlencode($val[$i]));
                 }
             } else {
@@ -985,44 +994,48 @@ class Cronofy
 
 class PagedResultIterator implements \IteratorAggregate
 {
-  private $cronofy;
-  private $items_key;
-  private $auth_headers;
-  private $url;
-  private $url_params;
+    private $cronofy;
+    private $items_key;
+    private $auth_headers;
+    private $url;
+    private $url_params;
 
-  public function __construct($cronofy, $items_key, $auth_headers, $url, $url_params){
-    $this->cronofy = $cronofy;
-    $this->items_key = $items_key;
-    $this->auth_headers = $auth_headers;
-    $this->url = $url;
-    $this->url_params = $url_params;
-    $this->first_page = $this->get_page($url, $url_params);
-  }
-
-  public function each(){
-    $page = $this->first_page;
-
-    for($i = 0; $i < count($page[$this->items_key]); $i++){
-      yield $page[$this->items_key][$i];
+    public function __construct($cronofy, $items_key, $auth_headers, $url, $url_params)
+    {
+        $this->cronofy = $cronofy;
+        $this->items_key = $items_key;
+        $this->auth_headers = $auth_headers;
+        $this->url = $url;
+        $this->url_params = $url_params;
+        $this->first_page = $this->get_page($url, $url_params);
     }
 
-    while(isset($page["pages"]["next_page"])){
-      $page = $this->get_page($page["pages"]["next_page"]);
+    public function each()
+    {
+        $page = $this->first_page;
 
-      for($i = 0; $i < count($page[$this->items_key]); $i++){
-        yield $page[$this->items_key][$i];
-      }
+        for ($i = 0; $i < count($page[$this->items_key]); $i++) {
+            yield $page[$this->items_key][$i];
+        }
+
+        while (isset($page["pages"]["next_page"])) {
+            $page = $this->get_page($page["pages"]["next_page"]);
+
+            for ($i = 0; $i < count($page[$this->items_key]); $i++) {
+                yield $page[$this->items_key][$i];
+            }
+        }
     }
-  }
 
-  public function getIterator() {
-      return $this->each();
-  }
+    public function getIterator()
+    {
+        return $this->each();
+    }
 
-  private function get_page($url, $url_params="") {
-      list ($result, $status_code) = $this->cronofy->http_client->get_page($url, $this->auth_headers, $url_params);
+    private function get_page($url, $url_params = "")
+    {
+        list ($result, $status_code) = $this->cronofy->http_client->get_page($url, $this->auth_headers, $url_params);
 
-      return $this->cronofy->handle_response($result, $status_code);
-  }
+        return $this->cronofy->handle_response($result, $status_code);
+    }
 }

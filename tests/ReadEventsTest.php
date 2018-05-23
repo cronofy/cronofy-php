@@ -49,18 +49,19 @@ class ReadEventsTest extends TestCase
         $this->assertCount(1, $actual);
         $this->assertCount(1, $actual->each());
 
-        foreach($actual->each() as $event){
+        foreach ($actual->each() as $event) {
             $this->assertNotNull($event);
             $this->assertEquals($event["event_uid"], "evt_external_54008b1a4a41730f8d5c6037");
         }
 
-        foreach($actual as $event){
+        foreach ($actual as $event) {
             $this->assertNotNull($event);
             $this->assertEquals($event["event_uid"], "evt_external_54008b1a4a41730f8d5c6037");
         }
     }
 
-    public function testReadEventsTwoPageSingleEvent() {
+    public function testReadEventsTwoPageSingleEvent()
+    {
         $page_1 = '{
           "pages": {
             "current": 1,
@@ -112,7 +113,8 @@ class ReadEventsTest extends TestCase
         $this->assertCount(2, $actual);
     }
 
-    public function testReadEventsCanBeConvertedToArray() {
+    public function testReadEventsCanBeConvertedToArray()
+    {
         $page_1 = '{
           "pages": {
             "current": 1,
@@ -160,7 +162,7 @@ class ReadEventsTest extends TestCase
         );
 
         $actual = $cronofy->read_events($params);
-        $event_uids = array_map(function(array $event) {
+        $event_uids = array_map(function (array $event) {
             return $event['event_uid'];
         }, iterator_to_array($actual));
 
@@ -168,4 +170,3 @@ class ReadEventsTest extends TestCase
         $this->assertContains('evt_external_event_two', $event_uids);
     }
 }
-?>

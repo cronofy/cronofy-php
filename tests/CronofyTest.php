@@ -186,6 +186,7 @@ class CronofyTest extends TestCase
             "end" => "2017-01-01T15:00:00Z"
         );
         $recipient = array("email" => "example@example.com");
+        $organizer = array("name" => "Smart invite application");
         $smart_invite_id = "foo";
         $callback_url = "http://www.example.com/callback";
 
@@ -193,7 +194,8 @@ class CronofyTest extends TestCase
           "recipient" => $recipient,
           "event" => $event,
           "smart_invite_id" => $smart_invite_id,
-          "callback_url" => $callback_url
+          "callback_url" => $callback_url,
+          "organizer" => $organizer,
         );
 
         $http = $this->createMock('HttpRequest');
@@ -222,4 +224,3 @@ class CronofyTest extends TestCase
         $this->assertNotNull($actual);
     }
 }
-?>
