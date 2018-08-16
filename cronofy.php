@@ -687,6 +687,14 @@ class Cronofy
                                       )
           required_duration : Duration that an available period must last to be considered viable. REQUIRED
                          for example: array("minutes" => 60)
+
+          start_interval : Duration that an events can start on for example: array("minutes" => 60)
+          buffer : Buffer to apply before or after events can start
+                          for example:
+                              array(
+                                  array("before" => array("minutes" => 30)),
+                                  array("after" => array("minutes" => 30))
+                              )
           available_periods : An array of available periods within which suitable matches may be found. REQUIRED
                          for example: array(
                                         array("start" => "2017-01-01T09:00:00Z", "end" => "2017-01-01T18:00:00Z"),
@@ -696,6 +704,8 @@ class Cronofy
         $postfields = array(
             "participants" => $params["participants"],
             "required_duration" => $params["required_duration"],
+            "start_interval" => $params["start_interval"],
+            "buffer" => $params["buffer"],
             "available_periods" => $params["available_periods"]
         );
 

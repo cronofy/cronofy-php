@@ -28,6 +28,14 @@ class SchedulingTest extends TestCase
             "required_duration" => array(
                 "minutes" => 60
             ),
+            "start_interval" => array(
+                "minutes" => 60
+            ),
+            "buffer" => array(
+                "before" => array(
+                    "minutes" => 60
+                )
+            ),
             "available_periods" => array(
                 array(
                     "start" => "2017-01-01T09:00:00Z",
@@ -135,8 +143,6 @@ class SchedulingTest extends TestCase
             "oauth" => $oauth,
             "tzid" => $tzid,
         );
-
-        print(json_encode($params));
 
         $http = $this->createMock('HttpRequest');
         $http->expects($this->once())
