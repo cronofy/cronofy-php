@@ -687,6 +687,14 @@ class Cronofy
                                       )
           required_duration : Duration that an available period must last to be considered viable. REQUIRED
                          for example: array("minutes" => 60)
+
+          start_interval : Duration that an events can start on for example: array("minutes" => 60)
+          buffer : Buffer to apply before or after events can start
+                          for example:
+                              array(
+                                  array("before" => array("minutes" => 30)),
+                                  array("after" => array("minutes" => 30))
+                              )
           available_periods : An array of available periods within which suitable matches may be found. REQUIRED
                          for example: array(
                                         array("start" => "2017-01-01T09:00:00Z", "end" => "2017-01-01T18:00:00Z"),
@@ -696,6 +704,8 @@ class Cronofy
         $postfields = array(
             "participants" => $params["participants"],
             "required_duration" => $params["required_duration"],
+            "start_interval" => $params["start_interval"],
+            "buffer" => $params["buffer"],
             "available_periods" => $params["available_periods"]
         );
 
@@ -761,6 +771,74 @@ class Cronofy
 
         return $this->http_post("/" . self::API_VERSION . "/real_time_scheduling", $postfields);
     }
+
+    public function real_time_sequencing($params)
+    {
+        /*
+          oauth: An object of redirect_uri and scope following the event creation
+                 for example: array(
+                                "redirect_uri" => "http://test.com/",
+                                "scope" => "test_scope"
+                              )
+          event: An object with an event's details
+                 for example: array(
+                                "event_id" => "test_event_id",
+                                "summary" => "Add to Calendar test event",
+                              )
+          availability: An object holding the event's availability information
+                for example: array(
+                        "sequence" => array(
+                            array(
+                                "sequence_id" => "123",
+                                "ordinal" => 1,
+                                "participants" => array(
+                                    array(
+                                        "members" => array(
+                                            array(
+                                                "sub" => "acc_567236000909002",
+                                                "calendar_ids" => array("cal_n23kjnwrw2_jsdfjksn234")
+                                            )
+                                        ),
+                                        "required" => "all"
+                                    )
+                                ),
+                                "event" => $event,
+                                "required_duration" => array(
+                                    "minutes" => 60
+                                ),
+                            ),
+                        ),
+                        "available_periods" => array(
+                            array(
+                                "start" => "2017-01-01T09:00:00Z",
+                                "end" => "2017-01-01T17:00:00Z"
+                            )
+                        )
+                    );
+          target_calendars: An object holding the calendars for the event to be inserted into
+                  for example: array(
+                    array(
+                      "sub" => "acc_567236000909002",
+                      "calendar_id" => "cal_n23kjnwrw2_jsdfjksn234"
+                    )
+                  )
+          tzid: the timezone to create the event in
+                for example:  'Europe/London'
+         */
+
+        $postfields = array(
+          "client_id" => $this->client_id,
+          "client_secret" => $this->client_secret,
+          "oauth" => $params["oauth"],
+          "event" => $params["event"],
+          "availability" => $params["availability"],
+          "target_calendars" => $params["target_calendars"],
+          "tzid" => $params["tzid"],
+        );
+
+        return $this->http_post("/" . self::API_VERSION . "/real_time_sequencing", $postfields);
+    }
+
 
     public function add_to_calendar($params)
     {
