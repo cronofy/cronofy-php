@@ -116,6 +116,7 @@ class Cronofy
     public $access_token;
     public $refresh_token;
     public $expires_in;
+    public $tokens;
     public $http_client;
 
     public function __construct($config = array())
@@ -300,6 +301,7 @@ class Cronofy
             $this->access_token = $tokens["access_token"];
             $this->refresh_token = $tokens["refresh_token"];
             $this->expires_in = $tokens["expires_in"];
+            $this->tokens = $tokens;
             return true;
         } else {
             return $tokens["error"];
@@ -335,6 +337,7 @@ class Cronofy
             $this->access_token = $tokens["access_token"];
             $this->refresh_token = $tokens["refresh_token"];
             $this->expires_in = $tokens["expires_in"];
+            $this->tokens = $tokens;
             return true;
         } else {
             return $tokens["error"];
@@ -386,6 +389,7 @@ class Cronofy
             $this->access_token = $tokens["access_token"];
             $this->refresh_token = $tokens["refresh_token"];
             $this->expires_in = $tokens["expires_in"];
+            $this->tokens = $tokens;
             return true;
         } else {
             return $tokens["error"];
