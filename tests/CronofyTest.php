@@ -3,7 +3,6 @@ use PHPUnit\Framework\TestCase;
 
 class CronofyTest extends TestCase
 {
-
     public function testAuthorizationUrl()
     {
         $redirect_uri = "http://yoursite.dev/oauth2/callback";
@@ -16,6 +15,53 @@ class CronofyTest extends TestCase
         $auth = $cronofy->getAuthorizationURL($params);
 
         $this->assertEquals("https://app.cronofy.com/oauth/authorize?response_type=code&client_id=clientId&redirect_uri=http%3A%2F%2Fyoursite.dev%2Foauth2%2Fcallback&scope=read_account%20list_calendars", $auth);
+    }
+
+    public function testErrorHandling()
+    {
+        $args = array(
+            "profile_id" => "pro_123",
+            "name" => "My Calendar",
+        );
+
+        $error_response = '{"errors":{"event_id":[{"key":"errors.required","description":"required"}]}}';
+
+        $http = $this->createMock('HttpRequest');
+        $http->expects($this->once())
+            ->method('http_post')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/v1/calendars'),
+                $this->equalTo($args),
+                $this->equalTo(array(
+                    'Authorization: Bearer accessToken',
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8',
+                ))
+            )
+            ->will($this->returnValue(array($error_response, 422)));
+
+        $cronofy = new Cronofy(array(
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => $http,
+        ));
+
+        $raised_error = false;
+
+        try
+        {
+            $cronofy->create_calendar($args);
+        }
+        catch (CronofyException $exception)
+        {
+            $raised_error = true;
+            $this->assertEquals(json_decode($error_response, true), $exception->error_details());
+            $this->assertEquals(422, $exception->getCode());
+        }
+
+        $this->assertTrue($raised_error);
     }
 
     public function testRequestToken()
