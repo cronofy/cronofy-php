@@ -240,7 +240,9 @@ class Cronofy
 
         $scope_list = rawurlencode(join(" ", $params['scope']));
 
-        $url = $this->app_root_url . "/oauth/authorize?response_type=code&client_id=" . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list;
+        $url = $this->app_root_url . "/oauth/authorize?response_type=code&client_id="
+            . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list;
+
         if (!empty($params['state'])) {
             $url.="&state=" . $params['state'];
         }
@@ -270,7 +272,10 @@ class Cronofy
         $scope_list = rawurlencode(join(" ", $params['scope']));
         $delegated_scope_list = rawurlencode(join(" ", $params['delegated_scope']));
 
-        $url = $this->app_root_url . "/enterprise_connect/oauth/authorize?response_type=code&client_id=" . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list . "&delegated_scope=" . $delegated_scope_list;
+        $url = $this->app_root_url . "/enterprise_connect/oauth/authorize?response_type=code&client_id="
+            . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope="
+            . $scope_list . "&delegated_scope=" . $delegated_scope_list;
+
         if (!empty($params['state'])) {
             $url.="&state=" . rawurlencode($params['state']);
         }
@@ -435,14 +440,22 @@ class Cronofy
           Date from : The minimum date from which to return events. Defaults to 16 days in the past. OPTIONAL
           Date to : The date to return events up until. Defaults to 201 days in the future. OPTIONAL
           String tzid : A string representing a known time zone identifier from the IANA Time Zone Database. REQUIRED
-          Boolean include_deleted : Indicates whether to include or exclude events that have been deleted. Defaults to excluding deleted events. OPTIONAL
-          Boolean include_moved: Indicates whether events that have ever existed within the given window should be included or excluded from the results. Defaults to only include events currently within the search window. OPTIONAL
-          Time last_modified : The Time that events must be modified on or after in order to be returned. Defaults to including all events regardless of when they were last modified. OPTIONAL
-          Boolean include_managed : Indiciates whether events that you are managing for the account should be included or excluded from the results. Defaults to include only non-managed events. OPTIONAL
-          Boolean only_managed : Indicates whether only events that you are managing for the account should be included in the results. OPTIONAL
-          Array calendar_ids : Restricts the returned events to those within the set of specified calendar_ids. Defaults to returning events from all of a user's calendars. OPTIONAL
-          Boolean localized_times : Indicates whether the events should have their start and end times returned with any available localization information. Defaults to returning start and end times as simple Time values. OPTIONAL
-          Boolean include_geo : Indicates whether the events should have their location's latitude and longitude returned where available. OPTIONAL
+          Boolean include_deleted : Indicates whether to include or exclude events that have been deleted.
+          Defaults to excluding deleted events. OPTIONAL
+          Boolean include_moved: Indicates whether events that have ever existed within the given window should be
+          included or excluded from the results. Defaults to only include events currently within the search window. OPTIONAL
+          Time last_modified : The Time that events must be modified on or after in order to be returned.
+          Defaults to including all events regardless of when they were last modified. OPTIONAL
+          Boolean include_managed : Indiciates whether events that you are managing for the account should be included
+          or excluded from the results. Defaults to include only non-managed events. OPTIONAL
+          Boolean only_managed : Indicates whether only events that you are managing for the account should be included
+          in the results. OPTIONAL
+          Array calendar_ids : Restricts the returned events to those within the set of specified calendar_ids.
+          Defaults to returning events from all of a user's calendars. OPTIONAL
+          Boolean localized_times : Indicates whether the events should have their start and end times returned with any
+          available localization information. Defaults to returning start and end times as simple Time values. OPTIONAL
+          Boolean include_geo : Indicates whether the events should have their location's latitude and longitude
+          returned where available. OPTIONAL
 
           returns $result - Array of events
          */
@@ -457,9 +470,12 @@ class Cronofy
           Date from : The minimum date from which to return free-busy information. Defaults to 16 days in the past. OPTIONAL
           Date to : The date to return free-busy information up until. Defaults to 201 days in the future. OPTIONAL
           String tzid : A string representing a known time zone identifier from the IANA Time Zone Database. REQUIRED
-          Boolean include_managed : Indiciates whether events that you are managing for the account should be included or excluded from the results. Defaults to include only non-managed events. OPTIONAL
-          Array calendar_ids : Restricts the returned free-busy information to those within the set of specified calendar_ids. Defaults to returning free-busy information from all of a user's calendars. OPTIONAL
-          Boolean localized_times : Indicates whether the free-busy information should have their start and end times returned with any available localization information. Defaults to returning start and end times as simple Time values. OPTIONAL
+          Boolean include_managed : Indiciates whether events that you are managing for the account should be included or
+          excluded from the results. Defaults to include only non-managed events. OPTIONAL
+          Array calendar_ids : Restricts the returned free-busy information to those within the set of specified calendar_ids.
+          Defaults to returning free-busy information from all of a user's calendars. OPTIONAL
+          Boolean localized_times : Indicates whether the free-busy information should have their start and end times returned
+          with any available localization information. Defaults to returning start and end times as simple Time values. OPTIONAL
 
           returns $result - Array of events
          */

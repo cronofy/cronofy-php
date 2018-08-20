@@ -5,6 +5,12 @@
   <exclude name="PSR1.Methods.CamelCapsMethodName"/>
   <exclude name="PSR1.Classes.ClassDeclaration"/>
  </rule>
+ <rule ref="Generic.Files.LineLength">
+     <properties>
+         <property name="lineLimit" value="180"/>
+         <property name="absoluteLineLimit" value="0"/>
+     </properties>
+ </rule>
 
  <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace"/>
 </ruleset>

@@ -13,7 +13,20 @@ class ApplicationCalendarTest extends TestCase
             "application_calendar_id" => $application_calendar_id,
         );
 
-        $token_response = '{"token_type":"bearer","access_token":"fffff","expires_in":3600,"refresh_token":"2222","scope":"read_write","application_calendar_id":"my-unique-string","sub":"apc_567236000909002","linking_profile":{"provider_name":"cronofy","profile_id":"pro_n23kjnwrw2","profile_name":"n23kjnwrw2"}}';
+        $token_response = '{
+        "token_type":"bearer",
+            "access_token":"fffff",
+            "expires_in":3600,
+            "refresh_token":"2222",
+            "scope":"read_write",
+            "application_calendar_id":"my-unique-string",
+            "sub":"apc_567236000909002",
+            "linking_profile":{
+            "provider_name":"cronofy",
+                "profile_id":"pro_n23kjnwrw2",
+                "profile_name":"n23kjnwrw2"
+            }
+        }';
 
         $http = $this->createMock('HttpRequest');
         $http->expects($this->once())

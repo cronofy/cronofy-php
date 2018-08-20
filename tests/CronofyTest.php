@@ -14,7 +14,8 @@ class CronofyTest extends TestCase
         );
         $auth = $cronofy->getAuthorizationURL($params);
 
-        $this->assertEquals("https://app.cronofy.com/oauth/authorize?response_type=code&client_id=clientId&redirect_uri=http%3A%2F%2Fyoursite.dev%2Foauth2%2Fcallback&scope=read_account%20list_calendars", $auth);
+        $this->assertEquals("https://app.cronofy.com/oauth/authorize?response_type=code&client_id=clientId"
+            . "&redirect_uri=http%3A%2F%2Fyoursite.dev%2Foauth2%2Fcallback&scope=read_account%20list_calendars", $auth);
     }
 
     public function testErrorHandling()
@@ -50,12 +51,9 @@ class CronofyTest extends TestCase
 
         $raised_error = false;
 
-        try
-        {
+        try {
             $cronofy->create_calendar($args);
-        }
-        catch (CronofyException $exception)
-        {
+        } catch (CronofyException $exception) {
             $raised_error = true;
             $this->assertEquals(json_decode($error_response, true), $exception->error_details());
             $this->assertEquals(422, $exception->getCode());
@@ -74,7 +72,20 @@ class CronofyTest extends TestCase
             "redirect_uri" => "http://example.com",
         );
 
-        $token_response = '{"token_type":"bearer","access_token":"fffff","expires_in":3600,"refresh_token":"2222","scope":"read_write","application_calendar_id":"my-unique-string","sub":"apc_567236000909002","linking_profile":{"provider_name":"cronofy","profile_id":"pro_n23kjnwrw2","profile_name":"n23kjnwrw2"}}';
+        $token_response = '{
+        "token_type":"bearer",
+            "access_token":"fffff",
+            "expires_in":3600,
+            "refresh_token":"2222",
+            "scope":"read_write",
+            "application_calendar_id":"my-unique-string",
+            "sub":"apc_567236000909002",
+            "linking_profile":{
+            "provider_name":"cronofy",
+                "profile_id":"pro_n23kjnwrw2",
+                "profile_name":"n23kjnwrw2"
+            }
+        }';
 
         $http = $this->createMock('HttpRequest');
         $http->expects($this->once())
