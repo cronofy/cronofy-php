@@ -32,7 +32,7 @@ class ApplicationCalendarTest extends TestCase
         $http->expects($this->once())
             ->method('http_post')
             ->with(
-                $this->equalTo('https://api.cronofy.com/v1/application_calendar'),
+                $this->equalTo('https://api.cronofy.com/v1/application_calendars'),
                 $this->equalTo($request_params),
                 $this->equalTo(array(
                     'Host: api.cronofy.com',
