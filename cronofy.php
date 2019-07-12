@@ -388,7 +388,7 @@ class Cronofy
             'application_calendar_id' => $application_calendar_id,
         );
 
-        $tokens = $this->http_post("/v1/application_calendar", $postfields);
+        $tokens = $this->http_post("/v1/application_calendars", $postfields);
 
         if (!empty($tokens["access_token"])) {
             $this->access_token = $tokens["access_token"];
