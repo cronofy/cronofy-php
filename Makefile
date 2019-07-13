@@ -5,7 +5,7 @@ all: test
 install_composer:
 	curl -sS https://getcomposer.org/installer | php
 
-install_dependencies: install_composer
+install_dependencies:
 	php composer.phar install
 
 update:

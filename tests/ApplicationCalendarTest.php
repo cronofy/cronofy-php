@@ -13,7 +13,7 @@ class ApplicationCalendarTest extends TestCase
             "application_calendar_id" => $application_calendar_id,
         );
 
-        $token_response = '{
+        $application_calendar_response = '{
         "token_type":"bearer",
             "access_token":"fffff",
             "expires_in":3600,
@@ -39,7 +39,7 @@ class ApplicationCalendarTest extends TestCase
                     'Content-Type: application/json; charset=utf-8'
                 ))
             )
-            ->will($this->returnValue(array($token_response, 200)));
+            ->will($this->returnValue(array($application_calendar_response, 200)));
 
         $cronofy = new Cronofy(array(
             "client_id" => "clientId",
@@ -49,10 +49,10 @@ class ApplicationCalendarTest extends TestCase
 
 
         $actual = $cronofy->application_calendar($application_calendar_id);
-        $this->assertTrue($actual);
+
+        $this->assertEquals($actual['sub'], "apc_567236000909002");
         $this->assertEquals($cronofy->access_token, "fffff");
         $this->assertEquals($cronofy->refresh_token, "2222");
         $this->assertEquals($cronofy->expires_in, 3600);
-        $this->assertEquals($cronofy->tokens, json_decode($token_response, true));
     }
 }
