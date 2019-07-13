@@ -388,16 +388,16 @@ class Cronofy
             'application_calendar_id' => $application_calendar_id,
         );
 
-        $tokens = $this->http_post("/v1/application_calendars", $postfields);
+        $application_calendar = $this->http_post("/v1/application_calendars", $postfields);
 
-        if (!empty($tokens["access_token"])) {
-            $this->access_token = $tokens["access_token"];
-            $this->refresh_token = $tokens["refresh_token"];
-            $this->expires_in = $tokens["expires_in"];
-            $this->tokens = $tokens;
-            return true;
+        if (!empty($application_calendar["access_token"])) {
+            $this->access_token = $application_calendar["access_token"];
+            $this->refresh_token = $application_calendar["refresh_token"];
+            $this->expires_in = $application_calendar["expires_in"];
+            $this->tokens = $application_calendar;
+            return $application_calendar;
         } else {
-            return $tokens["error"];
+            return $application_calendar["error"];
         }
     }
 
