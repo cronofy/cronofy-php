@@ -971,6 +971,17 @@ class Cronofy
         return $this->http_get("/" . self::API_VERSION . "/availability_rules");
     }
 
+    public function delete_availability_rule($availability_rule_id)
+    {
+        /*
+          String availability_rule_id: A string representing the id for the rule. REQUIRED
+
+          returns true on success, associative array of errors on failure
+         */
+
+        return $this->http_delete("/" . self::API_VERSION . "/availability_rules/" . $availability_rule_id);
+    }
+
     private function api_url($path)
     {
         return $this->api_root_url . $path;

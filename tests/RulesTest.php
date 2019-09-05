@@ -119,4 +119,27 @@ class RulesTest extends TestCase
         $this->assertEquals( "default", $response['availability_rules'][0]['availability_rule_id'] );
         $this->assertEquals( "work_hours", $response['availability_rules'][1]['availability_rule_id'] );
     }
+
+    public function testDeleteAvailabilityRules()
+    {
+
+        $http = $this->createMock('HttpRequest');
+        $http->expects($this->once())
+            ->method('http_delete')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/v1/availability_rules/rule_123')
+            )
+            ->will($this->returnValue(array("{'foo': 'bar'}", 200)));
+
+        $cronofy = new Cronofy(array(
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => $http,
+        ));
+
+        $actual = $cronofy->delete_availability_rule("rule_123");
+        $this->assertNotNull($actual);
+    }
 }
