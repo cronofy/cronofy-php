@@ -188,12 +188,7 @@ class RulesTest extends TestCase
             ->method('http_post')
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/availability_rules'),
-                $this->equalTo($params),
-                $this->equalTo(array(
-                    'Authorization: Bearer clientSecret',
-                    'Host: api.cronofy.com',
-                    'Content-Type: application/json; charset=utf-8'
-                ))
+                $this->equalTo($params)
             )
             ->will($this->returnValue(array(json_encode($expected_output), 200)));
 

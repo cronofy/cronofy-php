@@ -1014,7 +1014,7 @@ class Cronofy
             "weekly_periods" => $rule["weekly_periods"],
         );
 
-        return $this->api_key_http_post("/" . self::API_VERSION . "/availability_rules", $postfields);
+        return $this->http_post("/" . self::API_VERSION . "/availability_rules", $postfields);
     }
 
     private function api_url($path)
