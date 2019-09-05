@@ -58,6 +58,7 @@ class RulesTest extends TestCase
             "availability_rules" => array(
                 array(
                     "availability_rule_id" => "default",
+                    "calendar_ids" => array("cal_123"),
                     "tzid" => "Etc/UTC",
                     "weekly_periods" => array(
                         array(
@@ -79,6 +80,7 @@ class RulesTest extends TestCase
                 ),
                 array(
                     "availability_rule_id" => "work_hours",
+                    "calendar_ids" => array("cal_321"),
                     "tzid" => "Etc/UTC",
                     "weekly_periods" => array(
                         array(
@@ -115,7 +117,7 @@ class RulesTest extends TestCase
         
         $this->assertNotNull( $response );
         $this->assertEquals( 2, count( $response['availability_rules'] ) );
-        $this->assertEquals( 3, count( $response['availability_rules'][0] ) );
+        $this->assertEquals( 4, count( $response['availability_rules'][0] ) );
         $this->assertEquals( "default", $response['availability_rules'][0]['availability_rule_id'] );
         $this->assertEquals( "work_hours", $response['availability_rules'][1]['availability_rule_id'] );
     }
@@ -141,5 +143,73 @@ class RulesTest extends TestCase
 
         $actual = $cronofy->delete_availability_rule("rule_123");
         $this->assertNotNull($actual);
+    }
+
+    public function testCreateAvailabilityRule()
+    {
+        $expected_output = array(
+            "availability_rule_id" => "default",
+            "calendar_ids" => array("cal_123"),
+            "tzid" => "America/Chicago",
+            "weekly_periods" => array(
+                array(
+                    "day" => "monday",
+                    "start_time" => "09:30",
+                    "end_time" => "12:30"
+                ),
+                array(
+                    "day" => "wednesday",
+                    "start_time" => "09:30",
+                    "end_time" => "12:30"
+                )
+            )
+        );
+
+        $params = array(
+            "availability_rule_id" => "default",
+            "calendar_ids" => array("cal_123"),
+            "tzid" => "America/Chicago",
+            "weekly_periods" => array(
+                array(
+                    "day" => "monday",
+                    "start_time" => "09:30",
+                    "end_time" => "12:30"
+                ),
+                array(
+                    "day" => "wednesday",
+                    "start_time" => "09:30",
+                    "end_time" => "12:30"
+                )
+            )
+        );
+
+        $http = $this->createMock('HttpRequest');
+        $http->expects($this->once())
+            ->method('http_post')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/v1/availability_rules'),
+                $this->equalTo($params),
+                $this->equalTo(array(
+                    'Authorization: Bearer clientSecret',
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8'
+                ))
+            )
+            ->will($this->returnValue(array(json_encode($expected_output), 200)));
+
+        $cronofy = new Cronofy(array(
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => $http,
+        ));
+
+        $response = $cronofy->create_availability_rule($params);
+
+        $this->assertNotNull($response);
+        $this->assertEquals( 4, count( $response ) );
+        $this->assertEquals( "default", $response['availability_rule_id'] );
+        $this->assertEquals( 2, count( $response['weekly_periods'] ) );
     }
 }
