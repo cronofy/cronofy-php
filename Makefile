@@ -2,6 +2,9 @@ CURRENT_VERSION:=$(shell jq ".version" -r composer.json)
 
 all: test
 
+install_composer:
+	curl -sS https://getcomposer.org/installer | php
+
 install_dependencies:
 	php composer.phar install
 

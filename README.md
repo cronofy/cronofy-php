@@ -351,9 +351,7 @@ $response = $cronofy->create_availability_rule($params);
 ## Running unit tests
 
 ```shell
-curl -sS https://getcomposer.org/installer | php
-php composer.phar install
-vendor/bin/phpunit
+make test
 ```
 
 ## Links
