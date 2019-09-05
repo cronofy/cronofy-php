@@ -35,7 +35,7 @@ class RulesTest extends TestCase
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/availability_rules/default')
             )
-            ->will( $this->returnValue( array( json_encode($expected_rule), 200 ) ) );
+            ->will($this->returnValue(array(json_encode($expected_rule), 200)));
 
         $cronofy = new Cronofy(array(
             "client_id" => "clientId",
@@ -47,9 +47,9 @@ class RulesTest extends TestCase
 
         $response = $cronofy->get_availability_rule("default");
         
-        $this->assertNotNull( $response );
-        $this->assertEquals( 3, count( $response['availability_rule'] ) );
-        $this->assertEquals( "default", $response['availability_rule']['availability_rule_id'] );
+        $this->assertNotNull($response);
+        $this->assertEquals(3, count($response['availability_rule']));
+        $this->assertEquals("default", $response['availability_rule']['availability_rule_id']);
     }
     
     public function testListAvailabilityRules()
@@ -103,7 +103,7 @@ class RulesTest extends TestCase
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/availability_rules')
             )
-            ->will( $this->returnValue( array( json_encode($expected_rules), 200 ) ) );
+            ->will($this->returnValue(array(json_encode($expected_rules), 200)));
 
         $cronofy = new Cronofy(array(
             "client_id" => "clientId",
@@ -115,11 +115,11 @@ class RulesTest extends TestCase
 
         $response = $cronofy->list_availability_rules();
         
-        $this->assertNotNull( $response );
-        $this->assertEquals( 2, count( $response['availability_rules'] ) );
-        $this->assertEquals( 4, count( $response['availability_rules'][0] ) );
-        $this->assertEquals( "default", $response['availability_rules'][0]['availability_rule_id'] );
-        $this->assertEquals( "work_hours", $response['availability_rules'][1]['availability_rule_id'] );
+        $this->assertNotNull($response);
+        $this->assertEquals(2, count($response['availability_rules']));
+        $this->assertEquals(4, count($response['availability_rules'][0]));
+        $this->assertEquals("default", $response['availability_rules'][0]['availability_rule_id']);
+        $this->assertEquals("work_hours", $response['availability_rules'][1]['availability_rule_id']);
     }
 
     public function testDeleteAvailabilityRules()
@@ -203,8 +203,8 @@ class RulesTest extends TestCase
         $response = $cronofy->create_availability_rule($params);
 
         $this->assertNotNull($response);
-        $this->assertEquals( 4, count( $response ) );
-        $this->assertEquals( "default", $response['availability_rule_id'] );
-        $this->assertEquals( 2, count( $response['weekly_periods'] ) );
+        $this->assertEquals(4, count($response));
+        $this->assertEquals("default", $response['availability_rule_id']);
+        $this->assertEquals(2, count($response['weekly_periods']));
     }
 }
