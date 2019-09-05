@@ -3,7 +3,7 @@
     "description": "PHP wrapper for Cronofy's unified calendar API",
     "version": "v0.25.0",
     "require": {
-        "php": "^5.3.3 || ^7.0"
+        "php": "^5.3.3 || ^7.1"
     },
     "autoload": {
         "files": [
