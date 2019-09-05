@@ -259,6 +259,95 @@ $cronofy = new Cronofy(array(
 
 ```
 
+## List Availability Rules
+
+To retrieve all availability rules saved against an account:
+
+```php
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken"
+));
+
+$response = $cronofy->list_availability_rules();
+
+```
+
+## Read Availability Rule
+
+To retrieve an availability rule:
+
+```php
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken"
+));
+
+// The String that uniquely identifies the availability rule. 
+$rule_id = "default";
+
+$response = $cronofy->get_availability_rule($rule_id);
+
+```
+
+## Delete Availability Rule
+
+To delete an availability rule for the authenticated account:
+
+```php
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken"
+));
+
+// The String that uniquely identifies the availability rule. 
+$rule_id = "default";
+
+$response = $cronofy->delete_availability_rule($rule_id);
+
+```
+
+## Create or Update Availability Rule
+
+To creates or update an availability rule for the authenticated account:
+
+```php
+$cronofy = new Cronofy(array(
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken"
+));
+
+// The details of the event to create or update:
+$params = array(
+    "availability_rule_id" => "default",
+    "calendar_ids" => array("cal_123"),
+    "tzid" => "America/Chicago",
+    "weekly_periods" => array(
+        array(
+            "day" => "monday",
+            "start_time" => "09:30",
+            "end_time" => "12:30"
+        ),
+        array(
+            "day" => "wednesday",
+            "start_time" => "09:30",
+            "end_time" => "12:30"
+        )
+    )
+);
+
+$response = $cronofy->create_availability_rule($params);
+
+```
+
 ## Running unit tests
 
 ```shell

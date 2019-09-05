@@ -956,6 +956,67 @@ class Cronofy
         return $this->api_key_http_get("/" . self::API_VERSION . "/smart_invites", $url_params);
     }
 
+    public function get_availability_rule($availability_rule_id)
+    {
+        /*
+          String availability_rule_id: A string representing the id for the rule. REQUIRED
+         */
+
+        return $this->http_get("/" . self::API_VERSION . "/availability_rules/" . $availability_rule_id);
+    }
+    
+    public function list_availability_rules()
+    {
+
+        return $this->http_get("/" . self::API_VERSION . "/availability_rules");
+    }
+
+    public function delete_availability_rule($availability_rule_id)
+    {
+        /*
+          String availability_rule_id: A string representing the id for the rule. REQUIRED
+
+          returns true on success, associative array of errors on failure
+         */
+
+        return $this->http_delete("/" . self::API_VERSION . "/availability_rules/" . $availability_rule_id);
+    }
+
+    public function create_availability_rule($rule)
+    {
+        /*
+          Array rule: An object with an availability rule's details REQUIRED
+                 for example: array(
+                                "availability_rule_id" => "default",
+                                "tzid" => "America/Chicago",
+                                "calendar_ids" => array(
+                                    "cal_123"
+                                ),
+                                "weekly_periods" => array(
+                                    array(
+                                        "day" => "monday",
+                                        "start_time" => "09:30",
+                                        "end_time" => "12:30"
+                                    ),
+                                    array(
+                                        "day" => "wednesday",
+                                        "start_time" => "09:30",
+                                        "end_time" => "12:30"
+                                    )
+                                )
+                            )
+         */
+
+        $postfields = array(
+            "availability_rule_id" => $rule["availability_rule_id"],
+            "tzid" => $rule["tzid"],
+            "calendar_ids" => $rule["calendar_ids"],
+            "weekly_periods" => $rule["weekly_periods"],
+        );
+
+        return $this->http_post("/" . self::API_VERSION . "/availability_rules", $postfields);
+    }
+
     private function api_url($path)
     {
         return $this->api_root_url . $path;
