@@ -964,6 +964,12 @@ class Cronofy
 
         return $this->http_get("/" . self::API_VERSION . "/availability_rules/" . $availability_rule_id);
     }
+    
+    public function list_availability_rules()
+    {
+
+        return $this->http_get("/" . self::API_VERSION . "/availability_rules");
+    }
 
     private function api_url($path)
     {
