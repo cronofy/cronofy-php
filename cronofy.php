@@ -722,14 +722,25 @@ class Cronofy
                                       )
          */
         $postfields = array(
+            "available_periods" => $params["available_periods"],
             "participants" => $params["participants"],
-            "required_duration" => $params["required_duration"],
-            "start_interval" => $params["start_interval"],
-            "buffer" => $params["buffer"],
-            "available_periods" => $params["available_periods"]
+            "required_duration" => $params["required_duration"]
         );
+        
+        if (!empty($params["buffer"])) {
+            $postfields["buffer"] = $params["buffer"];
+        }
+        if (!empty($params["max_results"])) {
+            $postfields["max_results"] = $params["max_results"];
+        }
+        if (!empty($params["start_interval"])) {
+            $postfields["start_interval"] = $params["start_interval"];
+        }
+        if (!empty($params["response_format"])) {
+            $postfields["response_format"] = $params["response_format"];
+        }
 
-        return $this->http_post("/" . self::API_VERSION . "/availability", $postfields);
+        return $this->api_key_http_post("/" . self::API_VERSION . "/availability", $postfields);
     }
 
     public function real_time_scheduling($params)
