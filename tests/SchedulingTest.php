@@ -5,22 +5,9 @@ class SchedulingTest extends TestCase
 {
     public function testAvailability()
     {
-        $params = array(
-            "available_periods" => "PERIODS",
-            "required_duration" => "DURATION",
-            "response_format" => "FORMAT"
-        );
-
         $parsedParams = array(
             "available_periods" => "PERIODS",
-            "participants" => null,
-            "required_duration" => "DURATION",
-            "response_format" => "FORMAT"
-        );
-
-        $expected_output = array(
-            "available_periods" => "PERIODS",
-            "participants" => null,
+            "participants" => "PARTICIPANTS",
             "required_duration" => "DURATION",
             "response_format" => "FORMAT"
         );
@@ -32,7 +19,7 @@ class SchedulingTest extends TestCase
                 $this->equalTo('https://api.cronofy.com/v1/availability'),
                 $this->equalTo($parsedParams)
             )
-            ->will($this->returnValue(array(json_encode($expected_output), 200)));
+            ->will($this->returnValue(array(json_encode($parsedParams), 200)));
 
         $cronofy = new Cronofy(array(
             "client_id" => "clientId",
@@ -42,6 +29,13 @@ class SchedulingTest extends TestCase
             "http_client" => $http,
         ));
 
+        $params = array(
+            "participants" => "PARTICIPANTS",
+            "available_periods" => "PERIODS",
+            "required_duration" => "DURATION",
+            "response_format" => "FORMAT"
+        );
+        
         $response = $cronofy->availability($params);
         $this->assertNotNull($response);
     }
