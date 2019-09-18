@@ -3,6 +3,43 @@ use PHPUnit\Framework\TestCase;
 
 class SchedulingTest extends TestCase
 {
+    public function testAvailability()
+    {
+        $parsedParams = array(
+            "available_periods" => "PERIODS",
+            "participants" => "PARTICIPANTS",
+            "required_duration" => "DURATION",
+            "response_format" => "FORMAT"
+        );
+        
+        $http = $this->createMock('HttpRequest');
+        $http->expects($this->once())
+            ->method('http_post')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/v1/availability'),
+                $this->equalTo($parsedParams)
+            )
+            ->will($this->returnValue(array(json_encode($parsedParams), 200)));
+
+        $cronofy = new Cronofy(array(
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => $http,
+        ));
+
+        $params = array(
+            "participants" => "PARTICIPANTS",
+            "available_periods" => "PERIODS",
+            "required_duration" => "DURATION",
+            "response_format" => "FORMAT"
+        );
+        
+        $response = $cronofy->availability($params);
+        $this->assertNotNull($response);
+    }
+
     public function testRealTimeScheduling()
     {
         $oauth = array(
