@@ -230,6 +230,7 @@ class Cronofy
           Array $params : An array of additional paramaters
           redirect_uri : String The HTTP or HTTPS URI you wish the user's authorization request decision to be redirected to. REQUIRED
           scope : An array of scopes to be granted by the access token. Possible scopes detailed in the Cronofy API documentation. REQUIRED
+          delegated_scope : Array. An array of scopes to be granted that will be allowed to be granted to the account's users. OPTIONAL
           state : String A value that will be returned to you unaltered along with the user's authorization request decision. OPTIONAL
           avoid_linking : Boolean when true means we will avoid linking calendar accounts together under one set of credentials. OPTIONAL
           link_token : String The link token to explicitly link to a pre-existing account. OPTIONAL
@@ -251,6 +252,9 @@ class Cronofy
         }
         if (!empty($params['link_token'])) {
             $url.="&link_token=" . $params['link_token'];
+        }
+        if (!empty($params['delegated_scope'])) {
+            $url.="&delegated_scope=" . rawurlencode(join(" ", $params['delegated_scope']));
         }
 
         return $url;
@@ -432,6 +436,11 @@ class Cronofy
           returns $result - Array of calendars. Details are available in the Cronofy API Documentation
          */
         return $this->http_get("/" . self::API_VERSION . "/calendars");
+    }
+
+    public function list_accessible_calendars($profileId)
+    {
+        return $this->http_get("/" . self::API_VERSION . "/accessible_calendars", array('profile_id' => $profileId));
     }
 
     public function read_events($params)
@@ -726,7 +735,7 @@ class Cronofy
             "participants" => $params["participants"],
             "required_duration" => $params["required_duration"]
         );
-        
+
         if (!empty($params["buffer"])) {
             $postfields["buffer"] = $params["buffer"];
         }
@@ -975,7 +984,7 @@ class Cronofy
 
         return $this->http_get("/" . self::API_VERSION . "/availability_rules/" . $availability_rule_id);
     }
-    
+
     public function list_availability_rules()
     {
 
