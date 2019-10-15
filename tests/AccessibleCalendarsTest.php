@@ -48,6 +48,11 @@ class AccessibleCalendarsTest extends TestCase
             "http_client" => $http,
         ));
 
-        $cronofy->list_accessible_calendars($profileId);
+        $accesibleCalendars = $cronofy->list_accessible_calendars($profileId);
+
+        $this->assertEquals(
+            json_decode($accessible_calendars_response, true),
+            $accesibleCalendars
+        );
     }
 }

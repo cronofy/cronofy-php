@@ -436,7 +436,7 @@ class Cronofy
 
     public function list_accessible_calendars($profileId)
     {
-        $this->http_get("/" . self::API_VERSION . "/accessible_calendars", ['profile_id' => $profileId]);
+        return $this->http_get("/" . self::API_VERSION . "/accessible_calendars", ['profile_id' => $profileId]);
     }
 
     public function read_events($params)
