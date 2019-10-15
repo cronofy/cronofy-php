@@ -434,6 +434,11 @@ class Cronofy
         return $this->http_get("/" . self::API_VERSION . "/calendars");
     }
 
+    public function list_accessible_calendars($profileId)
+    {
+        $this->http_get("/" . self::API_VERSION . "/accessible_calendars", ['profile_id' => $profileId]);
+    }
+
     public function read_events($params)
     {
         /*
@@ -726,7 +731,7 @@ class Cronofy
             "participants" => $params["participants"],
             "required_duration" => $params["required_duration"]
         );
-        
+
         if (!empty($params["buffer"])) {
             $postfields["buffer"] = $params["buffer"];
         }
@@ -975,7 +980,7 @@ class Cronofy
 
         return $this->http_get("/" . self::API_VERSION . "/availability_rules/" . $availability_rule_id);
     }
-    
+
     public function list_availability_rules()
     {
 
