@@ -286,6 +286,11 @@ class Cronofy
         return $url;
     }
 
+    public function request_delegated_authorization()
+    {
+        //
+    }
+
     public function request_token($params)
     {
         /*
