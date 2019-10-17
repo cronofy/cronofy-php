@@ -55,7 +55,7 @@ class DelegatedAuthorizationsTest extends TestCase
         $profileId = "profileId";
         $email = "emailOfAccountToAccess";
         $callback_url = "http://www.example.com/callback";
-        $scopes = ["read_events"];
+        $scopes = ["list_calendars", "read_free_busy"];
         $state = "user-state";
 
         $args = array(
@@ -82,7 +82,13 @@ class DelegatedAuthorizationsTest extends TestCase
             ->method('http_post')
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/delegated_authorizations'),
-                $this->equalTo($args),
+                $this->equalTo([
+                    "profile_id" => $profileId,
+                    "email" => $email,
+                    "callback_url" => $callback_url,
+                    "scope" => "list_calendars read_free_busy",
+                    "state" => $state
+                ]),
                 $this->equalTo(array(
                     'Authorization: Bearer accessToken',
                     'Host: api.cronofy.com',
