@@ -317,9 +317,9 @@ class Cronofy
         }
     }
 
-    public function request_delegated_authorization()
+    public function request_delegated_authorization($params)
     {
-        $this->http_post('/' . self::API_VERSION . '/delegated_authorizations');
+        $this->http_post('/' . self::API_VERSION . '/delegated_authorizations', $params);
     }
 
     public function request_link_token()

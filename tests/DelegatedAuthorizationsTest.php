@@ -5,8 +5,10 @@ class DelegatedAuthorizationsTest extends TestCase
 {
     public function testDelegatedAuthorizations()
     {
+        $profileId = "profileId";
+
         $args = array(
-            // No for now.
+            "profile_id" => $profileId,
         );
 
         $http = $this->createMock('HttpRequest');
@@ -31,6 +33,6 @@ class DelegatedAuthorizationsTest extends TestCase
             "http_client" => $http,
         ));
 
-        $cronofy->request_delegated_authorization();
+        $cronofy->request_delegated_authorization($args);
     }
 }
