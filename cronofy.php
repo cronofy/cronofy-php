@@ -331,7 +331,7 @@ class Cronofy
             $params["scope"] = join(" ", $params["scope"]);
         }
 
-        $this->http_post('/' . self::API_VERSION . '/delegated_authorizations', $params);
+        return $this->http_post('/' . self::API_VERSION . '/delegated_authorizations', $params);
     }
 
     public function request_link_token()
