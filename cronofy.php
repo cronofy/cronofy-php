@@ -286,11 +286,6 @@ class Cronofy
         return $url;
     }
 
-    public function request_delegated_authorization()
-    {
-        //
-    }
-
     public function request_token($params)
     {
         /*
@@ -320,6 +315,11 @@ class Cronofy
         } else {
             return $tokens["error"];
         }
+    }
+
+    public function request_delegated_authorization()
+    {
+        $this->http_post('/' . self::API_VERSION . '/delegated_authorizations');
     }
 
     public function request_link_token()

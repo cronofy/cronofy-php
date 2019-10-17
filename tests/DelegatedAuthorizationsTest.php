@@ -20,7 +20,8 @@ class DelegatedAuthorizationsTest extends TestCase
                     'Host: api.cronofy.com',
                     'Content-Type: application/json; charset=utf-8',
                 ))
-            );
+            )
+            ->will($this->returnValue(array("", 202)));
 
         $cronofy = new Cronofy(array(
             "client_id" => "clientId",
