@@ -6,9 +6,17 @@ class DelegatedAuthorizationsTest extends TestCase
     public function testDelegatedAuthorizations()
     {
         $profileId = "profileId";
+        $email = "emailOfAccountToAccess";
+        $callback_url = "http://www.example.com/callback";
+        $scopes = ["read_events"];
+        $state = "user-state";
 
         $args = array(
             "profile_id" => $profileId,
+            "email" => $email,
+            "callback_url" => $callback_url,
+            "scope" => $scopes,
+            "state" => $state
         );
 
         $http = $this->createMock('HttpRequest');
