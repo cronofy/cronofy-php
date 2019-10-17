@@ -327,6 +327,10 @@ class Cronofy
           scope : array. The scope of the privileges you want the eventual access_token to grant.
           state : String. A value that will be returned to you unaltered along with the delegated authorization request decision.
          */
+        if (isset($params["scope"]) && gettype($params["scope"]) == "array") {
+            $params["scope"] = join(" ", $params["scope"]);
+        }
+
         $this->http_post('/' . self::API_VERSION . '/delegated_authorizations', $params);
     }
 
