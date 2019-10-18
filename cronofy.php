@@ -317,6 +317,23 @@ class Cronofy
         }
     }
 
+    public function request_delegated_authorization($params)
+    {
+        /*
+          Array $params : An array of additional parameters
+          profile_id : String. This specifies the ID of the profile you wish to get delegated authorization through.
+          email : String. The email address of the account or resource to receive delegated access to.
+          callback_url: String. The URL to callback with the result of the delegated access request.
+          scope : array. The scope of the privileges you want the eventual access_token to grant.
+          state : String. A value that will be returned to you unaltered along with the delegated authorization request decision.
+         */
+        if (isset($params["scope"]) && gettype($params["scope"]) == "array") {
+            $params["scope"] = join(" ", $params["scope"]);
+        }
+
+        return $this->http_post('/' . self::API_VERSION . '/delegated_authorizations', $params);
+    }
+
     public function request_link_token()
     {
         /*
