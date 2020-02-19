@@ -946,7 +946,6 @@ class Cronofy
          */
 
         $postfields = array(
-          "recipient" => $params["recipient"],
           "event" => $params["event"],
           "smart_invite_id" => $params["smart_invite_id"],
           "callback_url" => $params["callback_url"],
@@ -954,6 +953,12 @@ class Cronofy
 
         if (!empty($params['organizer'])) {
             $postfields['organizer'] = $params['organizer'];
+        }
+
+        if(!empty($params['recipients'])) {
+            $postfields['recipients'] = $params['recipients'];
+        } else {
+            $postfields['recipient'] = $params['recipient'];
         }
 
         return $this->api_key_http_post("/" . self::API_VERSION . "/smart_invites", $postfields);
