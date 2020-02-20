@@ -955,7 +955,7 @@ class Cronofy
             $postfields['organizer'] = $params['organizer'];
         }
 
-        if(!empty($params['recipients'])) {
+        if (!empty($params['recipients'])) {
             $postfields['recipients'] = $params['recipients'];
         } else {
             $postfields['recipient'] = $params['recipient'];
