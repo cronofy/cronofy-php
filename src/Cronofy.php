@@ -1,227 +1,130 @@
-<?php
+<?php declare(strict_types=1);
 
-class CronofyException extends Exception
-{
-    private $error_details;
+namespace Cronofy;
 
-    public function __construct($message, $code, $error_details = null)
-    {
-        $this->error_details = $error_details;
-
-        parent::__construct($message, $code, null);
-    }
-
-    public function error_details()
-    {
-        return $this->error_details;
-    }
-}
-
-interface HttpRequest
-{
-    public function http_get($url, array $auth_headers);
-    public function get_page($url, array $auth_headers, $url_params = "");
-    public function http_post($url, array $params, array $auth_headers);
-    public function http_delete($url, array $params, array $auth_headers);
-}
-
-class CurlRequest implements HttpRequest
-{
-    public $useragent;
-
-    public function __construct($useragent)
-    {
-        $this->useragent = $useragent;
-    }
-
-    public function http_get($url, array $auth_headers)
-    {
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, $this->useragent);
-        // empty string means send all supported encoding types
-        curl_setopt($curl, CURLOPT_ENCODING, '');
-        $result = curl_exec($curl);
-        if (curl_errno($curl) > 0) {
-            throw new CronofyException(curl_error($curl), 2);
-        }
-        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
-
-        return array($result, $status_code);
-    }
-
-    public function get_page($url, array $auth_headers, $url_params = "")
-    {
-        return $this->http_get($url.$url_params, $auth_headers);
-    }
-
-    public function http_post($url, array $params, array $auth_headers)
-    {
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, $this->useragent);
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
-        curl_setopt($curl, CURLOPT_VERBOSE, true);
-        // empty string means send all supported encoding types
-        curl_setopt($curl, CURLOPT_ENCODING, '');
-        $result = curl_exec($curl);
-        if (curl_errno($curl) > 0) {
-            throw new CronofyException(curl_error($curl), 3);
-        }
-        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
-
-        return array($result, $status_code);
-    }
-
-    public function http_delete($url, array $params, array $auth_headers)
-    {
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $auth_headers);
-        curl_setopt($curl, CURLOPT_USERAGENT, $this->useragent);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
-        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
-        // empty string means send all supported encoding types
-        curl_setopt($curl, CURLOPT_ENCODING, '');
-        $result = curl_exec($curl);
-        if (curl_errno($curl) > 0) {
-            throw new CronofyException(curl_error($curl), 4);
-        }
-        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
-
-        return array($result, $status_code);
-    }
-}
+use Cronofy\Exception\CronofyException;
+use Cronofy\Http\CurlRequest;
 
 class Cronofy
 {
-    const USERAGENT = 'Cronofy PHP 0.15.0';
+    const USERAGENT = 'Cronofy PHP 1.0.0';
     const API_VERSION = 'v1';
 
-    public $api_root_url;
-    public $app_root_url;
-    public $host_domain;
+    public $apiRootUrl;
+    public $appRootUrl;
+    public $hostDomain;
 
-    public $client_id;
-    public $client_secret;
-    public $access_token;
-    public $refresh_token;
-    public $expires_in;
+    public $clientId;
+    public $clientSecret;
+    public $accessToken;
+    public $refreshToken;
+    public $expiresIn;
     public $tokens;
-    public $http_client;
+    public $httpClient;
 
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         if (!function_exists('curl_init')) {
             throw new CronofyException("missing cURL extension", 1);
         }
 
         if (!empty($config["client_id"])) {
-            $this->client_id = $config["client_id"];
+            $this->clientId = $config["client_id"];
         }
         if (!empty($config["client_secret"])) {
-            $this->client_secret = $config["client_secret"];
+            $this->clientSecret = $config["client_secret"];
         }
         if (!empty($config["access_token"])) {
-            $this->access_token = $config["access_token"];
+            $this->accessToken = $config["access_token"];
         }
         if (!empty($config["refresh_token"])) {
-            $this->refresh_token = $config["refresh_token"];
+            $this->refreshToken = $config["refresh_token"];
         }
         if (!empty($config["expires_in"])) {
-            $this->expires_in = $config["expires_in"];
+            $this->expiresIn = $config["expires_in"];
         }
 
         if (!empty($config["http_client"])) {
-            $this->http_client = $config["http_client"];
+            $this->httpClient = $config["http_client"];
         } else {
-            $this->http_client = new CurlRequest(self::USERAGENT);
+            $this->httpClient = new CurlRequest(self::USERAGENT);
         }
 
-        $this->set_urls(isset($config["data_center"]) ? $config["data_center"] : false);
+        $this->setUrls(isset($config["data_center"]) ? $config["data_center"] : false);
     }
 
-    private function set_urls($data_center = false)
+    private function setUrls($data_center = false)
     {
         $data_center_addin = $data_center ? '-' . $data_center : '';
 
-        $this->api_root_url = "https://api$data_center_addin.cronofy.com";
-        $this->app_root_url = "https://app$data_center_addin.cronofy.com";
-        $this->host_domain = "api$data_center_addin.cronofy.com";
+        $this->apiRootUrl = "https://api$data_center_addin.cronofy.com";
+        $this->appRootUrl = "https://app$data_center_addin.cronofy.com";
+        $this->hostDomain = "api$data_center_addin.cronofy.com";
     }
 
-    private function base_http_get($path, array $auth_headers, array $params)
+    private function baseHttpGet($path, array $auth_headers, array $params)
     {
-        $url = $this->api_url($path);
-        $url .= $this->url_params($params);
+        $url = $this->apiUrl($path);
+        $url .= $this->urlParams($params);
 
-        if (filter_var($url, FILTER_VALIDATE_URL)===false) {
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
             throw new CronofyException('invalid URL');
         }
 
-        list ($result, $status_code) = $this->http_client->http_get($url, $auth_headers);
+        list ($result, $status_code) = $this->httpClient->httpGet($url, $auth_headers);
 
-        return $this->handle_response($result, $status_code);
+        return $this->handleResponse($result, $status_code);
     }
 
-    private function api_key_http_get($path, array $params = array())
+    private function apiKeyHttpGet($path, array $params = [])
     {
-        return $this->base_http_get($path, $this->get_api_key_auth_headers(), $params);
+        return $this->baseHttpGet($path, $this->getApiKeyAuthHeaders(), $params);
     }
 
-    private function http_get($path, array $params = array())
+    private function httpGet($path, array $params = [])
     {
-        return $this->base_http_get($path, $this->get_auth_headers(), $params);
+        return $this->baseHttpGet($path, $this->getAuthHeaders(), $params);
     }
 
-    private function base_http_post($path, $auth_headers, array $params = array())
+    private function baseHttpPost($path, $auth_headers, array $params = [])
     {
-        $url = $this->api_url($path);
+        $url = $this->apiUrl($path);
 
-        if (filter_var($url, FILTER_VALIDATE_URL)===false) {
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
             throw new CronofyException('invalid URL');
         }
 
-        list ($result, $status_code) = $this->http_client->http_post($url, $params, $auth_headers);
+        list ($result, $status_code) = $this->httpClient->httpPost($url, $params, $auth_headers);
 
-        return $this->handle_response($result, $status_code);
+        return $this->handleResponse($result, $status_code);
     }
 
-    private function http_post($path, array $params = array())
+    private function httpPost($path, array $params = [])
     {
-        return $this->base_http_post($path, $this->get_auth_headers(true), $params);
+        return $this->baseHttpPost($path, $this->getAuthHeaders(true), $params);
     }
 
-    private function api_key_http_post($path, array $params = array())
+    private function apiKeyHttpPost($path, array $params = [])
     {
-        return $this->base_http_post($path, $this->get_api_key_auth_headers(true), $params);
+        return $this->baseHttpPost($path, $this->getApiKeyAuthHeaders(true), $params);
     }
 
-    private function base_http_delete($path, $auth_headers, array $params = array())
+    private function baseHttpDelete($path, $auth_headers, array $params = [])
     {
-        $url = $this->api_url($path);
+        $url = $this->apiUrl($path);
 
-        if (filter_var($url, FILTER_VALIDATE_URL)===false) {
+        if (filter_var($url, FILTER_VALIDATE_URL) === false) {
             throw new CronofyException('invalid URL');
         }
 
-        list ($result, $status_code) = $this->http_client->http_delete($url, $params, $auth_headers);
+        list ($result, $status_code) = $this->httpClient->httpDelete($url, $params, $auth_headers);
 
-        return $this->handle_response($result, $status_code);
+        return $this->handleResponse($result, $status_code);
     }
 
-    private function http_delete($path, array $params = array())
+    private function httpDelete($path, array $params = [])
     {
-        return $this->base_http_delete($path, $this->get_auth_headers(true), $params);
+        return $this->baseHttpDelete($path, $this->getAuthHeaders(true), $params);
     }
 
     public function getAuthorizationURL($params)
@@ -241,20 +144,20 @@ class Cronofy
 
         $scope_list = rawurlencode(join(" ", $params['scope']));
 
-        $url = $this->app_root_url . "/oauth/authorize?response_type=code&client_id="
-            . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list;
+        $url = $this->appRootUrl . "/oauth/authorize?response_type=code&client_id="
+            . $this->clientId . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope=" . $scope_list;
 
         if (!empty($params['state'])) {
-            $url.="&state=" . $params['state'];
+            $url .= "&state=" . $params['state'];
         }
         if (!empty($params['avoid_linking'])) {
-            $url.="&avoid_linking=" . $params['avoid_linking'];
+            $url .= "&avoid_linking=" . $params['avoid_linking'];
         }
         if (!empty($params['link_token'])) {
-            $url.="&link_token=" . $params['link_token'];
+            $url .= "&link_token=" . $params['link_token'];
         }
         if (!empty($params['delegated_scope'])) {
-            $url.="&delegated_scope=" . rawurlencode(join(" ", $params['delegated_scope']));
+            $url .= "&delegated_scope=" . rawurlencode(join(" ", $params['delegated_scope']));
         }
 
         return $url;
@@ -276,17 +179,17 @@ class Cronofy
         $scope_list = rawurlencode(join(" ", $params['scope']));
         $delegated_scope_list = rawurlencode(join(" ", $params['delegated_scope']));
 
-        $url = $this->app_root_url . "/enterprise_connect/oauth/authorize?response_type=code&client_id="
-            . $this->client_id . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope="
+        $url = $this->appRootUrl . "/enterprise_connect/oauth/authorize?response_type=code&client_id="
+            . $this->clientId . "&redirect_uri=" . urlencode($params['redirect_uri']) . "&scope="
             . $scope_list . "&delegated_scope=" . $delegated_scope_list;
 
         if (!empty($params['state'])) {
-            $url.="&state=" . rawurlencode($params['state']);
+            $url .= "&state=" . rawurlencode($params['state']);
         }
         return $url;
     }
 
-    public function request_token($params)
+    public function requestToken($params)
     {
         /*
           Array $params : An array of additional paramaters
@@ -296,20 +199,20 @@ class Cronofy
           Response :
           true if successful, error string if not
          */
-        $postfields = array(
-            'client_id' => $this->client_id,
-            'client_secret' => $this->client_secret,
+        $postfields = [
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
             'grant_type' => 'authorization_code',
             'code' => $params['code'],
             'redirect_uri' => $params['redirect_uri']
-        );
+        ];
 
-        $tokens = $this->http_post("/oauth/token", $postfields);
+        $tokens = $this->httpPost("/oauth/token", $postfields);
 
         if (!empty($tokens["access_token"])) {
-            $this->access_token = $tokens["access_token"];
-            $this->refresh_token = $tokens["refresh_token"];
-            $this->expires_in = $tokens["expires_in"];
+            $this->accessToken = $tokens["access_token"];
+            $this->refreshToken = $tokens["refresh_token"];
+            $this->expiresIn = $tokens["expires_in"];
             $this->tokens = $tokens;
             return true;
         } else {
@@ -317,7 +220,7 @@ class Cronofy
         }
     }
 
-    public function request_delegated_authorization($params)
+    public function requestDelegatedAuthorization($params)
     {
         /*
           Array $params : An array of additional parameters
@@ -331,18 +234,18 @@ class Cronofy
             $params["scope"] = join(" ", $params["scope"]);
         }
 
-        return $this->http_post('/' . self::API_VERSION . '/delegated_authorizations', $params);
+        return $this->httpPost('/' . self::API_VERSION . '/delegated_authorizations', $params);
     }
 
-    public function request_link_token()
+    public function requestLinkToken()
     {
         /*
           returns $result - The link_token to explicitly link to a pre-existing account. Details are available in the Cronofy API Documentation
          */
-        return $this->http_post('/' . self::API_VERSION . '/link_tokens');
+        return $this->httpPost('/' . self::API_VERSION . '/link_tokens');
     }
 
-    public function refresh_token()
+    public function refreshToken()
     {
         /*
           String $refresh_token : The refresh_token issued to you when the user authorized your access to their account. REQUIRED
@@ -350,19 +253,19 @@ class Cronofy
           Response :
           true if successful, error string if not
          */
-        $postfields = array(
-            'client_id' => $this->client_id,
-            'client_secret' => $this->client_secret,
+        $postfields = [
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
             'grant_type' => 'refresh_token',
-            'refresh_token' => $this->refresh_token
-        );
+            'refresh_token' => $this->refreshToken
+        ];
 
-        $tokens = $this->http_post("/oauth/token", $postfields);
+        $tokens = $this->httpPost("/oauth/token", $postfields);
 
         if (!empty($tokens["access_token"])) {
-            $this->access_token = $tokens["access_token"];
-            $this->refresh_token = $tokens["refresh_token"];
-            $this->expires_in = $tokens["expires_in"];
+            $this->accessToken = $tokens["access_token"];
+            $this->refreshToken = $tokens["refresh_token"];
+            $this->expiresIn = $tokens["expires_in"];
             $this->tokens = $tokens;
             return true;
         } else {
@@ -370,7 +273,7 @@ class Cronofy
         }
     }
 
-    public function revoke_authorization($token)
+    public function revokeAuthorization($token)
     {
         /*
           String token : Either the refresh_token or access_token for the authorization you wish to revoke. REQUIRED
@@ -378,24 +281,24 @@ class Cronofy
           Response :
           true if successful, error string if not
          */
-        $postfields = array(
-            'client_id' => $this->client_id,
-            'client_secret' => $this->client_secret,
+        $postfields = [
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
             'token' => $token
-        );
+        ];
 
-        return $this->http_post("/oauth/token/revoke", $postfields);
+        return $this->httpPost("/oauth/token/revoke", $postfields);
     }
 
-    public function revoke_profile($profile_id)
+    public function revokeProfile($profile_id)
     {
         /*
           String profile_id : The profile_id of the profile you wish to revoke access to. REQUIRED
          */
-        return $this->http_post("/" . self::API_VERSION . "/profiles/" . $profile_id . "/revoke");
+        return $this->httpPost("/" . self::API_VERSION . "/profiles/" . $profile_id . "/revoke");
     }
 
-    public function application_calendar($application_calendar_id)
+    public function applicationCalendar($application_calendar_id)
     {
         /*
           application_calendar_id : String The identifier for the application calendar to create
@@ -403,18 +306,18 @@ class Cronofy
           Response :
           true if successful, error string if not
          */
-        $postfields = array(
-            'client_id' => $this->client_id,
-            'client_secret' => $this->client_secret,
+        $postfields = [
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
             'application_calendar_id' => $application_calendar_id,
-        );
+        ];
 
-        $application_calendar = $this->http_post("/v1/application_calendars", $postfields);
+        $application_calendar = $this->httpPost("/v1/application_calendars", $postfields);
 
         if (!empty($application_calendar["access_token"])) {
-            $this->access_token = $application_calendar["access_token"];
-            $this->refresh_token = $application_calendar["refresh_token"];
-            $this->expires_in = $application_calendar["expires_in"];
+            $this->accessToken = $application_calendar["access_token"];
+            $this->refreshToken = $application_calendar["refresh_token"];
+            $this->expiresIn = $application_calendar["expires_in"];
             $this->tokens = $application_calendar;
             return $application_calendar;
         } else {
@@ -422,45 +325,45 @@ class Cronofy
         }
     }
 
-    public function get_account()
+    public function getAccount()
     {
         /*
           returns $result - info for the user logged in. Details are available in the Cronofy API Documentation
          */
-        return $this->http_get("/" . self::API_VERSION . "/account");
+        return $this->httpGet("/" . self::API_VERSION . "/account");
     }
 
 
-    public function get_userinfo()
+    public function getUserInfo()
     {
         /*
           returns $result - userinfo for the user logged in. Details are available in the Cronofy API Documentation
          */
-        return $this->http_get("/" . self::API_VERSION . "/userinfo");
+        return $this->httpGet("/" . self::API_VERSION . "/userinfo");
     }
 
-    public function get_profiles()
+    public function getProfiles()
     {
         /*
           returns $result - list of all the authenticated user's calendar profiles. Details are available in the Cronofy API Documentation
          */
-        return $this->http_get("/" . self::API_VERSION . "/profiles");
+        return $this->httpGet("/" . self::API_VERSION . "/profiles");
     }
 
-    public function list_calendars()
+    public function listCalendars()
     {
         /*
           returns $result - Array of calendars. Details are available in the Cronofy API Documentation
          */
-        return $this->http_get("/" . self::API_VERSION . "/calendars");
+        return $this->httpGet("/" . self::API_VERSION . "/calendars");
     }
 
-    public function list_accessible_calendars($profileId)
+    public function listAccessibleCalendars($profileId)
     {
-        return $this->http_get("/" . self::API_VERSION . "/accessible_calendars", array('profile_id' => $profileId));
+        return $this->httpGet("/" . self::API_VERSION . "/accessible_calendars", ['profile_id' => $profileId]);
     }
 
-    public function read_events($params)
+    public function readEvents($params)
     {
         /*
           Date from : The minimum date from which to return events. Defaults to 16 days in the past. OPTIONAL
@@ -485,12 +388,12 @@ class Cronofy
 
           returns $result - Array of events
          */
-        $url = $this->api_url("/" . self::API_VERSION . "/events");
+        $url = $this->apiUrl("/" . self::API_VERSION . "/events");
 
-        return new PagedResultIterator($this, "events", $this->get_auth_headers(), $url, $this->url_params($params));
+        return new PagedResultIterator($this, "events", $this->getAuthHeaders(), $url, $this->urlParams($params));
     }
 
-    public function free_busy($params)
+    public function freeBusy($params)
     {
         /*
           Date from : The minimum date from which to return free-busy information. Defaults to 16 days in the past. OPTIONAL
@@ -505,12 +408,12 @@ class Cronofy
 
           returns $result - Array of events
          */
-        $url = $this->api_url("/" . self::API_VERSION . "/free_busy");
+        $url = $this->apiUrl("/" . self::API_VERSION . "/free_busy");
 
-        return new PagedResultIterator($this, "free_busy", $this->get_auth_headers(), $url, $this->url_params($params));
+        return new PagedResultIterator($this, "free_busy", $this->getAuthHeaders(), $url, $this->urlParams($params));
     }
 
-    public function upsert_event($params)
+    public function upsertEvent($params)
     {
         /*
           calendar_id : The calendar_id of the calendar you wish the event to be added to. REQUIRED
@@ -533,17 +436,17 @@ class Cronofy
 
           returns true on success, associative array of errors on failure
          */
-        $postfields = array(
+        $postfields = [
             'event_id' => $params['event_id'],
             'summary' => $params['summary'],
             'start' => $params['start'],
             'end' => $params['end']
-        );
+        ];
 
-        return $this->base_upsert_event($postfields, $params);
+        return $this->baseUpsertEvent($postfields, $params);
     }
 
-    public function upsert_external_event($params)
+    public function upsertExternalEvent($params)
     {
         /*
           calendar_id : The calendar_id of the calendar you wish the event to be added to. REQUIRED
@@ -566,47 +469,47 @@ class Cronofy
 
           returns true on success, associative array of errors on failure
          */
-        $postfields = array(
+        $postFields = [
             'event_uid' => $params['event_uid'],
             'summary' => $params['summary'],
             'start' => $params['start'],
             'end' => $params['end']
-        );
+        ];
 
-        return $this->base_upsert_event($postfields, $params);
+        return $this->baseUpsertEvent($postFields, $params);
     }
 
-    private function base_upsert_event($postfields, $params)
+    private function baseUpsertEvent($postFields, $params)
     {
         if (!empty($params['description'])) {
-            $postfields['description'] = $params['description'];
+            $postFields['description'] = $params['description'];
         }
         if (!empty($params['tzid'])) {
-            $postfields['tzid'] = $params['tzid'];
+            $postFields['tzid'] = $params['tzid'];
         }
         if (!empty($params['location'])) {
-            $postfields['location'] = $params['location'];
+            $postFields['location'] = $params['location'];
         }
         if (!empty($params['reminders'])) {
-            $postfields['reminders'] = $params['reminders'];
+            $postFields['reminders'] = $params['reminders'];
         }
         if (!empty($params['reminders_create_only'])) {
-            $postfields['reminders_create_only'] = $params['reminders_create_only'];
+            $postFields['reminders_create_only'] = $params['reminders_create_only'];
         }
         if (!empty($params['event_private'])) {
-            $postfields['event_private'] = $params['event_private'];
+            $postFields['event_private'] = $params['event_private'];
         }
         if (!empty($params['transparency'])) {
-            $postfields['transparency'] = $params['transparency'];
+            $postFields['transparency'] = $params['transparency'];
         }
         if (!empty($params['attendees'])) {
-            $postfields['attendees'] = $params['attendees'];
+            $postFields['attendees'] = $params['attendees'];
         }
 
-        return $this->http_post("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
+        return $this->httpPost("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postFields);
     }
 
-    public function delete_event($params)
+    public function deleteEvent($params)
     {
         /*
           calendar_id : The calendar_id of the calendar you wish the event to be removed from. REQUIRED
@@ -614,12 +517,12 @@ class Cronofy
 
           returns true on success, associative array of errors on failure
          */
-        $postfields = array('event_id' => $params['event_id']);
+        $postFields = ['event_id' => $params['event_id']];
 
-        return $this->http_delete("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
+        return $this->httpDelete("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postFields);
     }
 
-    public function delete_external_event($params)
+    public function deleteExternalEvent($params)
     {
         /*
           calendar_id : The calendar_id of the calendar you wish the event to be removed from. REQUIRED
@@ -627,46 +530,46 @@ class Cronofy
 
           returns true on success, associative array of errors on failure
          */
-        $postfields = array('event_uid' => $params['event_uid']);
+        $postFields = ['event_uid' => $params['event_uid']];
 
-        return $this->http_delete("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postfields);
+        return $this->httpDelete("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postFields);
     }
 
-    public function create_channel($params)
+    public function createChannel($params)
     {
         /*
           String callback_url : The URL that is notified whenever a change is made. REQUIRED
 
           returns $result - Details of new channel. Details are available in the Cronofy API Documentation
         */
-        $postfields = array('callback_url' => $params['callback_url']);
+        $postFields = ['callback_url' => $params['callback_url']];
 
         if (!empty($params['filters'])) {
-            $postfields['filters'] = $params['filters'];
+            $postFields['filters'] = $params['filters'];
         }
 
-        return $this->http_post("/" . self::API_VERSION . "/channels", $postfields);
+        return $this->httpPost("/" . self::API_VERSION . "/channels", $postFields);
     }
 
-    public function list_channels()
+    public function listChannels()
     {
         /*
           returns $result - Array of channels. Details are available in the Cronofy API Documentation
          */
-        return $this->http_get("/" . self::API_VERSION . "/channels");
+        return $this->httpGet("/" . self::API_VERSION . "/channels");
     }
 
-    public function close_channel($params)
+    public function closeChannel($params)
     {
         /*
           channel_id : The ID of the channel to be closed. REQUIRED
 
           returns $result - Array of channels. Details are available in the Cronofy API Documentation
          */
-        return $this->http_delete("/" . self::API_VERSION . "/channels/" . $params['channel_id']);
+        return $this->httpDelete("/" . self::API_VERSION . "/channels/" . $params['channel_id']);
     }
 
-    public function authorize_with_service_account($params)
+    public function authorizeWithServiceAccount($params)
     {
         /*
           email : The email of the user to be authorized. REQUIRED
@@ -677,48 +580,48 @@ class Cronofy
             $params["scope"] = join(" ", $params["scope"]);
         }
 
-        return $this->http_post("/" . self::API_VERSION . "/service_account_authorizations", $params);
+        return $this->httpPost("/" . self::API_VERSION . "/service_account_authorizations", $params);
     }
 
-    public function elevated_permissions($params)
+    public function elevatedPermissions($params)
     {
         /*
           permissions : The permissions to elevate to. Should be in an array of `array($calendar_id, $permission_level)`. REQUIRED
           redirect_uri : The application's redirect URI. REQUIRED
          */
-        return $this->http_post("/" . self::API_VERSION . "/permissions", $params);
+        return $this->httpPost("/" . self::API_VERSION . "/permissions", $params);
     }
 
-    public function create_calendar($params)
+    public function createCalendar($params)
     {
         /*
           profile_id : The ID for the profile on which to create the calendar. REQUIRED
           name : The name for the created calendar. REQUIRED
          */
-        return $this->http_post("/" . self::API_VERSION . "/calendars", $params);
+        return $this->httpPost("/" . self::API_VERSION . "/calendars", $params);
     }
 
     public function resources()
     {
-      /*
-        returns $result - Array of resources. Details
-        are available in the Cronofy API Documentation
-       */
-        return $this->http_get('/' . self::API_VERSION . "/resources");
+        /*
+          returns $result - Array of resources. Details
+          are available in the Cronofy API Documentation
+         */
+        return $this->httpGet('/' . self::API_VERSION . "/resources");
     }
 
-    public function change_participation_status($params)
+    public function changeParticipationStatus($params)
     {
         /*
           calendar_id : The ID of the calendar holding the event. REQUIRED
           event_uid : The UID of the event to chang ethe participation status of. REQUIRED
           status : The new participation status for the event. Accepted values are: accepted, tentative, declined. REQUIRED
          */
-        $postfields = array(
+        $postFields = [
             "status" => $params["status"]
-        );
+        ];
 
-        return $this->http_post("/" . self::API_VERSION . "/calendars/" . $params["calendar_id"] . "/events/" . $params["event_uid"] . "/participation_status", $postfields);
+        return $this->httpPost("/" . self::API_VERSION . "/calendars/" . $params["calendar_id"] . "/events/" . $params["event_uid"] . "/participation_status", $postFields);
     }
 
     public function availability($params)
@@ -747,29 +650,29 @@ class Cronofy
                                         array("start" => "2017-01-02T09:00:00Z", "end" => "2017-01-02T18:00:00Z")
                                       )
          */
-        $postfields = array(
+        $postFields = [
             "available_periods" => $params["available_periods"],
             "participants" => $params["participants"],
             "required_duration" => $params["required_duration"]
-        );
+        ];
 
         if (!empty($params["buffer"])) {
-            $postfields["buffer"] = $params["buffer"];
+            $postFields["buffer"] = $params["buffer"];
         }
         if (!empty($params["max_results"])) {
-            $postfields["max_results"] = $params["max_results"];
+            $postFields["max_results"] = $params["max_results"];
         }
         if (!empty($params["start_interval"])) {
-            $postfields["start_interval"] = $params["start_interval"];
+            $postFields["start_interval"] = $params["start_interval"];
         }
         if (!empty($params["response_format"])) {
-            $postfields["response_format"] = $params["response_format"];
+            $postFields["response_format"] = $params["response_format"];
         }
 
-        return $this->api_key_http_post("/" . self::API_VERSION . "/availability", $postfields);
+        return $this->apiKeyHttpPost("/" . self::API_VERSION . "/availability", $postFields);
     }
 
-    public function real_time_scheduling($params)
+    public function realTimeScheduling($params)
     {
         /*
           oauth: An object of redirect_uri and scope following the event creation
@@ -816,20 +719,20 @@ class Cronofy
                 for example:  'Europe/London'
          */
 
-        $postfields = array(
-          "client_id" => $this->client_id,
-          "client_secret" => $this->client_secret,
-          "oauth" => $params["oauth"],
-          "event" => $params["event"],
-          "availability" => $params["availability"],
-          "target_calendars" => $params["target_calendars"],
-          "tzid" => $params["tzid"],
-        );
+        $postFields = [
+            "client_id" => $this->clientId,
+            "client_secret" => $this->clientSecret,
+            "oauth" => $params["oauth"],
+            "event" => $params["event"],
+            "availability" => $params["availability"],
+            "target_calendars" => $params["target_calendars"],
+            "tzid" => $params["tzid"],
+        ];
 
-        return $this->http_post("/" . self::API_VERSION . "/real_time_scheduling", $postfields);
+        return $this->httpPost("/" . self::API_VERSION . "/real_time_scheduling", $postFields);
     }
 
-    public function real_time_sequencing($params)
+    public function realTimeSequencing($params)
     {
         /*
           oauth: An object of redirect_uri and scope following the event creation
@@ -883,21 +786,21 @@ class Cronofy
                 for example:  'Europe/London'
          */
 
-        $postfields = array(
-          "client_id" => $this->client_id,
-          "client_secret" => $this->client_secret,
-          "oauth" => $params["oauth"],
-          "event" => $params["event"],
-          "availability" => $params["availability"],
-          "target_calendars" => $params["target_calendars"],
-          "tzid" => $params["tzid"],
-        );
+        $postFields = [
+            "client_id" => $this->clientId,
+            "client_secret" => $this->clientSecret,
+            "oauth" => $params["oauth"],
+            "event" => $params["event"],
+            "availability" => $params["availability"],
+            "target_calendars" => $params["target_calendars"],
+            "tzid" => $params["tzid"],
+        ];
 
-        return $this->http_post("/" . self::API_VERSION . "/real_time_sequencing", $postfields);
+        return $this->httpPost("/" . self::API_VERSION . "/real_time_sequencing", $postFields);
     }
 
 
-    public function add_to_calendar($params)
+    public function addToCalendar($params)
     {
         /*
           oauth: An object of redirect_uri and scope following the event creation
@@ -914,17 +817,17 @@ class Cronofy
                               )
          */
 
-        $postfields = array(
-          "client_id" => $this->client_id,
-          "client_secret" => $this->client_secret,
-          "oauth" => $params["oauth"],
-          "event" => $params["event"],
-        );
+        $postFields = [
+            "client_id" => $this->clientId,
+            "client_secret" => $this->clientSecret,
+            "oauth" => $params["oauth"],
+            "event" => $params["event"],
+        ];
 
-        return $this->http_post("/" . self::API_VERSION . "/add_to_calendar", $postfields);
+        return $this->httpPost("/" . self::API_VERSION . "/add_to_calendar", $postFields);
     }
 
-    public function create_smart_invite($params)
+    public function createSmartInvite($params)
     {
         /*
           Array event: An object with an event's details REQUIRED
@@ -945,26 +848,26 @@ class Cronofy
                      )
          */
 
-        $postfields = array(
-          "event" => $params["event"],
-          "smart_invite_id" => $params["smart_invite_id"],
-          "callback_url" => $params["callback_url"],
-        );
+        $postFields = [
+            "event" => $params["event"],
+            "smart_invite_id" => $params["smart_invite_id"],
+            "callback_url" => $params["callback_url"],
+        ];
 
         if (!empty($params['organizer'])) {
-            $postfields['organizer'] = $params['organizer'];
+            $postFields['organizer'] = $params['organizer'];
         }
 
         if (!empty($params['recipients'])) {
-            $postfields['recipients'] = $params['recipients'];
+            $postFields['recipients'] = $params['recipients'];
         } else {
-            $postfields['recipient'] = $params['recipient'];
+            $postFields['recipient'] = $params['recipient'];
         }
 
-        return $this->api_key_http_post("/" . self::API_VERSION . "/smart_invites", $postfields);
+        return $this->apiKeyHttpPost("/" . self::API_VERSION . "/smart_invites", $postFields);
     }
 
-    public function cancel_smart_invite($params)
+    public function cancelSmartInvite($params)
     {
         /*
           Array recipient: An object with recipient details REQUIRED
@@ -974,46 +877,46 @@ class Cronofy
           String smart_invite_id: A string representing the id for the smart invite. REQUIRED
          */
 
-        $postfields = array(
-          "recipient" => $params["recipient"],
-          "smart_invite_id" => $params["smart_invite_id"],
-          "method" => "cancel",
-        );
+        $postFields = [
+            "recipient" => $params["recipient"],
+            "smart_invite_id" => $params["smart_invite_id"],
+            "method" => "cancel",
+        ];
 
-        return $this->api_key_http_post("/" . self::API_VERSION . "/smart_invites", $postfields);
+        return $this->apiKeyHttpPost("/" . self::API_VERSION . "/smart_invites", $postFields);
     }
 
-    public function get_smart_invite($smart_invite_id, $recipient_email)
+    public function getSmartInvite($smart_invite_id, $recipient_email)
     {
         /*
           String smart_invite_id: A string representing the id for the smart invite. REQUIRED
           String recipient_email: A string representing the email of the recipient to get status for. REQUIRED
          */
 
-        $url_params = array(
+        $urlParams = [
             "smart_invite_id" => $smart_invite_id,
             "recipient_email" => $recipient_email,
-        );
+        ];
 
-        return $this->api_key_http_get("/" . self::API_VERSION . "/smart_invites", $url_params);
+        return $this->apiKeyHttpGet("/" . self::API_VERSION . "/smart_invites", $urlParams);
     }
 
-    public function get_availability_rule($availability_rule_id)
+    public function getAvailabilityRule($availability_rule_id)
     {
         /*
           String availability_rule_id: A string representing the id for the rule. REQUIRED
          */
 
-        return $this->http_get("/" . self::API_VERSION . "/availability_rules/" . $availability_rule_id);
+        return $this->httpGet("/" . self::API_VERSION . "/availability_rules/" . $availability_rule_id);
     }
 
-    public function list_availability_rules()
+    public function listAvailabilityRules()
     {
 
-        return $this->http_get("/" . self::API_VERSION . "/availability_rules");
+        return $this->httpGet("/" . self::API_VERSION . "/availability_rules");
     }
 
-    public function delete_availability_rule($availability_rule_id)
+    public function deleteAvailabilityRule($availability_rule_id)
     {
         /*
           String availability_rule_id: A string representing the id for the rule. REQUIRED
@@ -1021,10 +924,10 @@ class Cronofy
           returns true on success, associative array of errors on failure
          */
 
-        return $this->http_delete("/" . self::API_VERSION . "/availability_rules/" . $availability_rule_id);
+        return $this->httpDelete("/" . self::API_VERSION . "/availability_rules/" . $availability_rule_id);
     }
 
-    public function create_availability_rule($rule)
+    public function createAvailabilityRule($rule)
     {
         /*
           Array rule: An object with an availability rule's details REQUIRED
@@ -1049,27 +952,27 @@ class Cronofy
                             )
          */
 
-        $postfields = array(
+        $postFields = [
             "availability_rule_id" => $rule["availability_rule_id"],
             "tzid" => $rule["tzid"],
             "calendar_ids" => $rule["calendar_ids"],
             "weekly_periods" => $rule["weekly_periods"],
-        );
+        ];
 
-        return $this->http_post("/" . self::API_VERSION . "/availability_rules", $postfields);
+        return $this->httpPost("/" . self::API_VERSION . "/availability_rules", $postFields);
     }
 
-    private function api_url($path)
+    private function apiUrl($path)
     {
-        return $this->api_root_url . $path;
+        return $this->apiRootUrl . $path;
     }
 
-    private function url_params($params)
+    private function urlParams($params)
     {
         if (count($params) == 0) {
             return "";
         }
-        $str_params = array();
+        $str_params = [];
 
         foreach ($params as $key => $val) {
             if (gettype($val) == "array") {
@@ -1084,12 +987,12 @@ class Cronofy
         return "?" . join("&", $str_params);
     }
 
-    private function get_api_key_auth_headers($with_content_headers = false)
+    private function getApiKeyAuthHeaders($with_content_headers = false)
     {
-        $headers = array();
+        $headers = [];
 
-        $headers[] = 'Authorization: Bearer ' . $this->client_secret;
-        $headers[] = 'Host: ' . $this->host_domain;
+        $headers[] = 'Authorization: Bearer ' . $this->clientSecret;
+        $headers[] = 'Host: ' . $this->hostDomain;
 
         if ($with_content_headers) {
             $headers[] = 'Content-Type: application/json; charset=utf-8';
@@ -1098,14 +1001,14 @@ class Cronofy
         return $headers;
     }
 
-    private function get_auth_headers($with_content_headers = false)
+    private function getAuthHeaders($with_content_headers = false)
     {
-        $headers = array();
+        $headers = [];
 
-        if (isset($this->access_token)) {
-            $headers[] = 'Authorization: Bearer ' . $this->access_token;
+        if (isset($this->accessToken)) {
+            $headers[] = 'Authorization: Bearer ' . $this->accessToken;
         }
-        $headers[] = 'Host: ' . $this->host_domain;
+        $headers[] = 'Host: ' . $this->hostDomain;
 
         if ($with_content_headers) {
             $headers[] = 'Content-Type: application/json; charset=utf-8';
@@ -1114,7 +1017,7 @@ class Cronofy
         return $headers;
     }
 
-    private function parsed_response($response)
+    private function parsedResponse($response)
     {
         $json_decoded = json_decode($response, true);
 
@@ -1125,118 +1028,70 @@ class Cronofy
         return $json_decoded;
     }
 
-    public function handle_response($result, $status_code)
+    public function handleResponse($result, $status_code)
     {
         if ($status_code >= 200 && $status_code < 300) {
-            return $this->parsed_response($result);
+            return $this->parsedResponse($result);
         }
 
-        throw new CronofyException($this->http_codes[$status_code], $status_code, $this->parsed_response($result));
+        throw new CronofyException($this->http_codes[$status_code], $status_code, $this->parsedResponse($result));
     }
 
-    private $http_codes = array(
-      100 => 'Continue',
-      101 => 'Switching Protocols',
-      102 => 'Processing',
-      200 => 'OK',
-      201 => 'Created',
-      202 => 'Accepted',
-      203 => 'Non-Authoritative Information',
-      204 => 'No Content',
-      205 => 'Reset Content',
-      206 => 'Partial Content',
-      207 => 'Multi-Status',
-      300 => 'Multiple Choices',
-      301 => 'Moved Permanently',
-      302 => 'Found',
-      303 => 'See Other',
-      304 => 'Not Modified',
-      305 => 'Use Proxy',
-      306 => 'Switch Proxy',
-      307 => 'Temporary Redirect',
-      400 => 'Bad Request',
-      401 => 'Unauthorized',
-      402 => 'Payment Required',
-      403 => 'Forbidden',
-      404 => 'Not Found',
-      405 => 'Method Not Allowed',
-      406 => 'Not Acceptable',
-      407 => 'Proxy Authentication Required',
-      408 => 'Request Timeout',
-      409 => 'Conflict',
-      410 => 'Gone',
-      411 => 'Length Required',
-      412 => 'Precondition Failed',
-      413 => 'Request Entity Too Large',
-      414 => 'Request-URI Too Long',
-      415 => 'Unsupported Media Type',
-      416 => 'Requested Range Not Satisfiable',
-      417 => 'Expectation Failed',
-      418 => 'I\'m a teapot',
-      422 => 'Unprocessable Entity',
-      423 => 'Locked',
-      424 => 'Failed Dependency',
-      425 => 'Unordered Collection',
-      426 => 'Upgrade Required',
-      449 => 'Retry With',
-      450 => 'Blocked by Windows Parental Controls',
-      500 => 'Internal Server Error',
-      501 => 'Not Implemented',
-      502 => 'Bad Gateway',
-      503 => 'Service Unavailable',
-      504 => 'Gateway Timeout',
-      505 => 'HTTP Version Not Supported',
-      506 => 'Variant Also Negotiates',
-      507 => 'Insufficient Storage',
-      509 => 'Bandwidth Limit Exceeded',
-      510 => 'Not Extended'
-    );
-}
-
-class PagedResultIterator implements \IteratorAggregate
-{
-    private $cronofy;
-    private $items_key;
-    private $auth_headers;
-    private $url;
-    private $url_params;
-
-    public function __construct($cronofy, $items_key, $auth_headers, $url, $url_params)
-    {
-        $this->cronofy = $cronofy;
-        $this->items_key = $items_key;
-        $this->auth_headers = $auth_headers;
-        $this->url = $url;
-        $this->url_params = $url_params;
-        $this->first_page = $this->get_page($url, $url_params);
-    }
-
-    public function each()
-    {
-        $page = $this->first_page;
-
-        for ($i = 0; $i < count($page[$this->items_key]); $i++) {
-            yield $page[$this->items_key][$i];
-        }
-
-        while (isset($page["pages"]["next_page"])) {
-            $page = $this->get_page($page["pages"]["next_page"]);
-
-            for ($i = 0; $i < count($page[$this->items_key]); $i++) {
-                yield $page[$this->items_key][$i];
-            }
-        }
-    }
-
-    public function getIterator()
-    {
-        return $this->each();
-    }
-
-    private function get_page($url, $url_params = "")
-    {
-        list ($result, $status_code) = $this->cronofy->http_client->get_page($url, $this->auth_headers, $url_params);
-
-        return $this->cronofy->handle_response($result, $status_code);
-    }
+    private $http_codes = [
+        100 => 'Continue',
+        101 => 'Switching Protocols',
+        102 => 'Processing',
+        200 => 'OK',
+        201 => 'Created',
+        202 => 'Accepted',
+        203 => 'Non-Authoritative Information',
+        204 => 'No Content',
+        205 => 'Reset Content',
+        206 => 'Partial Content',
+        207 => 'Multi-Status',
+        300 => 'Multiple Choices',
+        301 => 'Moved Permanently',
+        302 => 'Found',
+        303 => 'See Other',
+        304 => 'Not Modified',
+        305 => 'Use Proxy',
+        306 => 'Switch Proxy',
+        307 => 'Temporary Redirect',
+        400 => 'Bad Request',
+        401 => 'Unauthorized',
+        402 => 'Payment Required',
+        403 => 'Forbidden',
+        404 => 'Not Found',
+        405 => 'Method Not Allowed',
+        406 => 'Not Acceptable',
+        407 => 'Proxy Authentication Required',
+        408 => 'Request Timeout',
+        409 => 'Conflict',
+        410 => 'Gone',
+        411 => 'Length Required',
+        412 => 'Precondition Failed',
+        413 => 'Request Entity Too Large',
+        414 => 'Request-URI Too Long',
+        415 => 'Unsupported Media Type',
+        416 => 'Requested Range Not Satisfiable',
+        417 => 'Expectation Failed',
+        418 => 'I\'m a teapot',
+        422 => 'Unprocessable Entity',
+        423 => 'Locked',
+        424 => 'Failed Dependency',
+        425 => 'Unordered Collection',
+        426 => 'Upgrade Required',
+        449 => 'Retry With',
+        450 => 'Blocked by Windows Parental Controls',
+        500 => 'Internal Server Error',
+        501 => 'Not Implemented',
+        502 => 'Bad Gateway',
+        503 => 'Service Unavailable',
+        504 => 'Gateway Timeout',
+        505 => 'HTTP Version Not Supported',
+        506 => 'Variant Also Negotiates',
+        507 => 'Insufficient Storage',
+        509 => 'Bandwidth Limit Exceeded',
+        510 => 'Not Extended'
+    ];
 }

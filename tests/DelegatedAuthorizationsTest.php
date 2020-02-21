@@ -1,5 +1,10 @@
 <?php
+namespace Cronofy\Tests;
+
+use Cronofy\Exception\CronofyException;
+use Cronofy\Http\HttpRequest;
 use PHPUnit\Framework\TestCase;
+use Cronofy\Cronofy;
 
 class DelegatedAuthorizationsTest extends TestCase
 {
@@ -11,17 +16,17 @@ class DelegatedAuthorizationsTest extends TestCase
         $scopes = ["list_calendars", "read_free_busy"];
         $state = "user-state";
 
-        $args = array(
+        $args = [
             "profile_id" => $profileId,
             "email" => $email,
             "callback_url" => $callback_url,
             "scope" => $scopes,
             "state" => $state
-        );
+        ];
 
-        $http = $this->createMock('HttpRequest');
+        $http = $this->createMock(HttpRequest::class);
         $http->expects($this->once())
-            ->method('http_post')
+            ->method('httpPost')
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/delegated_authorizations'),
                 $this->equalTo([
@@ -31,23 +36,23 @@ class DelegatedAuthorizationsTest extends TestCase
                     "scope" => "list_calendars read_free_busy",
                     "state" => $state
                 ]),
-                $this->equalTo(array(
+                $this->equalTo([
                     'Authorization: Bearer accessToken',
                     'Host: api.cronofy.com',
                     'Content-Type: application/json; charset=utf-8',
-                ))
+                ])
             )
-            ->will($this->returnValue(array("", 202)));
+            ->will($this->returnValue(["", 202]));
 
-        $cronofy = new Cronofy(array(
+        $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "access_token" => "accessToken",
             "refresh_token" => "refreshToken",
             "http_client" => $http,
-        ));
+        ]);
 
-        $cronofy->request_delegated_authorization($args);
+        $cronofy->requestDelegatedAuthorization($args);
     }
 
     public function testErrorHandling()
@@ -58,15 +63,15 @@ class DelegatedAuthorizationsTest extends TestCase
         $scopes = ["list_calendars", "read_free_busy"];
         $state = "user-state";
 
-        $args = array(
+        $args = [
             "profile_id" => $profileId,
             "email" => $email,
             "callback_url" => $callback_url,
             "scope" => $scopes,
             "state" => $state
-        );
+        ];
 
-        $error_response = '{
+        $errorResponse = '{
             "errors": {
                 "email": [
                     {
@@ -77,9 +82,9 @@ class DelegatedAuthorizationsTest extends TestCase
             }
         }';
 
-        $http = $this->createMock('HttpRequest');
+        $http = $this->createMock(HttpRequest::class);
         $http->expects($this->once())
-            ->method('http_post')
+            ->method('httpPost')
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/delegated_authorizations'),
                 $this->equalTo([
@@ -89,29 +94,29 @@ class DelegatedAuthorizationsTest extends TestCase
                     "scope" => "list_calendars read_free_busy",
                     "state" => $state
                 ]),
-                $this->equalTo(array(
+                $this->equalTo([
                     'Authorization: Bearer accessToken',
                     'Host: api.cronofy.com',
                     'Content-Type: application/json; charset=utf-8',
-                ))
+                ])
             )
-            ->will($this->returnValue(array($error_response, 422)));
+            ->will($this->returnValue([$errorResponse, 422]));
 
-        $cronofy = new Cronofy(array(
+        $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "access_token" => "accessToken",
             "refresh_token" => "refreshToken",
             "http_client" => $http,
-        ));
+        ]);
 
         $raised_error = false;
 
         try {
-            $cronofy->request_delegated_authorization($args);
+            $cronofy->requestDelegatedAuthorization($args);
         } catch (CronofyException $exception) {
             $raised_error = true;
-            $this->assertEquals(json_decode($error_response, true), $exception->error_details());
+            $this->assertEquals(json_decode($errorResponse, true), $exception->error_details());
             $this->assertEquals(422, $exception->getCode());
         }
 
