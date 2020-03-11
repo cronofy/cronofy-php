@@ -296,6 +296,51 @@ class CronofyTest extends TestCase
         $this->assertNotNull($actual);
     }
 
+    public function testCancelSmartInviteWithMultipleRecipients()
+    {
+        $recipients = array(
+            array("email" => "example@example.com"),
+            array("email" => "example@example.org"),
+        );
+        $smart_invite_id = "foo";
+
+        $request_params = array(
+          "method" => "cancel",
+          "recipients" => $recipients,
+          "smart_invite_id" => $smart_invite_id,
+        );
+
+        $http = $this->createMock('HttpRequest');
+        $http->expects($this->once())
+            ->method('http_post')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/v1/smart_invites'),
+                $this->equalTo($request_params),
+                $this->equalTo(array(
+                    'Authorization: Bearer clientSecret',
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8'
+                ))
+            )
+            ->will($this->returnValue(array("{'foo': 'bar'}", 200)));
+
+        $cronofy = new Cronofy(array(
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => $http,
+        ));
+
+        $params = array(
+          "recipients" => $recipients,
+          "smart_invite_id" => $smart_invite_id,
+        );
+
+        $actual = $cronofy->cancel_smart_invite($params);
+        $this->assertNotNull($actual);
+    }
+
     public function testCreateSmartInvite()
     {
         $event = array(
