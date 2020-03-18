@@ -1,3 +1,4 @@
 language: php
+install: composer dump-autoload
 php:
   - '7.2'
