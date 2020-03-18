@@ -878,10 +878,15 @@ class Cronofy
          */
 
         $postFields = [
-            "recipient" => $params["recipient"],
             "smart_invite_id" => $params["smart_invite_id"],
             "method" => "cancel",
         ];
+
+        if (!empty($params['recipients'])) {
+            $postFields['recipients'] = $params['recipients'];
+        } else {
+            $postFields['recipient'] = $params['recipient'];
+        }
 
         return $this->apiKeyHttpPost("/" . self::API_VERSION . "/smart_invites", $postFields);
     }
