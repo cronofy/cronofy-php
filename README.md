@@ -25,7 +25,7 @@ Generate a link for a user to grant access to their calendars:
 ```php
 $redirect_uri = "http://yoursite.dev/oauth2/callback";
 
-$cronofy = new Cronofy(["client_id" => "clientId"]);
+$cronofy = new Cronofy\Cronofy(["client_id" => "clientId"]);
 $params = [
   'redirect_uri' => $redirect_uri,
   'scope' => ['read_account','list_calendars','read_events','create_event','delete_event']
@@ -38,7 +38,7 @@ callback and receive a `code` parameter. You can then use that code to retrieve
 an OAuth token granting access to the user's Cronofy account:
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret"
 ]);
@@ -48,7 +48,7 @@ $params = [
   'code' => $code
 ];
 
-$token=$cronofy->request_token($params);
+$token=$cronofy->requestToken($params);
 
 ```
 
@@ -64,14 +64,14 @@ access to be granted.
 Get a list of all the user's calendars:
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret",
   "access_token" => "AccessToken",
   "refresh_token" => "RefreshToken"
 ]);
 
-$calendar = $cronofy->list_calendars();
+$calendar = $cronofy->listCalendars();
 ```
 
 ## Read events
@@ -81,7 +81,7 @@ $calendar = $cronofy->list_calendars();
 Get a list of all the user's events:
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret",
   "access_token" => "AccessToken",
@@ -92,7 +92,7 @@ $params = [
   'tzid' => 'Etc/UTC'
 ];
 
-$events = $cronofy->read_events($params);
+$events = $cronofy->readEvents($params);
 
 foreach($events->each() as $event){
   // process event
@@ -106,7 +106,7 @@ foreach($events->each() as $event){
 To create/update an event in the user's calendar:
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret",
   "access_token" => "AccessToken",
@@ -121,7 +121,7 @@ $params = [
   'start' => '2015-12-07T09:00:00Z',
   'end' => '2015-12-08T10:00:00Z'
 ];
-$new_event = $cronofy->upsert_event($params);
+$new_event = $cronofy->upsertEvent($params);
 
 ```
 
@@ -132,7 +132,7 @@ $new_event = $cronofy->upsert_event($params);
 To delete an event from user's calendar:
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret",
   "access_token" => "AccessToken",
@@ -144,7 +144,7 @@ $params = [
   'event_id' => 'EventID'
 ];
 
-$delete = $cronofy->delete_event($params);
+$delete = $cronofy->deleteEvent($params);
 
 ```
 
@@ -153,7 +153,7 @@ $delete = $cronofy->delete_event($params);
 To delete an external event from a user's calendar:
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret",
   "access_token" => "AccessToken",
@@ -165,7 +165,7 @@ $params = [
   'event_uid' => 'EventUID'
 ];
 
-$delete = $cronofy->delete_external_event($params);
+$delete = $cronofy->deleteExternalEvent($params);
 
 ```
 
@@ -174,7 +174,7 @@ $delete = $cronofy->delete_external_event($params);
 To elevate a client's permissions for a user's calendar(s):
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret",
   "access_token" => "AccessToken",
@@ -195,7 +195,7 @@ $params = [
   'redirect_uri' => 'http://yoursite.dev/elevate/callback'
 ];
 
-$response = $cronofy->elevated_permissions($params);
+$response = $cronofy->elevatedPermissions($params);
 
 ```
 
@@ -204,7 +204,7 @@ $response = $cronofy->elevated_permissions($params);
 To authorize a user's account using a service account:
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret",
   "access_token" => "AccessToken",
@@ -217,7 +217,7 @@ $params = [
   'scope' => ['read_account','list_calendars','read_events','create_event','delete_event']
 ];
 
-$response = $cronofy->authorize_with_service_account($params);
+$response = $cronofy->authorizeWithServiceAccount($params);
 
 ```
 
@@ -228,7 +228,7 @@ Note: You will need to use a Service Account access token to perform this action
 To create a calendar for a user's account profile:
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret",
   "access_token" => "AccessToken",
@@ -240,7 +240,7 @@ $params = [
   'name' => $new_calendar_name
 ];
 
-$response = $cronofy->create_calendar($params);
+$response = $cronofy->createCalendar($params);
 
 ```
 
@@ -249,7 +249,7 @@ $response = $cronofy->create_calendar($params);
 To use an alternative data center:
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret",
   "access_token" => "AccessToken",
@@ -264,14 +264,14 @@ $cronofy = new Cronofy([
 To retrieve all availability rules saved against an account:
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret",
   "access_token" => "AccessToken",
   "refresh_token" => "RefreshToken"
 ]);
 
-$response = $cronofy->list_availability_rules();
+$response = $cronofy->listAvailabilityRules();
 
 ```
 
@@ -280,7 +280,7 @@ $response = $cronofy->list_availability_rules();
 To retrieve an availability rule:
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret",
   "access_token" => "AccessToken",
@@ -290,7 +290,7 @@ $cronofy = new Cronofy([
 // The String that uniquely identifies the availability rule. 
 $rule_id = "default";
 
-$response = $cronofy->get_availability_rule($rule_id);
+$response = $cronofy->getAvailabilityRule($rule_id);
 
 ```
 
@@ -299,7 +299,7 @@ $response = $cronofy->get_availability_rule($rule_id);
 To delete an availability rule for the authenticated account:
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret",
   "access_token" => "AccessToken",
@@ -309,7 +309,7 @@ $cronofy = new Cronofy([
 // The String that uniquely identifies the availability rule. 
 $rule_id = "default";
 
-$response = $cronofy->delete_availability_rule($rule_id);
+$response = $cronofy->deleteAvailabilityRule($rule_id);
 
 ```
 
@@ -318,7 +318,7 @@ $response = $cronofy->delete_availability_rule($rule_id);
 To creates or update an availability rule for the authenticated account:
 
 ```php
-$cronofy = new Cronofy([
+$cronofy = new Cronofy\Cronofy([
   "client_id" => "clientId",
   "client_secret" => "ClientSecret",
   "access_token" => "AccessToken",
@@ -344,7 +344,7 @@ $params = [
     ]
 ];
 
-$response = $cronofy->create_availability_rule($params);
+$response = $cronofy->createAvailabilityRule($params);
 
 ```
 
