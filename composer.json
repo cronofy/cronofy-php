@@ -1,14 +1,17 @@
 {
     "name": "cronofy/cronofy",
     "description": "PHP wrapper for Cronofy's unified calendar API",
-    "version": "v0.29.0",
+    "version": "v1.0.0",
     "require": {
-        "php": "^5.3.3 || ^7.1"
+        "php": "^7.1"
     },
     "autoload": {
         "files": [
-            "cronofy.php"
-        ]
+            "src/Cronofy.php"
+        ],
+        "psr-4": {
+            "Cronofy\\": "src/"
+        }
     },
     "keywords": [
         "cronofy",

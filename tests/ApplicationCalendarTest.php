@@ -1,5 +1,9 @@
 <?php
+namespace Cronofy\Tests;
+
+use Cronofy\Http\HttpRequest;
 use PHPUnit\Framework\TestCase;
+use Cronofy\Cronofy;
 
 class ApplicationCalendarTest extends TestCase
 {
@@ -7,11 +11,11 @@ class ApplicationCalendarTest extends TestCase
     {
         $application_calendar_id = "foo";
 
-        $request_params = array(
+        $request_params = [
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "application_calendar_id" => $application_calendar_id,
-        );
+        ];
 
         $application_calendar_response = '{
         "token_type":"bearer",
@@ -28,31 +32,31 @@ class ApplicationCalendarTest extends TestCase
             }
         }';
 
-        $http = $this->createMock('HttpRequest');
+        $http = $this->createMock(HttpRequest::class);
         $http->expects($this->once())
-            ->method('http_post')
+            ->method('httpPost')
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/application_calendars'),
                 $this->equalTo($request_params),
-                $this->equalTo(array(
+                $this->equalTo([
                     'Host: api.cronofy.com',
                     'Content-Type: application/json; charset=utf-8'
-                ))
+                ])
             )
-            ->will($this->returnValue(array($application_calendar_response, 200)));
+            ->will($this->returnValue([$application_calendar_response, 200]));
 
-        $cronofy = new Cronofy(array(
+        $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "http_client" => $http,
-        ));
+        ]);
 
 
-        $actual = $cronofy->application_calendar($application_calendar_id);
+        $actual = $cronofy->applicationCalendar($application_calendar_id);
 
         $this->assertEquals($actual['sub'], "apc_567236000909002");
-        $this->assertEquals($cronofy->access_token, "fffff");
-        $this->assertEquals($cronofy->refresh_token, "2222");
-        $this->assertEquals($cronofy->expires_in, 3600);
+        $this->assertEquals($cronofy->accessToken, "fffff");
+        $this->assertEquals($cronofy->refreshToken, "2222");
+        $this->assertEquals($cronofy->expiresIn, 3600);
     }
 }

@@ -1,5 +1,9 @@
 <?php
+namespace Cronofy\Tests;
+
+use Cronofy\Http\HttpRequest;
 use PHPUnit\Framework\TestCase;
+use Cronofy\Cronofy;
 
 class ReadEventsTest extends TestCase
 {
@@ -19,32 +23,32 @@ class ReadEventsTest extends TestCase
           ]
         }';
 
-        $http = $this->createMock('HttpRequest');
+        $http = $this->createMock(HttpRequest::class);
         $http->expects($this->once())
-            ->method('get_page')
+            ->method('getPage')
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/events'),
-                $this->equalTo(array(
+                $this->equalTo([
                     'Authorization: Bearer accessToken',
                     'Host: api.cronofy.com'
-                )),
+                ]),
                 "?tzid=Etc%2FUTC"
             )
-            ->will($this->returnValue(array($events_page, 200)));
+            ->will($this->returnValue([$events_page, 200]));
 
-        $cronofy = new Cronofy(array(
+        $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "access_token" => "accessToken",
             "refresh_token" => "refreshToken",
             "http_client" => $http,
-        ));
+        ]);
 
-        $params = array(
+        $params = [
             'tzid' => 'Etc/UTC'
-        );
+        ];
 
-        $actual = $cronofy->read_events($params);
+        $actual = $cronofy->readEvents($params);
         $this->assertNotNull($actual);
         $this->assertCount(1, $actual);
         $this->assertCount(1, $actual->each());
@@ -91,24 +95,24 @@ class ReadEventsTest extends TestCase
           ]
         }';
 
-        $http = $this->createMock('HttpRequest');
+        $http = $this->createMock(HttpRequest::class);
         $http->expects($this->exactly(2))
-            ->method('get_page')
-            ->will($this->onConsecutiveCalls(array($page_1, 200), array($page_2, 200)));
+            ->method('getPage')
+            ->will($this->onConsecutiveCalls([$page_1, 200], [$page_2, 200]));
 
-        $cronofy = new Cronofy(array(
+        $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "access_token" => "accessToken",
             "refresh_token" => "refreshToken",
             "http_client" => $http,
-        ));
+        ]);
 
-        $params = array(
+        $params = [
             'tzid' => 'Etc/UTC'
-        );
+        ];
 
-        $actual = $cronofy->read_events($params);
+        $actual = $cronofy->readEvents($params);
         $this->assertNotNull($actual);
         $this->assertCount(2, $actual);
     }
@@ -144,24 +148,24 @@ class ReadEventsTest extends TestCase
           ]
         }';
 
-        $http = $this->createMock('HttpRequest');
+        $http = $this->createMock(HttpRequest::class);
         $http->expects($this->exactly(2))
-            ->method('get_page')
-            ->will($this->onConsecutiveCalls(array($page_1, 200), array($page_2, 200)));
+            ->method('getPage')
+            ->will($this->onConsecutiveCalls([$page_1, 200], [$page_2, 200]));
 
-        $cronofy = new Cronofy(array(
+        $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "access_token" => "accessToken",
             "refresh_token" => "refreshToken",
             "http_client" => $http,
-        ));
+        ]);
 
-        $params = array(
+        $params = [
             'tzid' => 'Etc/UTC'
-        );
+        ];
 
-        $actual = $cronofy->read_events($params);
+        $actual = $cronofy->readEvents($params);
         $event_uids = array_map(function (array $event) {
             return $event['event_uid'];
         }, iterator_to_array($actual));

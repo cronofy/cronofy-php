@@ -1,29 +1,33 @@
 <?php
+namespace Cronofy\Tests;
+
+use Cronofy\Http\HttpRequest;
 use PHPUnit\Framework\TestCase;
+use Cronofy\Cronofy;
 
 class UpsertEventTest extends TestCase
 {
     public function testUpsertEvent()
     {
-        $location = array(
+        $location = [
             "description" => "board room",
             "latitude" => "12.2344",
             "longitude" => "45.2444",
-        );
+        ];
 
-        $reminders = array(
-            array("minutes" => 30),
-            array("minutes" => 1440)
-        );
+        $reminders = [
+            ["minutes" => 30],
+            ["minutes" => 1440]
+        ];
 
-        $attendees = array(
-            "invite" => array(array("email" => "new_invitee@test.com", "display_name" => "New Invitee")),
-            "reject" => array(array("email" => "old_invitee@test.com", "display_name" => "Old Invitee"))
-        );
+        $attendees = [
+            "invite" => [["email" => "new_invitee@test.com", "display_name" => "New Invitee"]],
+            "reject" => [["email" => "old_invitee@test.com", "display_name" => "Old Invitee"]]
+        ];
 
         $calendarId = "cal_123";
 
-        $event = array(
+        $event = [
             "event_id" => "partner_event_id",
             "summary" => "Upsert Event Test",
             "description" => "description example",
@@ -36,57 +40,57 @@ class UpsertEventTest extends TestCase
             "event_private" => true,
             "reminders_create_only" => true,
             "transparency" => "opaque",
-        );
+        ];
 
-        $params = $event + array("calendar_id" => $calendarId);
+        $params = $event + ["calendar_id" => $calendarId];
 
-        $http = $this->createMock('HttpRequest');
+        $http = $this->createMock(HttpRequest::class);
         $http->expects($this->once())
-            ->method('http_post')
+            ->method('httpPost')
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/calendars/'.$calendarId.'/events'),
                 $this->equalTo($event),
-                $this->equalTo(array(
+                $this->equalTo([
                     'Authorization: Bearer accessToken',
                     'Host: api.cronofy.com',
                     'Content-Type: application/json; charset=utf-8'
-                ))
+                ])
             )
-            ->will($this->returnValue(array("{'foo': 'bar'}", 200)));
+            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
 
-        $cronofy = new Cronofy(array(
+        $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "access_token" => "accessToken",
             "refresh_token" => "refreshToken",
             "http_client" => $http,
-        ));
+        ]);
 
-        $actual = $cronofy->upsert_event($params);
+        $actual = $cronofy->upsertEvent($params);
         $this->assertNotNull($actual);
     }
 
     public function testUpsertExternalEvent()
     {
-        $location = array(
+        $location = [
             "description" => "board room",
             "latitude" => "12.2344",
             "longitude" => "45.2444",
-        );
+        ];
 
-        $reminders = array(
-            array("minutes" => 30),
-            array("minutes" => 1440)
-        );
+        $reminders = [
+            ["minutes" => 30],
+            ["minutes" => 1440]
+        ];
 
-        $attendees = array(
-            "invite" => array(array("email" => "new_invitee@test.com", "display_name" => "New Invitee")),
-            "reject" => array(array("email" => "old_invitee@test.com", "display_name" => "Old Invitee"))
-        );
+        $attendees = [
+            "invite" => [["email" => "new_invitee@test.com", "display_name" => "New Invitee"]],
+            "reject" => [["email" => "old_invitee@test.com", "display_name" => "Old Invitee"]]
+        ];
 
         $calendarId = "cal_123";
 
-        $event = array(
+        $event = [
             "event_uid" => "evt_external_22343948494",
             "summary" => "Upsert Event Test",
             "description" => "description example",
@@ -99,33 +103,33 @@ class UpsertEventTest extends TestCase
             "event_private" => true,
             "reminders_create_only" => true,
             "transparency" => "opaque",
-        );
+        ];
 
-        $params = $event + array("calendar_id" => $calendarId);
+        $params = $event + ["calendar_id" => $calendarId];
 
-        $http = $this->createMock('HttpRequest');
+        $http = $this->createMock(HttpRequest::class);
         $http->expects($this->once())
-            ->method('http_post')
+            ->method('httpPost')
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/calendars/'.$calendarId.'/events'),
                 $this->equalTo($event),
-                $this->equalTo(array(
+                $this->equalTo([
                     'Authorization: Bearer accessToken',
                     'Host: api.cronofy.com',
                     'Content-Type: application/json; charset=utf-8'
-                ))
+                ])
             )
-            ->will($this->returnValue(array("{'foo': 'bar'}", 200)));
+            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
 
-        $cronofy = new Cronofy(array(
+        $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "access_token" => "accessToken",
             "refresh_token" => "refreshToken",
             "http_client" => $http,
-        ));
+        ]);
 
-        $actual = $cronofy->upsert_external_event($params);
+        $actual = $cronofy->upsertExternalEvent($params);
         $this->assertNotNull($actual);
     }
 }

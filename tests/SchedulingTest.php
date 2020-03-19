@@ -1,94 +1,98 @@
 <?php
+namespace Cronofy\Tests;
+
+use Cronofy\Http\HttpRequest;
 use PHPUnit\Framework\TestCase;
+use Cronofy\Cronofy;
 
 class SchedulingTest extends TestCase
 {
     public function testAvailability()
     {
-        $parsedParams = array(
+        $parsedParams = [
             "available_periods" => "PERIODS",
             "participants" => "PARTICIPANTS",
             "required_duration" => "DURATION",
             "response_format" => "FORMAT"
-        );
-        
-        $http = $this->createMock('HttpRequest');
+        ];
+
+        $http = $this->createMock(HttpRequest::class);
         $http->expects($this->once())
-            ->method('http_post')
+            ->method('httpPost')
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/availability'),
                 $this->equalTo($parsedParams)
             )
-            ->will($this->returnValue(array(json_encode($parsedParams), 200)));
+            ->will($this->returnValue([json_encode($parsedParams), 200]));
 
-        $cronofy = new Cronofy(array(
+        $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "access_token" => "accessToken",
             "refresh_token" => "refreshToken",
             "http_client" => $http,
-        ));
+        ]);
 
-        $params = array(
+        $params = [
             "participants" => "PARTICIPANTS",
             "available_periods" => "PERIODS",
             "required_duration" => "DURATION",
             "response_format" => "FORMAT"
-        );
-        
+        ];
+
         $response = $cronofy->availability($params);
         $this->assertNotNull($response);
     }
 
     public function testRealTimeScheduling()
     {
-        $oauth = array(
+        $oauth = [
             "redirect_uri" => "http://test.com/",
             "scope" => "test_scope"
-        );
-        $event = array(
+        ];
+        $event = [
             "event_id" => "test_event_id",
             "summary" => "Add to Calendar test event",
-        );
-        $availability = array(
-            "participants" => array(
-                array(
-                    "members" => array(
-                        array(
+        ];
+        $availability = [
+            "participants" => [
+                [
+                    "members" => [
+                        [
                             "sub" => "acc_567236000909002",
-                            "calendar_ids" => array("cal_n23kjnwrw2_jsdfjksn234")
-                        )
-                    ),
+                            "calendar_ids" => ["cal_n23kjnwrw2_jsdfjksn234"]
+                        ]
+                    ],
                     "required" => "all"
-                )
-            ),
-            "required_duration" => array(
+                ]
+            ],
+            "required_duration" => [
                 "minutes" => 60
-            ),
-            "start_interval" => array(
+            ],
+            "start_interval" => [
                 "minutes" => 60
-            ),
-            "buffer" => array(
-                "before" => array(
+            ],
+            "buffer" => [
+                "before" => [
                     "minutes" => 60
-                )
-            ),
-            "available_periods" => array(
-                array(
+                ]
+            ],
+            "available_periods" => [
+                [
                     "start" => "2017-01-01T09:00:00Z",
                     "end" => "2017-01-01T17:00:00Z"
-                )
-            )
-        );
-        $target_calendars = array(
-            array(
+                ]
+            ]
+        ];
+        $target_calendars = [
+            [
                 "sub" => "acc_567236000909002",
                 "calendar_id" => "cal_n23kjnwrw2_jsdfjksn234"
-            )
-        );
+            ]
+        ];
         $tzid = 'Europe/London';
 
-        $params = array(
+        $params = [
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "event" => $event,
@@ -96,82 +100,82 @@ class SchedulingTest extends TestCase
             "availability" => $availability,
             "oauth" => $oauth,
             "tzid" => $tzid,
-        );
+        ];
 
-        $http = $this->createMock('HttpRequest');
+        $http = $this->createMock(HttpRequest::class);
         $http->expects($this->once())
-            ->method('http_post')
+            ->method('httpPost')
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/real_time_scheduling'),
                 $this->equalTo($params),
-                $this->equalTo(array(
+                $this->equalTo([
                     'Authorization: Bearer accessToken',
                     'Host: api.cronofy.com',
                     'Content-Type: application/json; charset=utf-8'
-                ))
+                ])
             )
-            ->will($this->returnValue(array("{'foo': 'bar'}", 200)));
+            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
 
-        $cronofy = new Cronofy(array(
+        $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "access_token" => "accessToken",
             "refresh_token" => "refreshToken",
             "http_client" => $http,
-        ));
+        ]);
 
-        $actual = $cronofy->real_time_scheduling($params);
+        $actual = $cronofy->realTimeScheduling($params);
         $this->assertNotNull($actual);
     }
 
     public function testRealTimeSequencing()
     {
-        $oauth = array(
+        $oauth = [
             "redirect_uri" => "http://test.com/",
             "scope" => "test_scope"
-        );
-        $event = array(
+        ];
+        $event = [
             "event_id" => "test_event_id",
             "summary" => "Add to Calendar test event",
-        );
-        $availability = array(
-            "sequence" => array(
-                array(
+        ];
+        $availability = [
+            "sequence" => [
+                [
                     "sequence_id" => "123",
                     "ordinal" => 1,
-                    "participants" => array(
-                        array(
-                            "members" => array(
-                                array(
+                    "participants" => [
+                        [
+                            "members" => [
+                                [
                                     "sub" => "acc_567236000909002",
-                                    "calendar_ids" => array("cal_n23kjnwrw2_jsdfjksn234")
-                                )
-                            ),
+                                    "calendar_ids" => ["cal_n23kjnwrw2_jsdfjksn234"]
+                                ]
+                            ],
                             "required" => "all"
-                        )
-                    ),
+                        ]
+                    ],
                     "event" => $event,
-                    "required_duration" => array(
+                    "required_duration" => [
                         "minutes" => 60
-                    ),
-                ),
-            ),
-            "available_periods" => array(
-                array(
+                    ],
+                ],
+            ],
+            "available_periods" => [
+                [
                     "start" => "2017-01-01T09:00:00Z",
                     "end" => "2017-01-01T17:00:00Z"
-                )
-            )
-        );
-        $target_calendars = array(
-            array(
+                ]
+            ]
+        ];
+        $target_calendars = [
+            [
                 "sub" => "acc_567236000909002",
                 "calendar_id" => "cal_n23kjnwrw2_jsdfjksn234"
-            )
-        );
+            ]
+        ];
         $tzid = 'Europe/London';
 
-        $params = array(
+        $params = [
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "event" => $event,
@@ -179,31 +183,31 @@ class SchedulingTest extends TestCase
             "availability" => $availability,
             "oauth" => $oauth,
             "tzid" => $tzid,
-        );
+        ];
 
-        $http = $this->createMock('HttpRequest');
+        $http = $this->createMock(HttpRequest::class);
         $http->expects($this->once())
-            ->method('http_post')
+            ->method('httpPost')
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/real_time_sequencing'),
                 $this->equalTo($params),
-                $this->equalTo(array(
+                $this->equalTo([
                     'Authorization: Bearer accessToken',
                     'Host: api.cronofy.com',
                     'Content-Type: application/json; charset=utf-8'
-                ))
+                ])
             )
-            ->will($this->returnValue(array("{'foo': 'bar'}", 200)));
+            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
 
-        $cronofy = new Cronofy(array(
+        $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
             "access_token" => "accessToken",
             "refresh_token" => "refreshToken",
             "http_client" => $http,
-        ));
+        ]);
 
-        $actual = $cronofy->real_time_sequencing($params);
+        $actual = $cronofy->realTimeSequencing($params);
         $this->assertNotNull($actual);
     }
 }
