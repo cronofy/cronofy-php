@@ -505,6 +505,11 @@ class Cronofy
         if (!empty($params['attendees'])) {
             $postFields['attendees'] = $params['attendees'];
         }
+        if (!empty($params['conferencing'])) {
+            if (!empty($params['conferencing']['profileId'])) {
+                $postFields['conferencing'] = ['profileId' => $params['conferencing']['profileId']];
+            }
+        }
 
         return $this->httpPost("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postFields);
     }
