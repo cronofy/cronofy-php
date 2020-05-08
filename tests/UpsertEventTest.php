@@ -41,7 +41,7 @@ class UpsertEventTest extends TestCase
             "reminders_create_only" => true,
             "transparency" => "opaque",
             "conferencing" => [
-                "profileId" => "default"
+                "profile_id" => "default"
             ],
         ];
 

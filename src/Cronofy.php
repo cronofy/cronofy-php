@@ -506,8 +506,8 @@ class Cronofy
             $postFields['attendees'] = $params['attendees'];
         }
         if (!empty($params['conferencing'])) {
-            if (!empty($params['conferencing']['profileId'])) {
-                $postFields['conferencing'] = ['profileId' => $params['conferencing']['profileId']];
+            if (!empty($params['conferencing']['profile_id'])) {
+                $postFields['conferencing'] = ['profile_id' => $params['conferencing']['profile_id']];
             }
         }
 
