@@ -40,6 +40,9 @@ class UpsertEventTest extends TestCase
             "event_private" => true,
             "reminders_create_only" => true,
             "transparency" => "opaque",
+            "conferencing" => [
+                "profile_id" => "default"
+            ],
         ];
 
         $params = $event + ["calendar_id" => $calendarId];
