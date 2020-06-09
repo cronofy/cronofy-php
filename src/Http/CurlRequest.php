@@ -44,7 +44,7 @@ class CurlRequest implements HttpRequest
         curl_setopt($curl, CURLOPT_USERAGENT, $this->useragent);
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($params));
-        curl_setopt($curl, CURLOPT_VERBOSE, true);
+        curl_setopt($curl, CURLOPT_VERBOSE, false);
         // empty string means send all supported encoding types
         curl_setopt($curl, CURLOPT_ENCODING, '');
         $result = curl_exec($curl);
