@@ -40,6 +40,22 @@ class CronofyTest extends TestCase
             . "&scope=read_account%20list_calendars&delegated_scope=create_calendar%20read_free_busy", $auth);
     }
 
+    public function testProviderNameInAuthorizationUrl()
+    {
+        $redirect_uri = "http://yoursite.dev/oauth2/callback";
+
+        $cronofy = new Cronofy(["client_id" => "clientId"]);
+        $params = [
+            'redirect_uri' => $redirect_uri,
+            'scope' => ['read_account','list_calendars'],
+            'provider_name' => 'office365'
+        ];
+        $auth = $cronofy->getAuthorizationURL($params);
+
+        $this->assertEquals("https://app.cronofy.com/oauth/authorize?response_type=code&client_id=clientId"
+            . "&redirect_uri=http%3A%2F%2Fyoursite.dev%2Foauth2%2Fcallback&scope=read_account%20list_calendars&provider_name=office365", $auth);
+    }
+
     public function testErrorHandling()
     {
         $args = [

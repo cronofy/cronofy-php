@@ -159,6 +159,9 @@ class Cronofy
         if (!empty($params['delegated_scope'])) {
             $url .= "&delegated_scope=" . rawurlencode(join(" ", $params['delegated_scope']));
         }
+        if (!empty($params['provider_name'])) {
+            $url .= "&provider_name=" . $params['provider_name'];
+        }
 
         return $url;
     }
