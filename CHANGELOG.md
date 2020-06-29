@@ -1,3 +1,7 @@
+## [1.1.2]
+
+* disable libcurl verbose output
+
 ## [1.1.1]
 
 * add support for `provider_name` on `getAuthorizationURL()`
