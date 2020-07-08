@@ -249,6 +249,35 @@ class CronofyTest extends TestCase
         $this->assertNotNull($actual);
     }
 
+    public function testFreeBusy()
+    {
+        $http = $this->createMock(HttpRequest::class);
+        $http->expects($this->once())
+            ->method('httpGet')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/v1/free_busy?localized_times=true'),
+                $this->equalTo([
+                    'Authorization: Bearer accessToken',
+                    'Host: api.cronofy.com'
+                ])
+            )
+            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
+
+        $cronofy = new Cronofy([
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => $http,
+        ]);
+
+        $params = [
+          "localized_times" => true
+        ];
+        $actual = $cronofy->freeBusy($params);
+        $this->assertNotNull($actual);
+    }
+
     public function testGetSmartInvite()
     {
         $http = $this->createMock(HttpRequest::class);
