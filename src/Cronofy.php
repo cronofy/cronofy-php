@@ -992,6 +992,9 @@ class Cronofy
                 for ($i = 0; $i < count($val); $i++) {
                     array_push($str_params, $key . "[]=" . urlencode($val[$i]));
                 }
+            } elseif (gettype($val) == "boolean") {
+                $bool_str = $val ? "true" : "false";
+                array_push($str_params, $key . "=" . urlencode($bool_str));
             } else {
                 array_push($str_params, $key . "=" . urlencode($val));
             }
