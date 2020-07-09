@@ -251,17 +251,32 @@ class CronofyTest extends TestCase
 
     public function testFreeBusy()
     {
+        $page_1 = '{
+          "pages": {
+            "current": 1,
+            "total": 1,
+          },
+          "events": [
+            {
+              "calendar_id": "cal_U9uuErStTG@EAAAB_IsAsykA2DBTWqQTf-f0kJw",
+              "event_uid": "evt_external_event_one",
+              "summary": "Company Retreat"
+            }
+          ]
+        }';
+
         $http = $this->createMock(HttpRequest::class);
-        $http->expects($this->once())
-            ->method('httpGet')
+        $http->expects($this->at(0))
+            ->method('getPage')
             ->with(
-                $this->equalTo('https://api.cronofy.com/v1/free_busy?localized_times=true'),
+                $this->equalTo('https://api.cronofy.com/v1/free_busy'),
                 $this->equalTo([
                     'Authorization: Bearer accessToken',
                     'Host: api.cronofy.com'
-                ])
+                ]),
+                "?localized_times=true"
             )
-            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
+            ->will($this->returnValue([$page_1, 200]));
 
         $cronofy = new Cronofy([
             "client_id" => "clientId",
@@ -271,9 +286,7 @@ class CronofyTest extends TestCase
             "http_client" => $http,
         ]);
 
-        $params = [
-          "localized_times" => true
-        ];
+        $params = [ "localized_times" => true ];
         $actual = $cronofy->freeBusy($params);
         $this->assertNotNull($actual);
     }
