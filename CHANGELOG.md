@@ -1,3 +1,7 @@
+## [1.1.3]
+
+* allow serialization of booleans in params
+
 ## [1.1.2]
 
 * disable libcurl verbose output
@@ -27,6 +31,8 @@
 [1.0.1]: https://github.com/cronofy/cronofy-php/releases/tag/v1.0.1
 [1.1.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.0
 [1.1.1]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.1
+[1.1.2]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.2
+[1.1.3]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.3
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
