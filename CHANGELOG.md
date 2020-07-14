@@ -1,3 +1,5 @@
+* add `color` support to `upsertEvent`
+
 ## [1.1.3]
 
 * allow serialization of booleans in params
