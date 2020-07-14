@@ -40,6 +40,7 @@ class UpsertEventTest extends TestCase
             "event_private" => true,
             "reminders_create_only" => true,
             "transparency" => "opaque",
+            "color" => "#c6040f",
             "conferencing" => [
                 "profile_id" => "default"
             ],

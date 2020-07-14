@@ -433,6 +433,7 @@ class Cronofy
                             for example: array(array("minutes" => 30), array("minutes" => 1440))
           Boolean reminders_create_only: A Boolean specifying whether reminders should only be applied when creating an event. OPTIONAL
           String transparency : The transparency of the event. Accepted values are "transparent" and "opaque". OPTIONAL
+          String color : The color of the event in calendars which support custom event colors. OPTIONAL
           Array attendees : An array of "invite" and "reject" arrays which are lists of attendees to invite and remove from the event. OPTIONAL
                             for example: array("invite" => array(array("email" => "new_invitee@test.com", "display_name" => "New Invitee"))
                                                "reject" => array(array("email" => "old_invitee@test.com", "display_name" => "Old Invitee")))
@@ -504,6 +505,9 @@ class Cronofy
         }
         if (!empty($params['transparency'])) {
             $postFields['transparency'] = $params['transparency'];
+        }
+        if (!empty($params['color'])) {
+            $postFields['color'] = $params['color'];
         }
         if (!empty($params['attendees'])) {
             $postFields['attendees'] = $params['attendees'];
