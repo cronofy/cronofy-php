@@ -2,6 +2,8 @@
 
 namespace Cronofy\Http;
 
+use Cronofy\Exception\CronofyException;
+
 class CurlRequest implements HttpRequest
 {
     public $useragent;
