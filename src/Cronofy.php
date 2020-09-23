@@ -192,6 +192,30 @@ class Cronofy
         return $url;
     }
 
+    public function requestElementToken($params)
+    {
+        /*
+          Array $params : An array of additional parameters
+          permissions : Array. An array of permissions the token will be granted. REQUIRED
+          subs:  : Array. An array of subs to identify the accounts the token is allowed to access  REQUIRED
+          origin: String he Origin of the application where the Element will be used. REQUIRED
+
+          Response Array:
+          element_token.permissions : The array of permissions granted.
+          element_token.origin : The permitted Origin the token can be used with.
+          element_token.token : The token that is passed to Elements to authenticate them.
+          element_token.expires_in : The number of seconds the token can be used for.
+         */
+        $postfields = [
+            "version" => "1",
+            "permissions" => $params['permissions'],
+            'subs' => $params['subs'],
+            "origin" => $params['origin']
+        ];
+
+        return $this->apiKeyHttpPost("/v1/element_tokens", $postfields);
+    }
+
     public function requestToken($params)
     {
         /*
