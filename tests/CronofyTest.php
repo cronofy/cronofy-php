@@ -497,4 +497,50 @@ class CronofyTest extends TestCase
         $actual = $cronofy->createSmartInvite($params);
         $this->assertNotNull($actual);
     }
+
+    public function testRequestElementToken()
+    {
+        $params = [
+            "version" => "1",
+            "permissions" => ["agenda", "availability"],
+            'subs' => ['acc_12345678'],
+            "origin" => 'http://local.test'
+        ];
+
+        $response = [
+            "element_token" =>  [
+                "permissions" => ["agenda", "availability"],
+                "origin" => 'http://local.test',
+                "token" => "ELEMENT_TOKEN",
+                "expires_in" => 64800
+            ]
+        ];
+
+        $http = $this->createMock(HttpRequest::class);
+        $http->expects($this->once())
+            ->method('httpPost')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/v1/element_tokens'),
+                $this->equalTo($params),
+                $this->equalTo([
+                    'Authorization: Bearer clientSecret',
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8'
+                ])
+            )
+            ->will($this->returnValue([json_encode($response), 200]))
+        ;
+
+        $cronofy = new Cronofy([
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => $http,
+        ]);
+
+        $actual = $cronofy->requestElementToken($params);
+        $this->assertNotNull($actual);
+    }
+
 }
