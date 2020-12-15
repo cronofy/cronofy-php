@@ -542,5 +542,4 @@ class CronofyTest extends TestCase
         $actual = $cronofy->requestElementToken($params);
         $this->assertNotNull($actual);
     }
-
 }
