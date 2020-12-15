@@ -537,9 +537,7 @@ class Cronofy
             $postFields['attendees'] = $params['attendees'];
         }
         if (!empty($params['conferencing'])) {
-            if (!empty($params['conferencing']['profile_id'])) {
-                $postFields['conferencing'] = ['profile_id' => $params['conferencing']['profile_id']];
-            }
+            $postFields['conferencing'] = $params['conferencing'];
         }
 
         return $this->httpPost("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postFields);
