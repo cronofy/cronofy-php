@@ -1,3 +1,7 @@
+## [1.1.6]
+
+* less restrictive options for `conferencing`
+
 ## [1.1.5]
 
 * add `requestElementToken()`
@@ -42,7 +46,8 @@
 [1.1.2]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.2
 [1.1.3]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.3
 [1.1.4]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.4
-[1.1.4]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.5
+[1.1.5]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.5
+[1.1.6]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.6
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
