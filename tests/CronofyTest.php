@@ -191,12 +191,13 @@ class CronofyTest extends TestCase
             ->with(
                 $this->equalTo('https://api.cronofy.com/oauth/token/revoke'),
                 $this->equalTo([
-                    'Host: api.cronofy.com'
-                ]),
-                $this->equalTo([
                     'client_id' => 'clientId',
                     'client_secret' => 'clientSecret',
                     'token' => 'sometoken'
+                ]),
+                $this->equalTo([
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8'
                 ])
             )
             ->will($this->returnValue(["{'foo': 'bar'}", 200]));
@@ -204,8 +205,6 @@ class CronofyTest extends TestCase
         $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
-            "access_token" => "accessToken",
-            "refresh_token" => "refreshToken",
             "http_client" => $http,
         ]);
 
@@ -223,12 +222,13 @@ class CronofyTest extends TestCase
             ->with(
                 $this->equalTo('https://api.cronofy.com/oauth/token/revoke'),
                 $this->equalTo([
-                    'Host: api.cronofy.com'
-                ]),
-                $this->equalTo([
                     'client_id' => 'clientId',
                     'client_secret' => 'clientSecret',
                     'token' => 'sometoken'
+                ]),
+                $this->equalTo([
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8'
                 ])
             )
             ->will($this->returnValue(["{'foo': 'bar'}", 200]));
@@ -236,8 +236,6 @@ class CronofyTest extends TestCase
         $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
-            "access_token" => "accessToken",
-            "refresh_token" => "refreshToken",
             "http_client" => $http,
         ]);
 
@@ -255,12 +253,13 @@ class CronofyTest extends TestCase
             ->with(
                 $this->equalTo('https://api.cronofy.com/oauth/token/revoke'),
                 $this->equalTo([
-                    'Host: api.cronofy.com'
-                ]),
-                $this->equalTo([
                     'client_id' => 'clientId',
                     'client_secret' => 'clientSecret',
                     'sub' => 'somesub'
+                ]),
+                $this->equalTo([
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8'
                 ])
             )
             ->will($this->returnValue(["{'foo': 'bar'}", 200]));
@@ -268,8 +267,6 @@ class CronofyTest extends TestCase
         $cronofy = new Cronofy([
             "client_id" => "clientId",
             "client_secret" => "clientSecret",
-            "access_token" => "accessToken",
-            "refresh_token" => "refreshToken",
             "http_client" => $http,
         ]);
 
