@@ -300,10 +300,12 @@ class Cronofy
         }
     }
 
-    public function revokeAuthorization($token)
+    public function revokeAuthorization($params)
     {
         /*
-          String token : Either the refresh_token or access_token for the authorization you wish to revoke. REQUIRED
+          Array $params : An array of additional parameters
+          String token : Either the refresh_token or access_token for the authorization you wish to revoke. OPTIONAL
+          String sub : The sub value for the account you wish to revoke. OPTIONAL
 
           Response :
           true if successful, error string if not
@@ -311,8 +313,20 @@ class Cronofy
         $postfields = [
             'client_id' => $this->clientId,
             'client_secret' => $this->clientSecret,
-            'token' => $token
         ];
+
+        if (is_string($params)) {
+            // in version <= 1.1.6 the method only supported token
+            $params = ['token' => $params];
+        }
+
+        if (array_key_exists('token', $params)) {
+            $postfields['token'] = $params['token'];
+        }
+
+        if (array_key_exists('sub', $params)) {
+            $postfields['sub'] = $params['sub'];
+        }
 
         return $this->httpPost("/oauth/token/revoke", $postfields);
     }
