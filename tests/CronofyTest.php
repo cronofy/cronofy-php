@@ -189,7 +189,7 @@ class CronofyTest extends TestCase
         $http->expects($this->once())
             ->method('httpPost')
             ->with(
-                $this->equalTo('https://api.cronofy.com/v1/oauth/token/revoke'),
+                $this->equalTo('https://api.cronofy.com/oauth/token/revoke'),
                 $this->equalTo([
                     'Host: api.cronofy.com'
                 ]),
@@ -221,7 +221,7 @@ class CronofyTest extends TestCase
         $http->expects($this->once())
             ->method('httpPost')
             ->with(
-                $this->equalTo('https://api.cronofy.com/v1/oauth/token/revoke'),
+                $this->equalTo('https://api.cronofy.com/oauth/token/revoke'),
                 $this->equalTo([
                     'Host: api.cronofy.com'
                 ]),
@@ -253,7 +253,7 @@ class CronofyTest extends TestCase
         $http->expects($this->once())
             ->method('httpPost')
             ->with(
-                $this->equalTo('https://api.cronofy.com/v1/oauth/token/revoke'),
+                $this->equalTo('https://api.cronofy.com/oauth/token/revoke'),
                 $this->equalTo([
                     'Host: api.cronofy.com'
                 ]),
