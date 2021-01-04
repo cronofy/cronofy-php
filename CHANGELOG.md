@@ -1,3 +1,7 @@
+## [1.1.7]
+
+* support revoking subs
+
 ## [1.1.6]
 
 * less restrictive options for `conferencing`

@@ -183,6 +183,97 @@ class CronofyTest extends TestCase
         $this->assertNotNull($actual);
     }
 
+    public function testRevokeAuthorizationWithString()
+    {
+        $http = $this->createMock(HttpRequest::class);
+        $http->expects($this->once())
+            ->method('httpPost')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/oauth/token/revoke'),
+                $this->equalTo([
+                    'client_id' => 'clientId',
+                    'client_secret' => 'clientSecret',
+                    'token' => 'sometoken'
+                ]),
+                $this->equalTo([
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8'
+                ])
+            )
+            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
+
+        $cronofy = new Cronofy([
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "http_client" => $http,
+        ]);
+
+        $actual = $cronofy->revokeAuthorization('sometoken');
+        $this->assertNotNull($actual);
+    }
+
+
+
+    public function testRevokeAuthorizationWithToken()
+    {
+        $http = $this->createMock(HttpRequest::class);
+        $http->expects($this->once())
+            ->method('httpPost')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/oauth/token/revoke'),
+                $this->equalTo([
+                    'client_id' => 'clientId',
+                    'client_secret' => 'clientSecret',
+                    'token' => 'sometoken'
+                ]),
+                $this->equalTo([
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8'
+                ])
+            )
+            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
+
+        $cronofy = new Cronofy([
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "http_client" => $http,
+        ]);
+
+        $actual = $cronofy->revokeAuthorization(['token' => 'sometoken']);
+        $this->assertNotNull($actual);
+    }
+
+
+
+    public function testRevokeAuthorizationWithSub()
+    {
+        $http = $this->createMock(HttpRequest::class);
+        $http->expects($this->once())
+            ->method('httpPost')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/oauth/token/revoke'),
+                $this->equalTo([
+                    'client_id' => 'clientId',
+                    'client_secret' => 'clientSecret',
+                    'sub' => 'somesub'
+                ]),
+                $this->equalTo([
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8'
+                ])
+            )
+            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
+
+        $cronofy = new Cronofy([
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "http_client" => $http,
+        ]);
+
+        $actual = $cronofy->revokeAuthorization(['sub' => 'somesub']);
+        $this->assertNotNull($actual);
+    }
+
     public function testDeleteEvent()
     {
         $params = ["event_id" => "evt_456"];
