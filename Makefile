@@ -12,7 +12,7 @@ update:
 	php composer.phar update
 
 test: install_dependencies
-	vendor/bin/phpunit
+	vendor/bin/phpunit tests/
 	vendor/bin/phpcs tests/ src/Cronofy.php --standard=ruleset.xml
 
 check_dependencies:

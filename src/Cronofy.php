@@ -1015,6 +1015,15 @@ class Cronofy
         return $this->httpPost("/" . self::API_VERSION . "/availability_rules", $postFields);
     }
 
+    public function conferencingServiceAuthorization($params)
+    {
+        $postFields = [
+            'redirect_uri' => $params['redirect_uri'],
+        ];
+
+        return $this->httpPost("/" . self::API_VERSION . "/conferencing_service_authorizations", $postFields);
+    }
+
     private function apiUrl($path)
     {
         return $this->apiRootUrl . $path;
