@@ -633,4 +633,47 @@ class CronofyTest extends TestCase
         $actual = $cronofy->requestElementToken($params);
         $this->assertNotNull($actual);
     }
+
+    public function testConferencingServiceAuthorization()
+    {
+        $request_params = [
+            "redirect_uri" => "http://example.com",
+        ];
+
+        $response = [
+            "authorization_request" => [
+                "url" => "https://app.cronofy.com/conferencing_services/xxxxx"
+            ],
+        ];
+
+        $http = $this->createMock(HttpRequest::class);
+        $http->expects($this->once())
+             ->method('httpPost')
+             ->with(
+                 $this->equalTo('https://api.cronofy.com/v1/conferencing_service_authorizations'),
+                 $this->equalTo($request_params),
+                 $this->equalTo([
+                     'Authorization: Bearer accessToken',
+                     'Host: api.cronofy.com',
+                     'Content-Type: application/json; charset=utf-8',
+                 ])
+             )
+             ->will($this->returnValue([json_encode($response), 200]));
+
+        $cronofy = new Cronofy([
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => $http,
+        ]);
+
+        $params = [
+            'redirect_uri' => "http://example.com",
+        ];
+
+        $actual = $cronofy->conferencingServiceAuthorization($params);
+        $this->assertNotNull($actual);
+        $this->assertEquals($actual, $response);
+    }
 }
