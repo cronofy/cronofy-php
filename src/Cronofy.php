@@ -1020,6 +1020,10 @@ class Cronofy
         $postFields = [
             'redirect_uri' => $params['redirect_uri'],
         ];
+        
+        if (!empty($params['provider_name'])) {
+            $postFields['provider_name'] = $params['provider_name'];
+        }
 
         return $this->httpPost("/" . self::API_VERSION . "/conferencing_service_authorizations", $postFields);
     }
