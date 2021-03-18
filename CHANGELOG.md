@@ -1,3 +1,7 @@
+## [1.1.10]
+
+* add missing exception `use` [#86]
+
 ## [1.1.9]
 
 * add support for `provider_name` to `conferencingServiceAuthorization()` [#94]
@@ -63,8 +67,10 @@
 [1.1.7]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.7
 [1.1.8]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.8
 [1.1.9]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.9
+[1.1.10]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.10
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
 [#34]: https://github.com/cronofy/cronofy-php/pull/77
 [#94]: https://github.com/cronofy/cronofy-php/pull/94
+[#86]: https://github.com/cronofy/cronofy-php/pull/86
