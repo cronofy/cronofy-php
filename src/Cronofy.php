@@ -2,8 +2,13 @@
 
 namespace Cronofy;
 
+use Cronofy\Batch\BatchRequest;
 use Cronofy\Exception\CronofyException;
+use Cronofy\Exception\PartialBatchFailureException;
 use Cronofy\Http\CurlRequest;
+use Cronofy\Batch\BatchBuilder;
+use Cronofy\Batch\BatchResponse;
+use Cronofy\Batch\BatchResult;
 
 class Cronofy
 {
@@ -1026,6 +1031,57 @@ class Cronofy
         }
 
         return $this->httpPost("/" . self::API_VERSION . "/conferencing_service_authorizations", $postFields);
+    }
+
+    public function batch(BatchBuilder $batch): BatchResult
+    {
+        $requests = $batch->requests();
+
+        $postFields = [
+            'batch' => $this->convertBatchRequestsToArray(...$requests),
+        ];
+
+        $httpResult = $this->httpPost(
+            sprintf('/%s/batch', self::API_VERSION),
+            $postFields
+        );
+
+        $responses = [];
+
+        foreach ($httpResult['batch'] as $i => $response) {
+            $responses[] = new BatchResponse(
+                $response['status'],
+                $response['headers'] ?? null,
+                $response['data'] ?? null,
+                $requests[$i]
+            );
+        }
+
+        $result = new BatchResult(...$responses);
+
+        if ($result->hasErrors()) {
+            $errorCount = count($result->errors());
+
+            throw new PartialBatchFailureException(
+                sprintf('Batch contains %d errors', $errorCount),
+                $result
+            );
+        }
+
+        return $result;
+    }
+
+    private function convertBatchRequestsToArray(BatchRequest ...$requests): array
+    {
+        $requestMapper = function (BatchRequest $request) {
+            return [
+                'method' => $request->method(),
+                'relative_url' => $request->relativeUrl(),
+                'data' => $request->data(),
+            ];
+        };
+
+        return array_map($requestMapper, $requests);
     }
 
     private function apiUrl($path)
