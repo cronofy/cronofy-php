@@ -20,7 +20,7 @@ class BatchTest extends TestCase
     /** @var Cronofy */
     private $cronofy;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
