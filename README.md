@@ -364,3 +364,12 @@ make test
 ## Mirgation guides
 
  * `v0.X.X` -> `v1.0.0`: [version `1.0.0`](https://github.com/cronofy/cronofy-php/releases/tag/v1.0.0) adds namespacing and standardizes the names of public methods to camelCase (whereas previously some methods were named with camel_case). Where in v0.29.0 you would have written `$cronofy = new Cronofy();` and `$calendar = $cronofy->list_calendars();`, for v1.0.0 you should write `$cronofy = new Cronofy\Cronofy();` and `$calendar = $cronofy->listCalendars();`.
+
+## A feature I want is not in the SDK, how do I get it?
+
+We add features to this SDK as they are requested, to focus on developing the Cronofy API.
+
+If you're comfortable contributing support for an endpoint or attribute, then we love to receive pull requests!
+Please create a PR mentioning the feature/API endpoint you’ve added and we’ll review it as soon as we can.
+
+If you would like to request a feature is added by our team then please let us know by getting in touch via [support@cronofy.com](mailto:support@cronofy.com).
