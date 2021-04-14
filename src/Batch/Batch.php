@@ -4,7 +4,7 @@ namespace Cronofy\Batch;
 
 use Cronofy\Cronofy;
 
-class BatchBuilder
+class Batch
 {
     /** @var BatchRequest[] */
     private $requests = [];

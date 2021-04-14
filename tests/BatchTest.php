@@ -2,7 +2,7 @@
 
 namespace Cronofy\Tests;
 
-use Cronofy\Batch\BatchBuilder;
+use Cronofy\Batch\Batch;
 use Cronofy\Batch\BatchRequest;
 use Cronofy\Batch\BatchResponse;
 use Cronofy\Batch\BatchResult;
@@ -62,8 +62,8 @@ class BatchTest extends TestCase
 
         $this->makeBatchRequestExpectation($expectedRequests, $mockResponses);
 
-        $batch = BatchBuilder::create()->upsertEvent($calendarId, $data);
-        $result = $this->cronofy->batch($batch);
+        $batch = Batch::create()->upsertEvent($calendarId, $data);
+        $result = $this->cronofy->executeBatch($batch);
 
         $this->assertInstanceOf(BatchResult::class, $result);
 
@@ -112,8 +112,8 @@ class BatchTest extends TestCase
 
         $this->makeBatchRequestExpectation($expectedRequests, $mockResponses);
 
-        $batch = BatchBuilder::create()->updateExternalEvent($calendarId, $data);
-        $result = $this->cronofy->batch($batch);
+        $batch = Batch::create()->updateExternalEvent($calendarId, $data);
+        $result = $this->cronofy->executeBatch($batch);
 
         $this->assertInstanceOf(BatchResult::class, $result);
 
@@ -164,8 +164,8 @@ class BatchTest extends TestCase
 
         $this->makeBatchRequestExpectation($expectedRequests, $mockResponses);
 
-        $batch = BatchBuilder::create()->deleteEvent($calendarId, $eventId);
-        $result = $this->cronofy->batch($batch);
+        $batch = Batch::create()->deleteEvent($calendarId, $eventId);
+        $result = $this->cronofy->executeBatch($batch);
 
         $this->assertInstanceOf(BatchResult::class, $result);
 
@@ -220,8 +220,8 @@ class BatchTest extends TestCase
 
         $this->makeBatchRequestExpectation($expectedRequests, $mockResponses);
 
-        $batch = BatchBuilder::create()->deleteExternalEvent($calendarId, $externalEventId);
-        $result = $this->cronofy->batch($batch);
+        $batch = Batch::create()->deleteExternalEvent($calendarId, $externalEventId);
+        $result = $this->cronofy->executeBatch($batch);
 
         $this->assertInstanceOf(BatchResult::class, $result);
 
@@ -269,8 +269,8 @@ class BatchTest extends TestCase
 
         $this->makeBatchRequestExpectation($expectedRequests, $mockResponses);
 
-        $batch = BatchBuilder::create()->upsertAvailablePeriod($data);
-        $result = $this->cronofy->batch($batch);
+        $batch = Batch::create()->upsertAvailablePeriod($data);
+        $result = $this->cronofy->executeBatch($batch);
 
         $this->assertInstanceOf(BatchResult::class, $result);
 
@@ -320,8 +320,8 @@ class BatchTest extends TestCase
 
         $this->makeBatchRequestExpectation($expectedRequests, $mockResponses);
 
-        $batch = BatchBuilder::create()->deleteAvailablePeriod($availablePeriodId);
-        $result = $this->cronofy->batch($batch);
+        $batch = Batch::create()->deleteAvailablePeriod($availablePeriodId);
+        $result = $this->cronofy->executeBatch($batch);
 
         $this->assertInstanceOf(BatchResult::class, $result);
 
@@ -381,10 +381,10 @@ class BatchTest extends TestCase
 
         $this->makeBatchRequestExpectation($expectedRequests, $mockResponses);
 
-        $batch = BatchBuilder::create()->upsertAvailablePeriod($data);
+        $batch = Batch::create()->upsertAvailablePeriod($data);
 
         try {
-            $this->cronofy->batch($batch);
+            $this->cronofy->executeBatch($batch);
         } catch (PartialBatchFailureException $exception) {
             $result = $exception->result();
 

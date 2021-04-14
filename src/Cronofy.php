@@ -6,7 +6,7 @@ use Cronofy\Batch\BatchRequest;
 use Cronofy\Exception\CronofyException;
 use Cronofy\Exception\PartialBatchFailureException;
 use Cronofy\Http\CurlRequest;
-use Cronofy\Batch\BatchBuilder;
+use Cronofy\Batch\Batch;
 use Cronofy\Batch\BatchResponse;
 use Cronofy\Batch\BatchResult;
 
@@ -1033,7 +1033,7 @@ class Cronofy
         return $this->httpPost("/" . self::API_VERSION . "/conferencing_service_authorizations", $postFields);
     }
 
-    public function batch(BatchBuilder $batch): BatchResult
+    public function executeBatch(Batch $batch): BatchResult
     {
         $requests = $batch->requests();
 
