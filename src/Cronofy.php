@@ -1150,6 +1150,7 @@ class Cronofy
         424 => 'Failed Dependency',
         425 => 'Unordered Collection',
         426 => 'Upgrade Required',
+        429 => 'Too Many Requests',
         449 => 'Retry With',
         450 => 'Blocked by Windows Parental Controls',
         500 => 'Internal Server Error',
