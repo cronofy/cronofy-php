@@ -9,7 +9,7 @@ To see this API wrapper in action see our sample app [here](https://github.com/c
 
 ## Usage
 
-> Note: if upgrading from a v0.x.x version to v1.0.0, please read the [mirgation guide](#mirgation-guides)
+> Note: if upgrading from a v0.x.x version to v1.0.0, please read the [migration guide](#migration-guides)
 
 In order to use the Cronofy API you will need to [create a developer account](https://app.cronofy.com/sign_up/new).
 
@@ -361,7 +361,7 @@ make test
  * [API documentation](https://www.cronofy.com/developers/api)
  * [API mailing list](https://groups.google.com/d/forum/cronofy-api)
 
-## Mirgation guides
+## Migration guides
 
  * `v0.X.X` -> `v1.0.0`: [version `1.0.0`](https://github.com/cronofy/cronofy-php/releases/tag/v1.0.0) adds namespacing and standardizes the names of public methods to camelCase (whereas previously some methods were named with camel_case). Where in v0.29.0 you would have written `$cronofy = new Cronofy();` and `$calendar = $cronofy->list_calendars();`, for v1.0.0 you should write `$cronofy = new Cronofy\Cronofy();` and `$calendar = $cronofy->listCalendars();`.
 
