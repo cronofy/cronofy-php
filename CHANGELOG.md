@@ -1,3 +1,9 @@
+## [1.2.0]
+
+* add support for the Batch endpoint [#97]
+* add description for HTTP 429 (Too many requests) responses
+* add an SDK-dev script for manually testing the SDK against the API
+
 ## [1.1.10]
 
 * add missing exception `use` [#86]
@@ -68,9 +74,11 @@
 [1.1.8]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.8
 [1.1.9]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.9
 [1.1.10]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.10
+[1.2.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.2.0
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
 [#34]: https://github.com/cronofy/cronofy-php/pull/77
 [#94]: https://github.com/cronofy/cronofy-php/pull/94
 [#86]: https://github.com/cronofy/cronofy-php/pull/86
+[#97]: https://github.com/cronofy/cronofy-php/pull/97
