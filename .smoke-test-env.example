@@ -3,4 +3,4 @@ export CLIENT_SECRET=
 export CALENDAR_ID=
 export REFRESH_TOKEN=
 export ACCESS_TOKEN=
-export DATACENTER=local
+export DATACENTER=
