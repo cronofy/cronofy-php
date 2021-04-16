@@ -105,7 +105,7 @@ foreach($events->each() as $event){
 
 [API documentation](https://www.cronofy.com/developers/api/#upsert-event)
 
-To create/update an event in the user's calendar:
+To create or update an event in the user's calendar:
 
 ```php
 $cronofy = new Cronofy\Cronofy([
@@ -317,7 +317,7 @@ $response = $cronofy->deleteAvailabilityRule($rule_id);
 
 ## Create or Update Availability Rule
 
-To creates or update an availability rule for the authenticated account:
+To create or update an availability rule for the authenticated account:
 
 ```php
 $cronofy = new Cronofy\Cronofy([
@@ -348,6 +348,51 @@ $params = [
 
 $response = $cronofy->createAvailabilityRule($params);
 
+```
+
+## Make a Batch request
+
+Send multiple requests as a batch of operations via the [Batch][(https://docs.cronofy.com/developers/api/batch/) endpoint.
+
+```php
+$cronofy = new Cronofy\Cronofy([
+  "client_id" => "clientId",
+  "client_secret" => "ClientSecret",
+  "access_token" => "AccessToken",
+  "refresh_token" => "RefreshToken"
+]);
+
+$eventData = [
+  'calendar_id' => 'calendarID',
+  'event_id' => 'myapp-event-001',
+  'summary' => 'Wyld Stallyns band practice',
+  'start' => date("Y-m-d", strtotime('tomorrow')) . "T15:30:00Z",
+  'end' => date("Y-m-d", strtotime('tomorrow')) . "T17:00:00Z",
+];
+
+$batch = Batch::create()
+  ->upsertEvent($calendarId, $testEventData)
+  ->deleteEvent($calendarId, $testEventId)
+
+try {
+  $result = $cronofy->executeBatch($batch);
+
+  foreach ($result->responses() as $response) {
+    // $response->status();
+    // $response->headers();
+    // $response->data();
+    // $response->request();
+  }
+} catch (PartialBatchFailureException $exception) {
+  $result = $exception->result();
+
+  foreach ($result->errors() as $response) {
+    // $response->status();
+    // $response->headers();
+    // $response->data();
+    // $response->request();
+  }
+}
 ```
 
 ## Running unit tests
