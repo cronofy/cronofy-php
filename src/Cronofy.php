@@ -558,6 +558,9 @@ class Cronofy
         if (!empty($params['conferencing'])) {
             $postFields['conferencing'] = $params['conferencing'];
         }
+        if (!empty($params['subscriptions'])) {
+            $postFields['subscriptions'] = $params['subscriptions'];
+        }
 
         return $this->httpPost("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postFields);
     }
