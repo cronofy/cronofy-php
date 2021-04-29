@@ -961,6 +961,67 @@ class Cronofy
 
         return $this->apiKeyHttpGet("/" . self::API_VERSION . "/smart_invites", $urlParams);
     }
+    
+    public function readAvailablePeriods($params)
+    {
+        /*
+          Date from: The minimum Date from which to return available periods. OPTIONAL
+          Date to: The Date to return available periods up until.
+          Note that the results will not include available periods occurring on this date. OPTIONAL
+          String tzid: A String representing a known time zone identifier from the IANA Time Zone Database. OPTIONAL
+          Boolean localized_times: A Boolean specifying whether the available periods should have their start and end times
+          returned with any available localization information. If not provided the start and end times will be
+          returned as simple Time values. OPTIONAL
+
+          returns $result - Array of available_periods
+         */
+
+        $url = $this->apiUrl("/" . self::API_VERSION . "/available_periods");
+
+        return new PagedResultIterator($this, "available_periods", $this->getAuthHeaders(), $url, $this->urlParams($params));
+    }
+
+    public function createAvailablePeriod($params)
+    {
+        /*
+          String available_period_id: The String that uniquely identifies the available period. The first request made
+          for an available_period_id will create an available period for the account and subsequent requests will
+          update its details. REQUIRED
+          Time start: The start time can be provided as a simple Time string or an object with two attributes, time and tzid. REQUIRED
+          Time end: The end time can be provided as a simple Time string or an object with two attributes, time and tzid. REQUIRED
+          String tzid: A String representing a known time zone identifier from the IANA Time Zone Database.
+         */
+
+        $postfields = array(
+            'available_period_id' => $params['available_period_id'],
+            'start'               => $params['start'],
+            'end'                 => $params['end'],
+        );
+
+        if (!empty($params['tzid'])) {
+            $postFields['tzid'] = $params['tzid'];
+        }
+
+        return $this->httpPost("/" . self::API_VERSION . "/available_periods", $postfields);
+    }
+
+    public function deleteAvailablePeriod($available_period_id)
+    {
+        /*
+          String available_period_id: The String that uniquely identifies the available period. REQUIRED
+
+          returns true on success, associative array of errors on failure
+         */
+
+        return $this->httpDelete("/" . self::API_VERSION . "/available_periods/" . $available_period_id);
+    }
+
+    public function bulkDeleteAvailablePeriods()
+    {
+        return $this->httpDelete("/" . self::API_VERSION . "/available_periods", [
+            'delete_all' => true,
+        ]);
+    }
 
     public function getAvailabilityRule($availability_rule_id)
     {
