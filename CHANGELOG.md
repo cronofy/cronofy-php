@@ -1,3 +1,8 @@
+## [1.3.0]
+* add AvailablePeriod create, read, delete and bulkDelete [#105] [#106]
+* add support for empty descriptions [#103]
+* add support for subscriptions on baseUpsertEvent [#104]
+
 ## [1.2.0]
 
 * add support for the Batch endpoint [#97]
@@ -75,6 +80,7 @@
 [1.1.9]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.9
 [1.1.10]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.10
 [1.2.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.2.0
+[1.2.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.3.0
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
@@ -82,3 +88,7 @@
 [#94]: https://github.com/cronofy/cronofy-php/pull/94
 [#86]: https://github.com/cronofy/cronofy-php/pull/86
 [#97]: https://github.com/cronofy/cronofy-php/pull/97
+[#103]: https://github.com/cronofy/cronofy-php/pull/103
+[#104]: https://github.com/cronofy/cronofy-php/pull/104
+[#105]: https://github.com/cronofy/cronofy-php/pull/105
+[#106]: https://github.com/cronofy/cronofy-php/pull/106
