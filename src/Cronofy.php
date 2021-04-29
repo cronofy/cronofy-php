@@ -1005,7 +1005,7 @@ class Cronofy
         return $this->httpPost("/" . self::API_VERSION . "/available_periods", $postfields);
     }
 
-    public function deleteAvailablePeriod($available_period_id)
+    public function deleteAvailablePeriod($params)
     {
         /*
           String available_period_id: The String that uniquely identifies the available period. REQUIRED
@@ -1013,7 +1013,9 @@ class Cronofy
           returns true on success, associative array of errors on failure
          */
 
-        return $this->httpDelete("/" . self::API_VERSION . "/available_periods/" . $available_period_id);
+        $postFields = ['available_period_id' => $params["available_period_id"]];
+
+        return $this->httpDelete("/" . self::API_VERSION . "/available_periods/", $postFields);
     }
 
     public function bulkDeleteAvailablePeriods()

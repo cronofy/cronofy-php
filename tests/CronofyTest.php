@@ -676,4 +676,36 @@ class CronofyTest extends TestCase
         $this->assertNotNull($actual);
         $this->assertEquals($actual, $response);
     }
+
+    public function testDeleteAvailablePeriod()
+    {
+        $params = ["available_period_id" => "avp_456"];
+
+        $http = $this->createMock(HttpRequest::class);
+        $http->expects($this->once())
+            ->method('httpDelete')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/v1/available_periods/'),
+                $this->equalTo($params),
+                $this->equalTo([
+                    'Authorization: Bearer accessToken',
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8',
+                ])
+            )
+            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
+
+        $cronofy = new Cronofy([
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => $http,
+        ]);
+
+        $actual = $cronofy->deleteAvailablePeriod([
+            "available_period_id" => "avp_456",
+        ]);
+        $this->assertNotNull($actual);
+    }
 }
