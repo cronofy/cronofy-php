@@ -18,6 +18,9 @@ $calendarId = $_ENV["CALENDAR_ID"];
 $start = date("Y-m-d", strtotime('tomorrow')) . "T09:30:00Z";
 $end   = date("Y-m-d", strtotime('tomorrow')) . "T10:00:00Z";
 
+$yesterday = date("Y-m-d", strtotime('yesterday'));
+$next_week = date("Y-m-d", strtotime('next week'));
+
 $testEventId = 'php-smoke-test-001';
 $testEventData = [
   'calendar_id' => 'calendarID',
@@ -59,4 +62,41 @@ try {
   }
 }
 
+echo "Creating AvailablePeriod\n";
+$ap_id = "test_available_period_001";
 
+$params = [
+  "available_period_id" => $ap_id,
+  "start" => $start,
+  "end" => $end,
+];
+
+$cronofy->createAvailablePeriod($params);
+
+echo "Reading Available Period\n";
+
+$readParams = [
+  "from" => $yesterday,
+  "to" => $next_week,
+  "tzid" => "Europe/London",
+];
+
+$periods = $cronofy->readAvailablePeriods($readParams);
+foreach($periods->each() as $available_period){
+  print_r($available_period);
+}
+
+echo "\n";
+echo "Deleting Available Period\n";
+
+$params = [
+  "available_period_id" => $ap_id,
+];
+
+$result = $cronofy->deleteAvailablePeriod($params);
+print_r($result);
+
+$periods = $cronofy->readAvailablePeriods($readParams);
+foreach($periods->each() as $available_period){
+  print_r($available_period);
+}
