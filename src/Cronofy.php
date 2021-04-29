@@ -528,7 +528,7 @@ class Cronofy
 
     private function baseUpsertEvent($postFields, $params)
     {
-        if (!empty($params['description'])) {
+        if (isset($params['description'])) {
             $postFields['description'] = $params['description'];
         }
         if (!empty($params['tzid'])) {
