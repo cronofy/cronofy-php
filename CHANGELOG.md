@@ -1,3 +1,6 @@
+## [1.4.0]
+* add support for `recurrence` key on upsertEvent
+
 ## [1.3.0]
 * add AvailablePeriod create, read, delete and bulkDelete [#105] [#106]
 * add support for empty descriptions [#103]
@@ -80,7 +83,8 @@
 [1.1.9]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.9
 [1.1.10]: https://github.com/cronofy/cronofy-php/releases/tag/v1.1.10
 [1.2.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.2.0
-[1.2.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.3.0
+[1.3.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.3.0
+[1.4.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.4.0
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
