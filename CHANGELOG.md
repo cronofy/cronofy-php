@@ -1,5 +1,5 @@
 ## [1.4.0]
-* add support for `recurrence` key on upsertEvent
+* add support for `recurrence` key on upsertEvent (this is currently pre-release and not generally available yet)
 
 ## [1.3.0]
 * add AvailablePeriod create, read, delete and bulkDelete [#105] [#106]
