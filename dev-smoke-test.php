@@ -23,7 +23,7 @@ $next_week = date("Y-m-d", strtotime('next week'));
 
 $testEventId = 'php-smoke-test-001';
 $testEventData = [
-  'calendar_id' => 'calendarID',
+  'calendar_id' => $calendarId,
   'event_id' => $testEventId,
   'summary' => 'PHP SDK test event 001',
   'description' => 'Just checking this thing is on!',
@@ -100,3 +100,20 @@ $periods = $cronofy->readAvailablePeriods($readParams);
 foreach($periods->each() as $available_period){
   print_r($available_period);
 }
+
+echo "\n";
+echo "Creating event with recurrence\n";
+
+$recurrenceEventParams = $testEventData;
+$recurrenceEventParams['recurrence'] = [
+  "rules" => [
+    [
+      "frequency" => "daily",
+      "interval" => 2,
+      "count" => 3,
+    ],
+  ],
+];
+
+$cronofy->upsertEvent($recurrenceEventParams);
+
