@@ -1140,6 +1140,19 @@ class Cronofy
         return $result;
     }
 
+    public function hmacMatch($params, $body)
+    {
+        if ($params['hmac'] == null  || empty($params['hmac'])) {
+            return false;
+        }
+
+        $digest = hash_hmac('sha256', $body, $this->clientSecret);
+        $calculated = base64_encode($digest);
+        $hmac_list = explode(',', $params['hmac']);
+
+        return in_array($calculated, $hmac_list);
+    }
+
     private function convertBatchRequestsToArray(BatchRequest ...$requests): array
     {
         $requestMapper = function (BatchRequest $request) {
