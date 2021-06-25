@@ -1140,15 +1140,15 @@ class Cronofy
         return $result;
     }
 
-    public function hmacMatch($params, $body)
+    public function verifyHMAC($hmac_header, $body)
     {
-        if ($params['hmac'] == null  || empty($params['hmac'])) {
+        if ($hmac_header == null  || empty($hmac_header)) {
             return false;
         }
 
         $digest = hash_hmac('sha256', $body, $this->clientSecret);
         $calculated = base64_encode($digest);
-        $hmac_list = explode(',', $params['hmac']);
+        $hmac_list = explode(',', $hmac_header);
 
         return in_array($calculated, $hmac_list);
     }
