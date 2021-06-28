@@ -15,6 +15,8 @@ test: install_dependencies
 	vendor/bin/phpunit tests/
 	vendor/bin/phpcs tests/ src/Cronofy.php --standard=ruleset.xml
 
+ci: test
+
 check_dependencies:
 	@command -v jq >/dev/null || (echo "jq not installed please install via homebrew - 'brew install jq'"; exit 1)
 
