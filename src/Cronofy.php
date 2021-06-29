@@ -1140,7 +1140,7 @@ class Cronofy
         return $result;
     }
 
-    public function verifyHMAC($hmac_header, $body)
+    public function hmacValid($hmac_header, $body)
     {
         if ($hmac_header == null  || empty($hmac_header)) {
             return false;

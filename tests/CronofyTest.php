@@ -721,22 +721,22 @@ class CronofyTest extends TestCase
 
         $body = '{"example":"well-known"}';
 
-        $actual = $cronofy->verifyHMAC("NDJlMWE1YzcxYjJjMzQzNmIxNTIzNzdhNDU4ZTMwYzQ2N2ZlZTRhMGViOWE4NmNjOWEzOTA2NDBmYjQxZGQ2NA==", $body);
+        $actual = $cronofy->hmacValid("NDJlMWE1YzcxYjJjMzQzNmIxNTIzNzdhNDU4ZTMwYzQ2N2ZlZTRhMGViOWE4NmNjOWEzOTA2NDBmYjQxZGQ2NA==", $body);
         $this->assertTrue($actual);
 
-        $actual = $cronofy->verifyHMAC("something-else", $body);
+        $actual = $cronofy->hmacValid("something-else", $body);
         $this->assertFalse($actual);
 
-        $actual = $cronofy->verifyHMAC("something-else,NDJlMWE1YzcxYjJjMzQzNmIxNTIzNzdhNDU4ZTMwYzQ2N2ZlZTRhMGViOWE4NmNjOWEzOTA2NDBmYjQxZGQ2NA==,something-else2", $body);
+        $actual = $cronofy->hmacValid("something-else,NDJlMWE1YzcxYjJjMzQzNmIxNTIzNzdhNDU4ZTMwYzQ2N2ZlZTRhMGViOWE4NmNjOWEzOTA2NDBmYjQxZGQ2NA==,something-else2", $body);
         $this->assertTrue($actual);
 
-        $actual = $cronofy->verifyHMAC("something-else,something-else2", $body);
+        $actual = $cronofy->hmacValid("something-else,something-else2", $body);
         $this->assertFalse($actual);
 
-        $actual = $cronofy->verifyHMAC(null, $body);
+        $actual = $cronofy->hmacValid(null, $body);
         $this->assertFalse($actual);
 
-        $actual = $cronofy->verifyHMAC("", $body);
+        $actual = $cronofy->hmacValid("", $body);
         $this->assertFalse($actual);
     }
 }
