@@ -1,7 +1,8 @@
 # Cronofy
 
 [Cronofy](https://www.cronofy.com) - one API for all the calendars (Google, iCloud, Exchange, Office 365, Outlook.com)
-[![Build Status](https://travis-ci.org/cronofy/cronofy-php.svg?branch=master)](https://travis-ci.org/cronofy/cronofy-php)
+[![php CI](https://github.com/cronofy/cronofy-php/actions/workflows/ci.yml/badge.svg)](https://github.com/cronofy/cronofy-php/actions/workflows/ci.yml)
+
 
 ## Sample Application
 
