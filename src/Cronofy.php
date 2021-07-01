@@ -1143,15 +1143,15 @@ class Cronofy
     public function hmacValid($hmac_header, $body)
     {
         /* Verifies a HMAC from a push notification using the client secret.
-        
-          String hmac_header: A String containing comma-separated values 
-          describing HMACs of the notification taken from the Cronofy-HMAC-SHA256 header.
 
-          String body: A String of the body of the notification.
+        String hmac_header: A String containing comma-separated values
+        describing HMACs of the notification taken from the Cronofy-HMAC-SHA256 header.
 
-          Returns true if one of the HMAC provided matches the one calculated using the
-          client secret, otherwise false.
-         */
+        String body: A String of the body of the notification.
+
+        Returns true if one of the HMAC provided matches the one calculated using the
+        client secret, otherwise false.
+        */
 
         if ($hmac_header == null  || empty($hmac_header)) {
             return false;
