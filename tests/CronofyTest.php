@@ -708,4 +708,35 @@ class CronofyTest extends TestCase
         ]);
         $this->assertNotNull($actual);
     }
+
+    public function testHmacValidation()
+    {
+        $cronofy = new Cronofy([
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => null,
+        ]);
+
+        $body = '{"example":"well-known"}';
+
+        $actual = $cronofy->hmacValid("NDJlMWE1YzcxYjJjMzQzNmIxNTIzNzdhNDU4ZTMwYzQ2N2ZlZTRhMGViOWE4NmNjOWEzOTA2NDBmYjQxZGQ2NA==", $body);
+        $this->assertTrue($actual);
+
+        $actual = $cronofy->hmacValid("something-else", $body);
+        $this->assertFalse($actual);
+
+        $actual = $cronofy->hmacValid("something-else,NDJlMWE1YzcxYjJjMzQzNmIxNTIzNzdhNDU4ZTMwYzQ2N2ZlZTRhMGViOWE4NmNjOWEzOTA2NDBmYjQxZGQ2NA==,something-else2", $body);
+        $this->assertTrue($actual);
+
+        $actual = $cronofy->hmacValid("something-else,something-else2", $body);
+        $this->assertFalse($actual);
+
+        $actual = $cronofy->hmacValid(null, $body);
+        $this->assertFalse($actual);
+
+        $actual = $cronofy->hmacValid("", $body);
+        $this->assertFalse($actual);
+    }
 }

@@ -1140,6 +1140,30 @@ class Cronofy
         return $result;
     }
 
+    public function hmacValid($hmac_header, $body)
+    {
+        /* Verifies a HMAC from a push notification using the client secret.
+
+        String hmac_header: A String containing comma-separated values
+        describing HMACs of the notification taken from the Cronofy-HMAC-SHA256 header.
+
+        String body: A String of the body of the notification.
+
+        Returns true if one of the HMAC provided matches the one calculated using the
+        client secret, otherwise false.
+        */
+
+        if ($hmac_header == null  || empty($hmac_header)) {
+            return false;
+        }
+
+        $digest = hash_hmac('sha256', $body, $this->clientSecret);
+        $calculated = base64_encode($digest);
+        $hmac_list = explode(',', $hmac_header);
+
+        return in_array($calculated, $hmac_list);
+    }
+
     private function convertBatchRequestsToArray(BatchRequest ...$requests): array
     {
         $requestMapper = function (BatchRequest $request) {
