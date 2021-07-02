@@ -1,3 +1,7 @@
+## [1.5.0]
+* add support for PHP 8
+* add `hmacValid` to verify a webhook call genuinely originated from Cronofy [#111]
+
 ## [1.4.0]
 * add support for `recurrence` key on upsertEvent (this is currently pre-release and not generally available yet)
 
@@ -85,6 +89,7 @@
 [1.2.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.2.0
 [1.3.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.3.0
 [1.4.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.4.0
+[1.5.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.5.0
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
@@ -96,3 +101,4 @@
 [#104]: https://github.com/cronofy/cronofy-php/pull/104
 [#105]: https://github.com/cronofy/cronofy-php/pull/105
 [#106]: https://github.com/cronofy/cronofy-php/pull/106
+[#111]: https://github.com/cronofy/cronofy-php/pull/111
