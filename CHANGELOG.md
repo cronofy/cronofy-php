@@ -1,5 +1,5 @@
 ## [1.5.0]
-* add support for `hmac_valid` which verifies a HMAC from a push notification using the client's secret.
+* add support for `hmac_valid` which verifies a HMAC from a push notification using the client's secret.[#111]
 
 ## [1.4.0]
 * add support for `recurrence` key on upsertEvent (this is currently pre-release and not generally available yet)
@@ -100,3 +100,4 @@
 [#104]: https://github.com/cronofy/cronofy-php/pull/104
 [#105]: https://github.com/cronofy/cronofy-php/pull/105
 [#106]: https://github.com/cronofy/cronofy-php/pull/106
+[#111]: https://github.com/cronofy/cronofy-php/pull/111
