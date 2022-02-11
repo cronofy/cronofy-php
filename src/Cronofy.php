@@ -776,6 +776,12 @@ class Cronofy
                   )
           tzid: the timezone to create the event in
                 for example:  'Europe/London'
+          formatting: An object indicating how to format the hours. The hour_format property should be h (12-hour format) or H (24-hour format).
+                for example: array(
+                                "hour_format" => "h"
+                             )
+          callback_url: A URL to call when the full event details are known.
+                for example:  'http://www.example.com/callback'
          */
 
         $postFields = [
@@ -786,6 +792,8 @@ class Cronofy
             "availability" => $params["availability"],
             "target_calendars" => $params["target_calendars"],
             "tzid" => $params["tzid"],
+            "formatting" => $params['formatting'],
+            "callback_url" => $params['callback_url'],
         ];
 
         return $this->httpPost("/" . self::API_VERSION . "/real_time_scheduling", $postFields);
