@@ -2,3 +2,4 @@
 composer.phar
 .idea
 .env
+.phpunit.result.cache
