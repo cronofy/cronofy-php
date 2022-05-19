@@ -792,9 +792,13 @@ class Cronofy
             "availability" => $params["availability"],
             "target_calendars" => $params["target_calendars"],
             "tzid" => $params["tzid"],
-            "formatting" => $params['formatting'],
-            "callback_url" => $params['callback_url'],
+            "redirect_url" => $params["redirect_url"],
+            "callback_url" => $params["callback_url"],
         ];
+
+        if (!empty($params["formatting"])) {
+            $postFields["formatting"] = $params["formatting"];
+        }
 
         return $this->httpPost("/" . self::API_VERSION . "/real_time_scheduling", $postFields);
     }

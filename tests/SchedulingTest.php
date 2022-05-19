@@ -91,6 +91,8 @@ class SchedulingTest extends TestCase
             ]
         ];
         $tzid = 'Europe/London';
+        $callback_url = "http://example.com/callback";
+        $redirect_url = "http://example.com/redirect";
 
         $params = [
             "client_id" => "clientId",
@@ -100,6 +102,11 @@ class SchedulingTest extends TestCase
             "availability" => $availability,
             "oauth" => $oauth,
             "tzid" => $tzid,
+            "callback_url" => $callback_url,
+            "redirect_url" => $redirect_url,
+            "formatting" => [
+              "hour_format" => "12",
+            ]
         ];
 
         $http = $this->createMock(HttpRequest::class);
