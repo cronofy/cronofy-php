@@ -24,3 +24,6 @@ release: check_dependencies test
 	git push
 	git tag $(CURRENT_VERSION)
 	git push --tags
+
+init:
+	brew install php@7.4
