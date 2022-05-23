@@ -92,7 +92,7 @@ class SchedulingTest extends TestCase
         ];
         $tzid = 'Europe/London';
         $callback_url = "http://example.com/callback";
-        $redirect_url = "http://example.com/redirect";
+        $completed_redirect_url = "http://example.com/redirect";
 
         $params = [
             "client_id" => "clientId",
@@ -103,10 +103,16 @@ class SchedulingTest extends TestCase
             "oauth" => $oauth,
             "tzid" => $tzid,
             "callback_url" => $callback_url,
-            "redirect_url" => $redirect_url,
+            "redirect_urls" => [
+              "completed_url" => $completed_redirect_url,
+            ],
             "formatting" => [
               "hour_format" => "12",
-            ]
+            ],
+            "minimum_notice" => [
+              "hours" => 2
+            ],
+            "event_creation" => "single",
         ];
 
         $http = $this->createMock(HttpRequest::class);

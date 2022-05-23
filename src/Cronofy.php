@@ -792,12 +792,17 @@ class Cronofy
             "availability" => $params["availability"],
             "target_calendars" => $params["target_calendars"],
             "tzid" => $params["tzid"],
-            "redirect_url" => $params["redirect_url"],
             "callback_url" => $params["callback_url"],
+            "minimum_notice" => $params["minimum_notice"],
+            "event_creation" => $params["event_creation"],
         ];
 
         if (!empty($params["formatting"])) {
             $postFields["formatting"] = $params["formatting"];
+        }
+
+        if (!empty($params["redirect_urls"])) {
+            $postFields["redirect_urls"] = $params["redirect_urls"];
         }
 
         return $this->httpPost("/" . self::API_VERSION . "/real_time_scheduling", $postFields);
