@@ -6,15 +6,23 @@ use Cronofy\Batch\Batch;
 use Cronofy\Exception\CronofyException;
 use Cronofy\Exception\PartialBatchFailureException;
 
+$testBatch = true;
+$testAvailablePeriod = true;
+$testRecurrence = true;
+$testRTS = true;
+
+$dataCenter = getenv("DATACENTER");
+
 $cronofy = new Cronofy\Cronofy([
-  "client_id" => $_ENV["CLIENT_ID"],
-  "client_secret" => $_ENV["CLIENT_SECRET"],
-  "access_token" => $_ENV["ACCESS_TOKEN"],
-  "refresh_token" => $_ENV["REFRESH_TOKEN"],
-  "data_center" => $_ENV["DATACENTER"]
+  "client_id" => getenv("CLIENT_ID"),
+  "client_secret" => getenv("CLIENT_SECRET"),
+  "access_token" => getenv("ACCESS_TOKEN"),
+  "refresh_token" => getenv("REFRESH_TOKEN"),
+  "data_center" => $dataCenter,
 ]);
 
-$calendarId = $_ENV["CALENDAR_ID"];
+$sub = getenv("SUB");
+$calendarId = getenv("CALENDAR_ID");
 $start = date("Y-m-d", strtotime('tomorrow')) . "T09:30:00Z";
 $end   = date("Y-m-d", strtotime('tomorrow')) . "T10:00:00Z";
 
@@ -31,89 +39,160 @@ $testEventData = [
   'end' => $end,
 ];
 
-$batch = Batch::create()
-  ->upsertEvent($calendarId, $testEventData)
-  ->deleteEvent($calendarId, $testEventId)
-  ->deleteEvent("fake-calendar-id", "just-want-it-to-fail")
-  ->upsertEvent($calendarId, []);
+echo "Writing test events to " . $dataCenter . ", account " . $sub . ", calendar " . $calendarId . "\n";
 
-try {
-  $result = $cronofy->executeBatch($batch);
+if ( $testBatch ) {
+  $batch = Batch::create()
+    ->upsertEvent($calendarId, $testEventData)
+    ->deleteEvent($calendarId, $testEventId)
+    ->deleteEvent("fake-calendar-id", "just-want-it-to-fail")
+    ->upsertEvent($calendarId, []);
 
-} catch (PartialBatchFailureException $exception) {
-  echo "PARTIAL FAILURE\n\n";
-  $result = $exception->result();
-} finally {
-  foreach ($result->responses() as $index=>$response) {
-    echo "Request " . $index . " - " . $response->request()->method() . " " . $response->request()->relativeUrl() . "\n";
-    echo $response->hasSuccessStatus() ? "  Success" : "  Failed";
-    echo "\n";
-    echo "  status " . $response->status() . "\n";
+  try {
+    $result = $cronofy->executeBatch($batch);
 
-    echo "  headers ";
-    $headers = $response->headers();
-    print_r($headers);
-    echo "\n";
+  } catch (PartialBatchFailureException $exception) {
+    echo "PARTIAL FAILURE\n\n";
+    $result = $exception->result();
+  } finally {
+    foreach ($result->responses() as $index=>$response) {
+      echo "Request " . $index . " - " . $response->request()->method() . " " . $response->request()->relativeUrl() . "\n";
+      echo $response->hasSuccessStatus() ? "  Success" : "  Failed";
+      echo "\n";
+      echo "  status " . $response->status() . "\n";
 
-    echo "  data ";
-    $data = $response->data();
-    print_r($data);
-    echo "\n\n";
+      echo "  headers ";
+      $headers = $response->headers();
+      print_r($headers);
+      echo "\n";
+
+      echo "  data ";
+      $data = $response->data();
+      print_r($data);
+      echo "\n\n";
+    }
   }
 }
 
-echo "Creating AvailablePeriod\n";
-$ap_id = "test_available_period_001";
+if( $testAvailablePeriod ) {
+  echo "Creating AvailablePeriod\n";
+  $ap_id = "test_available_period_001";
 
-$params = [
-  "available_period_id" => $ap_id,
-  "start" => $start,
-  "end" => $end,
-];
+  $params = [
+    "available_period_id" => $ap_id,
+    "start" => $start,
+    "end" => $end,
+  ];
 
-$cronofy->createAvailablePeriod($params);
+  $cronofy->createAvailablePeriod($params);
 
-echo "Reading Available Period\n";
+  echo "Reading Available Period\n";
 
-$readParams = [
-  "from" => $yesterday,
-  "to" => $next_week,
-  "tzid" => "Europe/London",
-];
+  $readParams = [
+    "from" => $yesterday,
+    "to" => $next_week,
+    "tzid" => "Europe/London",
+  ];
 
-$periods = $cronofy->readAvailablePeriods($readParams);
-foreach($periods->each() as $available_period){
-  print_r($available_period);
+  $periods = $cronofy->readAvailablePeriods($readParams);
+  foreach($periods->each() as $available_period){
+    print_r($available_period);
+  }
+
+  echo "\n";
+  echo "Deleting Available Period\n";
+
+  $params = [
+    "available_period_id" => $ap_id,
+  ];
+
+  $result = $cronofy->deleteAvailablePeriod($params);
+  print_r($result);
+
+  $periods = $cronofy->readAvailablePeriods($readParams);
+  foreach($periods->each() as $available_period){
+    print_r($available_period);
+  }
 }
 
-echo "\n";
-echo "Deleting Available Period\n";
+if( $testRecurrence ) {
+  echo "\n";
+  echo "Creating event with recurrence\n";
 
-$params = [
-  "available_period_id" => $ap_id,
-];
-
-$result = $cronofy->deleteAvailablePeriod($params);
-print_r($result);
-
-$periods = $cronofy->readAvailablePeriods($readParams);
-foreach($periods->each() as $available_period){
-  print_r($available_period);
-}
-
-echo "\n";
-echo "Creating event with recurrence\n";
-
-$recurrenceEventParams = $testEventData;
-$recurrenceEventParams['recurrence'] = [
-  "rules" => [
-    [
-      "frequency" => "daily",
-      "interval" => 2,
-      "count" => 3,
+  $recurrenceEventParams = $testEventData;
+  $recurrenceEventParams['recurrence'] = [
+    "rules" => [
+      [
+        "frequency" => "daily",
+        "interval" => 2,
+        "count" => 3,
+      ],
     ],
-  ],
-];
+  ];
 
-$cronofy->upsertEvent($recurrenceEventParams);
+  $cronofy->upsertEvent($recurrenceEventParams);
+  echo "\n";
+}
 
+if($testRTS){
+  echo "Checking RTS\n";
+
+  $event = [
+    "event_id" => "php-smoke-test-002",
+    "summary" => "Add to Calendar test event",
+  ];
+
+  $availability = [
+    "participants" => [
+      [
+        "members" => [
+          [
+            "sub" => $sub,
+            "calendar_ids" => [$calendarId]
+          ]
+        ],
+        "required" => "all"
+      ]
+    ],
+    "event" => $event,
+    "required_duration" => [
+      "minutes" => 60
+    ],
+    "available_periods" => [
+      [
+        "start" => $start,
+        "end" => $end
+      ]
+    ]
+  ];
+  $target_calendars = [
+    [
+      "sub" => $sub,
+      "calendar_id" => $calendarId
+    ]
+  ];
+  $tzid = 'Europe/London';
+
+  $params = [
+    "event" => $event,
+    "target_calendars" => $target_calendars,
+    "availability" => $availability,
+    "tzid" => $tzid,
+    "callback_url" => "http://local.cronofy.com/callback",
+    "oauth" => [
+      "redirect_uri" => "http://local.cronofy.com/redirect"
+    ],
+    "redirect_urls" => [
+      "completed_url" => "http://local.cronofy.com/complete",
+    ],
+    "formatting" => [
+      "hour_format" => "H",
+    ],
+    "minimum_notice" => [
+      "hours" => 2
+    ],
+    "event_creation" => "single",
+  ];
+
+  $cronofy->realTimeScheduling($params);
+}
