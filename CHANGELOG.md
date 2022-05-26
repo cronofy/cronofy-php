@@ -1,3 +1,6 @@
+## [1.5.1]
+* add support for additional Real-Time Scheduling params
+
 ## [1.5.0]
 * add support for PHP 8
 * add `hmacValid` to verify a webhook call genuinely originated from Cronofy [#111]
@@ -90,6 +93,7 @@
 [1.3.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.3.0
 [1.4.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.4.0
 [1.5.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.5.0
+[1.5.1]: https://github.com/cronofy/cronofy-php/releases/tag/v1.5.1
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
@@ -102,3 +106,4 @@
 [#105]: https://github.com/cronofy/cronofy-php/pull/105
 [#106]: https://github.com/cronofy/cronofy-php/pull/106
 [#111]: https://github.com/cronofy/cronofy-php/pull/111
+[#116]: https://github.com/cronofy/cronofy-php/pull/116
