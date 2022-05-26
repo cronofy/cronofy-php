@@ -15,6 +15,9 @@ test: install_dependencies
 	vendor/bin/phpunit tests/
 	vendor/bin/phpcs tests/ src/Cronofy.php --standard=ruleset.xml
 
+smoke-test:
+	source .env && php ./dev-smoke-test.php
+
 ci: test
 
 check_dependencies:
