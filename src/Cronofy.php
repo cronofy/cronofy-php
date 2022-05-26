@@ -780,8 +780,23 @@ class Cronofy
                 for example: array(
                                 "hour_format" => "h"
                              )
-          callback_url: A URL to call when the full event details are known.
+          minimum_notice: a Duration for the minimum amount of time before the first slot offered.
+                for example: array( "hours" => 2 )
+          event_creation: The event creation mode - "default" (one event per target calendar) or "single" (one event for all attendees)
+          callback_url: Deprecated - use callback_urls.completed_url instead
                 for example:  'http://www.example.com/callback'
+          callback_urls: URLs to send a request to when certain states occur.
+              callback_urls.completed_url: A URL to call when the full event details are known.
+              callback_urls.no_times_suitable_url: A URL to call if the user indicates none of the offered times are suitable.
+              for example: array(
+                  "completed_url" => "https://example.com/callbacks/scheduled",
+                  "no_times_suitable_url" => "https://example.com/callbacks/unable_to_schedule"
+              )
+          redirect_urls: URLs to redirect the user to when certain states are reached.
+              redirect_urls.completed_url: A URL to redirect the user to when the full event details are known.
+              for example: array(
+                  "completed_url" => "https://example.com/scheduling/thank_you",
+              )
          */
 
         $postFields = [
