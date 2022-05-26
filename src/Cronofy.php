@@ -820,6 +820,10 @@ class Cronofy
             $postFields["redirect_urls"] = $params["redirect_urls"];
         }
 
+        if (!empty($params["callback_urls"])) {
+            $postFields["callback_urls"] = $params["callback_urls"];
+        }
+
         return $this->httpPost("/" . self::API_VERSION . "/real_time_scheduling", $postFields);
     }
 

@@ -182,14 +182,18 @@ if($testRTS){
     "oauth" => [
       "redirect_uri" => "http://local.cronofy.com/redirect"
     ],
-    "redirect_urls" => [
-      "completed_url" => "http://local.cronofy.com/complete",
-    ],
     "formatting" => [
       "hour_format" => "H",
     ],
     "minimum_notice" => [
       "hours" => 2
+    ],
+    "redirect_urls" => [
+      "completed_url" => "http://local.cronofy.com/complete",
+      "no_times_suitable_url" => "http://local.cronofy.com/need_more_times_please",
+    ],
+    "callback_urls" => [
+      "completed_url" => "http://local.cronofy.com/callback/complete",
     ],
     "event_creation" => "single",
   ];
