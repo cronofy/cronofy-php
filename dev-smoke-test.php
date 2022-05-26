@@ -178,7 +178,6 @@ if($testRTS){
     "target_calendars" => $target_calendars,
     "availability" => $availability,
     "tzid" => $tzid,
-    "callback_url" => "http://local.cronofy.com/callback",
     "oauth" => [
       "redirect_uri" => "http://local.cronofy.com/redirect"
     ],
