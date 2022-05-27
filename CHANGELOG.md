@@ -1,3 +1,6 @@
+## [1.5.2]
+* update package description
+
 ## [1.5.1]
 * add support for additional Real-Time Scheduling params
 
@@ -94,6 +97,7 @@
 [1.4.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.4.0
 [1.5.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.5.0
 [1.5.1]: https://github.com/cronofy/cronofy-php/releases/tag/v1.5.1
+[1.5.2]: https://github.com/cronofy/cronofy-php/releases/tag/v1.5.2
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
