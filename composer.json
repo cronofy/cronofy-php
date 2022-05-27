@@ -1,7 +1,7 @@
 {
     "name": "cronofy/cronofy",
-    "description": "PHP wrapper for Cronofy's unified calendar API",
-    "version": "v1.5.1",
+    "description": "SDK for Cronofy - the Scheduling Platform for Business",
+    "version": "v1.5.2",
     "require": {
         "php": ">=7.1"
     },
