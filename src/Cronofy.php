@@ -600,7 +600,7 @@ class Cronofy
           String callback_url : The URL that is notified whenever a change is made. REQUIRED
 
           returns $result - Details of new channel. Details are available in the Cronofy API Documentation
-        */
+         */
         $postFields = ['callback_url' => $params['callback_url']];
 
         if (!empty($params['filters'])) {
@@ -776,6 +776,27 @@ class Cronofy
                   )
           tzid: the timezone to create the event in
                 for example:  'Europe/London'
+          formatting: An object indicating how to format the hours. The hour_format property should be h (12-hour format) or H (24-hour format).
+                for example: array(
+                                "hour_format" => "h"
+                             )
+          minimum_notice: a Duration for the minimum amount of time before the first slot offered.
+                for example: array( "hours" => 2 )
+          event_creation: The event creation mode - "default" (one event per target calendar) or "single" (one event for all attendees)
+          callback_url: Deprecated - use callback_urls.completed_url instead
+                for example:  'http://www.example.com/callback'
+          callback_urls: URLs to send a request to when certain states occur.
+              callback_urls.completed_url: A URL to call when the full event details are known.
+              callback_urls.no_times_suitable_url: A URL to call if the user indicates none of the offered times are suitable.
+              for example: array(
+                  "completed_url" => "https://example.com/callbacks/scheduled",
+                  "no_times_suitable_url" => "https://example.com/callbacks/unable_to_schedule"
+              )
+          redirect_urls: URLs to redirect the user to when certain states are reached.
+              redirect_urls.completed_url: A URL to redirect the user to when the full event details are known.
+              for example: array(
+                  "completed_url" => "https://example.com/scheduling/thank_you",
+              )
          */
 
         $postFields = [
@@ -785,8 +806,37 @@ class Cronofy
             "event" => $params["event"],
             "availability" => $params["availability"],
             "target_calendars" => $params["target_calendars"],
-            "tzid" => $params["tzid"],
+            "tzid" => $params["tzid"]
         ];
+
+        if (isset($params['minimum_notice'])) {
+            $postFields["minimum_notice"] = $params["minimum_notice"];
+        }
+
+        if (isset($params['event_creation'])) {
+            $postFields["event_creation"] = $params["event_creation"];
+        }
+
+        if (!empty($params["formatting"])) {
+            $postFields["formatting"] = $params["formatting"];
+        }
+
+        if (!empty($params["redirect_urls"])) {
+            $postFields["redirect_urls"] = $params["redirect_urls"];
+        }
+
+        if (isset($params['callback_url'])) {
+            $postFields["callback_urls"] = array("completed_url" => $params["callback_url"]);
+        }
+
+        if (!empty($params["callback_urls"])) {
+            $postFields["callback_urls"] = $params["callback_urls"];
+
+            # If the deprecated callback_url was passed and the newer callback_urls.complete_url was not passed, modernize the payload.
+            if (empty($params["callback_urls"]["completed_url"]) && !empty($params["callback_url"])) {
+                $postFields["callback_urls"]["completed_url"] = $params["callback_url"];
+            }
+        }
 
         return $this->httpPost("/" . self::API_VERSION . "/real_time_scheduling", $postFields);
     }
@@ -964,7 +1014,7 @@ class Cronofy
 
         return $this->apiKeyHttpGet("/" . self::API_VERSION . "/smart_invites", $urlParams);
     }
-    
+
     public function readAvailablePeriods($params)
     {
         /*
@@ -1094,7 +1144,7 @@ class Cronofy
         $postFields = [
             'redirect_uri' => $params['redirect_uri'],
         ];
-        
+
         if (!empty($params['provider_name'])) {
             $postFields['provider_name'] = $params['provider_name'];
         }
@@ -1151,7 +1201,7 @@ class Cronofy
 
         Returns true if one of the HMAC provided matches the one calculated using the
         client secret, otherwise false.
-        */
+         */
 
         if ($hmac_header == null  || empty($hmac_header)) {
             return false;
