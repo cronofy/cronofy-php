@@ -833,9 +833,8 @@ class Cronofy
             $postFields["callback_urls"] = $params["callback_urls"];
 
             # If the deprecated callback_url was passed and the newer callback_urls.complete_url was not passed, modernize the payload.
-            if (!empty($params["callback_urls"]) && empty($params["callback_urls"]["completed_url"]) && (!empty($params["callback_url"]))) {
-                $callbackArray =
-                    $postFields["callback_urls"] = array_merge_recursive(array("completed_url" => $params["callback_url"]), $postFields["callback_urls"]);
+            if (empty($params["callback_urls"]["completed_url"]) && !empty($params["callback_url"])) {
+                $postFields["callback_urls"]["completed_url"] = $params["callback_url"];
             }
         }
 
