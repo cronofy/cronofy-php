@@ -1,3 +1,6 @@
+## [1.5.3]
+* accept locale on upsertEvent
+
 ## [1.5.2]
 * update package description
 

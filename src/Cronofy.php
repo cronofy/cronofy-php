@@ -480,6 +480,7 @@ class Cronofy
           Array attendees : An array of "invite" and "reject" arrays which are lists of attendees to invite and remove from the event. OPTIONAL
                             for example: array("invite" => array(array("email" => "new_invitee@test.com", "display_name" => "New Invitee"))
                                                "reject" => array(array("email" => "old_invitee@test.com", "display_name" => "Old Invitee")))
+          String Locale: The locale represents the 2 character code for the language of the content. For example: "en". OPTIONAL unless using Templates
 
           returns true on success, associative array of errors on failure
          */
@@ -563,6 +564,9 @@ class Cronofy
         }
         if (!empty($params['recurrence'])) {
             $postFields['recurrence'] = $params['recurrence'];
+        }
+        if (!empty($params['locale'])) {
+            $postFields['locale'] = $params['locale'];
         }
 
         return $this->httpPost("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postFields);
