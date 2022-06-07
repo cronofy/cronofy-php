@@ -480,7 +480,7 @@ class Cronofy
           Array attendees : An array of "invite" and "reject" arrays which are lists of attendees to invite and remove from the event. OPTIONAL
                             for example: array("invite" => array(array("email" => "new_invitee@test.com", "display_name" => "New Invitee"))
                                                "reject" => array(array("email" => "old_invitee@test.com", "display_name" => "Old Invitee")))
-          Stribng Locale: The locale represents the 2 character code for the language of the content. For example: "en". OPTIONAL
+          String Locale: The locale represents the 2 character code for the language of the content. For example: "en". OPTIONAL unless using Templates
 
           returns true on success, associative array of errors on failure
          */
