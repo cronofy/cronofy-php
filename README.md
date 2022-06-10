@@ -51,14 +51,21 @@ $params = [
   'code' => $code
 ];
 
-$token=$cronofy->requestToken($params);
+$result = $cronofy->requestToken($params);
 
+// Retrieve credentials value
+$accessToken = $cronofy->accessToken;
+$refreshToken = $cronofy->refreshToken;
+$expiresIn = $cronofy->expiresIn;
 ```
 
 You should save the response's `AccessToken` and `RefreshToken` for later use.
 
 Note that the **exact same** redirect URI must be passed to both methods for
 access to be granted.
+
+`$result` will be `true` for success response. Otherwise, it will be an error code.
+Please reference [here](https://docs.cronofy.com/developers/api/authorization/request-authorization/#param-error) for possible error code.
 
 ## List calendars
 
