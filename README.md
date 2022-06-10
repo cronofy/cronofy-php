@@ -64,8 +64,8 @@ You should save the response's `AccessToken` and `RefreshToken` for later use.
 Note that the **exact same** redirect URI must be passed to both methods for
 access to be granted.
 
-`$result` will be `true` for success response. Otherwise, it will be an error code.
-Please reference [here](https://docs.cronofy.com/developers/api/authorization/request-authorization/#param-error) for possible error code.
+`$result` will be `true` for a successful request; otherwise, it will be an error code.
+Please reference [our documentation](https://docs.cronofy.com/developers/api/authorization/request-authorization/#param-error) for possible error code.
 
 ## List calendars
 
