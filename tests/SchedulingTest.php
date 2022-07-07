@@ -1,4 +1,5 @@
 <?php
+
 namespace Cronofy\Tests;
 
 use Cronofy\Http\HttpRequest;
@@ -103,16 +104,16 @@ class SchedulingTest extends TestCase
             "oauth" => $oauth,
             "tzid" => $tzid,
             "callback_urls" => [
-              "completed_url" => $callback_url,
+                "completed_url" => $callback_url,
             ],
             "redirect_urls" => [
-              "completed_url" => $completed_redirect_url,
+                "completed_url" => $completed_redirect_url,
             ],
             "formatting" => [
-              "hour_format" => "12",
+                "hour_format" => "12",
             ],
             "minimum_notice" => [
-              "hours" => 2
+                "hours" => 2
             ],
             "event_creation" => "single",
         ];
@@ -202,7 +203,7 @@ class SchedulingTest extends TestCase
             "tzid" => $tzid,
             "callback_url" => "http://example.com/THIS_ONE_GETS_OVERRIDEN",
             "callback_urls" => [
-              "completed_url" => $callback_url
+                "completed_url" => $callback_url
             ]
         ];
 
@@ -294,7 +295,7 @@ class SchedulingTest extends TestCase
             "tzid" => $tzid,
             "callback_url" => "http://example.com/THIS_GETS_MOVED_TO_CALLBACK_URLS_COMPLETED_URL",
             "callback_urls" => [
-              "no_times_suitable_url" => "https://example.com/no_times_suitable"
+                "no_times_suitable_url" => "https://example.com/no_times_suitable"
             ]
         ];
 
@@ -408,6 +409,43 @@ class SchedulingTest extends TestCase
         ]);
 
         $actual = $cronofy->realTimeSequencing($params);
+        $this->assertNotNull($actual);
+    }
+
+    public function testRealTimeSchedulingDisable()
+    {
+        $rts_id = 'sch_1234567890123456786453';
+        $display_message = "rtsDisplayMessage";
+
+        $params = [
+            "client_secret" => "clientSecret",
+            "id" => $rts_id,
+            "display_message" => $display_message
+        ];
+
+        $http = $this->createMock(HttpRequest::class);
+        $http->expects($this->once())
+            ->method('httpPost')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/v1/real_time_scheduling/'.$rts_id.'/disable'),
+                $this->equalTo($params),
+                $this->equalTo([
+                    'Authorization: Bearer accessToken',
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8',
+                ])
+            )
+            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
+
+        $cronofy = new Cronofy([
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => $http,
+        ]);
+
+        $actual = $cronofy->realTimeSchedulingDisable($params);
         $this->assertNotNull($actual);
     }
 }

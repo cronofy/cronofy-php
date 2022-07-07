@@ -845,6 +845,18 @@ class Cronofy
         return $this->httpPost("/" . self::API_VERSION . "/real_time_scheduling", $postFields);
     }
 
+    public function realTimeSchedulingDisable($params)
+    {
+
+        $postFields = [
+            'client_secret' => $this->clientSecret,
+            'id' => $params['id'],
+            'display_message' => $params['display_message']
+        ];
+
+        return $this->httpPost("/" . self::API_VERSION . "/real_time_scheduling/" . $params['id'] . "/disable", $postFields);
+    }
+
     public function realTimeSequencing($params)
     {
         /*
