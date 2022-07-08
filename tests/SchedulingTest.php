@@ -329,6 +329,41 @@ class SchedulingTest extends TestCase
         $this->assertNotNull($actual);
     }
 
+    public function testDisableRealTimeScheduling()
+    {
+        $rts_id = 'sch_1234567890123456786453';
+        $display_message = "rtsDisplayMessage";
+
+        $params = [
+            "display_message" => $display_message
+        ];
+
+        $http = $this->createMock(HttpRequest::class);
+        $http->expects($this->once())
+            ->method('httpPost')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/v1/real_time_scheduling/'.$rts_id.'/disable'),
+                $this->equalTo($params),
+                $this->equalTo([
+                    'Authorization: Bearer clientSecret',
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8',
+                ])
+            )
+            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
+
+        $cronofy = new Cronofy([
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => $http,
+        ]);
+
+        $actual = $cronofy->disableRealTimeScheduling($params, $rts_id);
+        $this->assertNotNull($actual);
+    }
+
     public function testRealTimeSequencing()
     {
         $oauth = [
@@ -409,43 +444,6 @@ class SchedulingTest extends TestCase
         ]);
 
         $actual = $cronofy->realTimeSequencing($params);
-        $this->assertNotNull($actual);
-    }
-
-    public function testRealTimeSchedulingDisable()
-    {
-        $rts_id = 'sch_1234567890123456786453';
-        $display_message = "rtsDisplayMessage";
-
-        $params = [
-            "client_secret" => "clientSecret",
-            "id" => $rts_id,
-            "display_message" => $display_message
-        ];
-
-        $http = $this->createMock(HttpRequest::class);
-        $http->expects($this->once())
-            ->method('httpPost')
-            ->with(
-                $this->equalTo('https://api.cronofy.com/v1/real_time_scheduling/'.$rts_id.'/disable'),
-                $this->equalTo($params),
-                $this->equalTo([
-                    'Authorization: Bearer accessToken',
-                    'Host: api.cronofy.com',
-                    'Content-Type: application/json; charset=utf-8',
-                ])
-            )
-            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
-
-        $cronofy = new Cronofy([
-            "client_id" => "clientId",
-            "client_secret" => "clientSecret",
-            "access_token" => "accessToken",
-            "refresh_token" => "refreshToken",
-            "http_client" => $http,
-        ]);
-
-        $actual = $cronofy->realTimeSchedulingDisable($params);
         $this->assertNotNull($actual);
     }
 }
