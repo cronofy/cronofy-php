@@ -6,9 +6,9 @@ use Cronofy\Batch\Batch;
 use Cronofy\Exception\CronofyException;
 use Cronofy\Exception\PartialBatchFailureException;
 
-$testBatch = true;
-$testAvailablePeriod = true;
-$testRecurrence = true;
+$testBatch = false;
+$testAvailablePeriod = false;
+$testRecurrence = false;
 $testRTS = true;
 
 $dataCenter = getenv("DATACENTER");
@@ -197,5 +197,17 @@ if($testRTS){
     "event_creation" => "single",
   ];
 
-  $cronofy->realTimeScheduling($params);
+  $rts = $cronofy->realTimeScheduling($params);
+  echo "RTS Created:\n";
+  print_r($rts);
+
+  $rts_id = $rts["real_time_scheduling"]["real_time_scheduling_id"];
+
+  echo "Cancelling RTS\n";
+  $params =[
+    "id" => $rts_id,
+    "display_message" => "Testing disable"
+  ];
+
+  $cronofy->realTimeSchedulingDisable($params);
 }
