@@ -335,6 +335,11 @@ class SchedulingTest extends TestCase
         $display_message = "rtsDisplayMessage";
 
         $params = [
+            "id" => $rts_id,
+            "display_message" => $display_message
+        ];
+
+        $postFields = [
             "display_message" => $display_message
         ];
 
@@ -343,7 +348,7 @@ class SchedulingTest extends TestCase
             ->method('httpPost')
             ->with(
                 $this->equalTo('https://api.cronofy.com/v1/real_time_scheduling/'.$rts_id.'/disable'),
-                $this->equalTo($params),
+                $this->equalTo($postFields),
                 $this->equalTo([
                     'Authorization: Bearer clientSecret',
                     'Host: api.cronofy.com',
@@ -360,7 +365,7 @@ class SchedulingTest extends TestCase
             "http_client" => $http,
         ]);
 
-        $actual = $cronofy->disableRealTimeScheduling($params, $rts_id);
+        $actual = $cronofy->disableRealTimeScheduling($params);
         $this->assertNotNull($actual);
     }
 
