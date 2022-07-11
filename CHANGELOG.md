@@ -1,3 +1,6 @@
+## [1.6.0]
+* add support for disabling Real-Time Scheduling links
+
 ## [1.5.3]
 * accept locale on upsertEvent
 
@@ -101,6 +104,8 @@
 [1.5.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.5.0
 [1.5.1]: https://github.com/cronofy/cronofy-php/releases/tag/v1.5.1
 [1.5.2]: https://github.com/cronofy/cronofy-php/releases/tag/v1.5.2
+[1.5.3]: https://github.com/cronofy/cronofy-php/releases/tag/v1.5.3
+[1.6.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.6.0
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
