@@ -79,7 +79,7 @@ $cronofy = new Cronofy\Cronofy([
   "refresh_token" => "YOUR_REFRESH_TOKEN"
 ]);
 
-$token = $cronofy->refreshToken();
+$new_access_token = $cronofy->refreshToken();
 ```
 
 ## List calendars
