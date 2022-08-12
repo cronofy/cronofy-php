@@ -67,6 +67,21 @@ access to be granted.
 `$result` will be `true` for a successful request; otherwise, it will be an error code.
 Please reference [our documentation](https://docs.cronofy.com/developers/api/authorization/request-authorization/#param-error) for possible error code.
 
+## Refresh Access Token
+
+Refresh an access token for an account:
+
+```php
+$cronofy = new Cronofy\Cronofy([
+  "client_id" => "CRONOFY_CLIENT_ID",
+  "client_secret" => "CRONOFY_CLIENT_SECRET",
+  "grant_type" => "refresh_token",
+  "refresh_token" => "YOUR_REFRESH_TOKEN"
+]);
+
+$token = $cronofy->refreshToken();
+```
+
 ## List calendars
 
 [API documentation](https://www.cronofy.com/developers/api/#calendars)
