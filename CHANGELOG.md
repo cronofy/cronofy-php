@@ -1,3 +1,8 @@
+## [1.7.0]
+* add support for `event_classes` in upsertEvent [#123]
+* Upgrade SDK dev env to PHP 8.1
+* Update dependencies
+
 ## [1.6.0]
 * add support for disabling Real-Time Scheduling links
 
@@ -106,6 +111,7 @@
 [1.5.2]: https://github.com/cronofy/cronofy-php/releases/tag/v1.5.2
 [1.5.3]: https://github.com/cronofy/cronofy-php/releases/tag/v1.5.3
 [1.6.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.6.0
+[1.7.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.6.0
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
@@ -119,3 +125,4 @@
 [#106]: https://github.com/cronofy/cronofy-php/pull/106
 [#111]: https://github.com/cronofy/cronofy-php/pull/111
 [#116]: https://github.com/cronofy/cronofy-php/pull/116
+[#123]: https://github.com/cronofy/cronofy-php/pull/123
