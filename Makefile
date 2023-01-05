@@ -6,10 +6,10 @@ install_composer:
 	curl -sS https://getcomposer.org/installer | php
 
 install_dependencies:
-	php composer.phar install
+	composer install
 
 update:
-	php composer.phar update
+	composer update
 
 test: install_dependencies
 	vendor/bin/phpunit tests/
@@ -29,4 +29,4 @@ release: check_dependencies test
 	git push --tags
 
 init:
-	brew install php@7.4
+	./init
