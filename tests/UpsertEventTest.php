@@ -44,7 +44,8 @@ class UpsertEventTest extends TestCase
             "conferencing" => [
                 "profile_id" => "default"
             ],
-            "locale" => "it"
+            "locale" => "it",
+            "event_classes" => "interview",
         ];
 
         $params = $event + ["calendar_id" => $calendarId];
