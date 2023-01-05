@@ -568,6 +568,9 @@ class Cronofy
         if (!empty($params['locale'])) {
             $postFields['locale'] = $params['locale'];
         }
+        if (!empty($params['event_classes'])) {
+            $postFields['event_classes'] = $params['event_classes'];
+        }
 
         return $this->httpPost("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postFields);
     }
