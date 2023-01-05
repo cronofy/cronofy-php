@@ -28,5 +28,6 @@ release: check_dependencies test
 	git tag $(CURRENT_VERSION)
 	git push --tags
 
+.PHONY: init
 init:
 	./init
