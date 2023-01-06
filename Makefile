@@ -8,12 +8,12 @@ install_composer:
 	curl -sS https://getcomposer.org/installer | php
 
 .PHONY: install_dependencies
-install_dependencies:
-	composer install
+install_dependencies: install_composer
+	php composer.phar install
 
 .PHONY: update
 update:
-	composer update
+	php composer.phar update
 
 .PHONY: test
 test: install_dependencies

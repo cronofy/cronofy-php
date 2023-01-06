@@ -1,3 +1,3 @@
 #! /bin/bash
 
-brew install php composer jq
+brew install php jq
