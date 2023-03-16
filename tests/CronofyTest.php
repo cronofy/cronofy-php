@@ -721,13 +721,13 @@ class CronofyTest extends TestCase
 
         $body = '{"example":"well-known"}';
 
-        $actual = $cronofy->hmacValid("NDJlMWE1YzcxYjJjMzQzNmIxNTIzNzdhNDU4ZTMwYzQ2N2ZlZTRhMGViOWE4NmNjOWEzOTA2NDBmYjQxZGQ2NA==", $body);
+        $actual = $cronofy->hmacValid("QuGlxxssNDaxUjd6RY4wxGf+5KDrmobMmjkGQPtB3WQ=", $body);
         $this->assertTrue($actual);
 
         $actual = $cronofy->hmacValid("something-else", $body);
         $this->assertFalse($actual);
 
-        $actual = $cronofy->hmacValid("something-else,NDJlMWE1YzcxYjJjMzQzNmIxNTIzNzdhNDU4ZTMwYzQ2N2ZlZTRhMGViOWE4NmNjOWEzOTA2NDBmYjQxZGQ2NA==,something-else2", $body);
+        $actual = $cronofy->hmacValid("something-else,QuGlxxssNDaxUjd6RY4wxGf+5KDrmobMmjkGQPtB3WQ=", $body);
         $this->assertTrue($actual);
 
         $actual = $cronofy->hmacValid("something-else,something-else2", $body);
