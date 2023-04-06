@@ -1226,7 +1226,7 @@ class Cronofy
             return false;
         }
 
-        $digest = hash_hmac('sha256', $body, $this->clientSecret);
+        $digest = hash_hmac('sha256', $body, $this->clientSecret, true);
         $calculated = base64_encode($digest);
         $hmac_list = explode(',', $hmac_header);
 
