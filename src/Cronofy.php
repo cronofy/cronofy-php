@@ -587,6 +587,27 @@ class Cronofy
 
         return $this->httpDelete("/" . self::API_VERSION . "/calendars/" . $params['calendar_id'] . "/events", $postFields);
     }
+    
+    public function bulkDeleteEvents($params)
+    {
+        /*
+          delete_all : A Boolean specifying whether all events you are managing for the user should be deleted. When specified must be true. OPTIONAL
+          calendar_ids : An Array specifying the calendars from which to delete all events you are managing for the user. When provided at least one calendar must be specified. OPTIONAL
+
+          Only one of delete_all or calendar_ids must be provided in the body, if both are set this is considered an error.
+         */
+        $postFields = [];
+        
+        if (!empty($params['calendar_ids'])) {
+            $postFields['calendar_ids'] = $params['calendar_ids'];
+        }
+
+        if (!empty($params['delete_all'])) {
+            $postFields['delete_all'] = $params['delete_all'];
+        }
+
+        return $this->httpDelete("/" . self::API_VERSION . "/events", $postFields);
+    }
 
     public function deleteExternalEvent($params)
     {
