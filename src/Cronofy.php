@@ -601,7 +601,7 @@ class Cronofy
         if (!empty($params['calendar_ids'])) {
             $postFields['calendar_ids'] = $params['calendar_ids'];
         }
-
+        
         if (!empty($params['delete_all'])) {
             $postFields['delete_all'] = $params['delete_all'];
         }
