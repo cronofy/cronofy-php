@@ -307,9 +307,9 @@ class CronofyTest extends TestCase
         $this->assertNotNull($actual);
     }
 
-    public function testBulkDeleteEvents()
+    public function testBulkDeleteEventsFromSpecificCalendar()
     {
-        $params = ["calendar_ids" => ["cal_123"], "delete_all" => true];
+        $params = ["calendar_ids" => ["cal_123"]];
 
         $http = $this->createMock(HttpRequest::class);
         $http->expects($this->once())
@@ -323,7 +323,7 @@ class CronofyTest extends TestCase
                     'Content-Type: application/json; charset=utf-8',
                 ])
             )
-            ->will($this->returnValue(["{'foo': 'bar'}", 200]));
+            ->will($this->returnValue(["{'foo': 'bar'}", 202]));
 
         $cronofy = new Cronofy([
             "client_id" => "clientId",
@@ -334,7 +334,38 @@ class CronofyTest extends TestCase
         ]);
 
         $actual = $cronofy->bulkDeleteEvents([
-            "calendar_ids" => ["cal_123"],
+            "calendar_ids" => ["cal_123"]
+        ]);
+        $this->assertNotNull($actual);
+    }
+    
+    public function testBulkDeleteEventsFromAllCalendars()
+    {
+        $params = ["delete_all" => true];
+
+        $http = $this->createMock(HttpRequest::class);
+        $http->expects($this->once())
+            ->method('httpDelete')
+            ->with(
+                $this->equalTo('https://api.cronofy.com/v1/events'),
+                $this->equalTo($params),
+                $this->equalTo([
+                    'Authorization: Bearer accessToken',
+                    'Host: api.cronofy.com',
+                    'Content-Type: application/json; charset=utf-8',
+                ])
+            )
+            ->will($this->returnValue(["{'foo': 'bar'}", 202]));
+
+        $cronofy = new Cronofy([
+            "client_id" => "clientId",
+            "client_secret" => "clientSecret",
+            "access_token" => "accessToken",
+            "refresh_token" => "refreshToken",
+            "http_client" => $http,
+        ]);
+
+        $actual = $cronofy->bulkDeleteEvents([
             "delete_all" => true
         ]);
         $this->assertNotNull($actual);

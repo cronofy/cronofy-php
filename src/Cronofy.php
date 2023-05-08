@@ -596,6 +596,8 @@ class Cronofy
             When provided at least one calendar must be specified. OPTIONAL
 
           Only one of delete_all or calendar_ids must be provided in the body, if both are set this is considered an error.
+
+          Returns true on success, associative array of errors on failure
          */
         $postFields = [];
         
