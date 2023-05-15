@@ -1,3 +1,6 @@
+## [1.7.2]
+* Adds support for bulk event deletion with bulkDeleteEvents method
+
 ## [1.7.1]
 * Fixes hmacValid function not outputting raw binary data 
 
@@ -115,6 +118,7 @@
 [1.6.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.6.0
 [1.7.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.7.0
 [1.7.1]: https://github.com/cronofy/cronofy-php/releases/tag/v1.7.1
+[1.7.2]: https://github.com/cronofy/cronofy-php/releases/tag/v1.7.2
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
