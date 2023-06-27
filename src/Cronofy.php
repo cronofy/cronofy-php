@@ -1043,7 +1043,7 @@ class Cronofy
         return $this->apiKeyHttpPost("/" . self::API_VERSION . "/smart_invites", $postFields);
     }
 
-    public function getSmartInvite($smart_invite_id, $recipient_email)
+    public function getSmartInvite($smart_invite_id, $recipient_email, $include_ics = false)
     {
         /*
           String smart_invite_id: A string representing the id for the smart invite. REQUIRED
@@ -1053,6 +1053,7 @@ class Cronofy
         $urlParams = [
             "smart_invite_id" => $smart_invite_id,
             "recipient_email" => $recipient_email,
+            "include_ics" => $include_ics,
         ];
 
         return $this->apiKeyHttpGet("/" . self::API_VERSION . "/smart_invites", $urlParams);
