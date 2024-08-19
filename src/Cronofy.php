@@ -1268,8 +1268,8 @@ class Cronofy
 
         foreach ($params as $key => $val) {
             if (gettype($val) == "array") {
-                for ($i = 0; $i < count($val); $i++) {
-                    array_push($str_params, $key . "[]=" . urlencode($val[$i]));
+                foreach ($val as $v) {
+                    array_push($str_params, $key . "[]=" . urlencode($v));
                 }
             } elseif (gettype($val) == "boolean") {
                 $bool_str = $val ? "true" : "false";
