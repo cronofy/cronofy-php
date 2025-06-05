@@ -1,3 +1,6 @@
+## [1.7.3]
+* Improved PHPDoc code documentation
+
 ## [1.7.2]
 * Adds support for bulk event deletion with bulkDeleteEvents method
 
@@ -119,6 +122,7 @@
 [1.7.0]: https://github.com/cronofy/cronofy-php/releases/tag/v1.7.0
 [1.7.1]: https://github.com/cronofy/cronofy-php/releases/tag/v1.7.1
 [1.7.2]: https://github.com/cronofy/cronofy-php/releases/tag/v1.7.2
+[1.7.3]: https://github.com/cronofy/cronofy-php/releases/tag/v1.7.3
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
