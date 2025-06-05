@@ -38,6 +38,7 @@ class PagedResultIterator implements \IteratorAggregate
         }
     }
 
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return $this->each();
