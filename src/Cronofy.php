@@ -750,10 +750,19 @@ class Cronofy
     public function availability($params)
     {
         $postFields = [
-            "available_periods" => $params["available_periods"],
             "participants" => $params["participants"],
             "required_duration" => $params["required_duration"]
         ];
+
+        if (!empty($params["query_periods"])) {
+            $postFields["query_periods"] = $params["query_periods"];
+        } elseif (!empty($params["available_periods"])) {
+            $postFields["available_periods"] = $params["available_periods"];
+        }
+
+        if (!empty($params["query_slots"])) {
+            $postFields["query_slots"] = $params["query_slots"];
+        }
 
         if (!empty($params["buffer"])) {
             $postFields["buffer"] = $params["buffer"];
@@ -766,6 +775,12 @@ class Cronofy
         }
         if (!empty($params["response_format"])) {
             $postFields["response_format"] = $params["response_format"];
+        }
+        if (!empty($params["include_member_statuses"])) {
+            $postFields["include_member_statuses"] = $params["include_member_statuses"];
+        }
+        if (!empty($params["excluded_events"])) {
+            $postFields["excluded_events"] = $params["excluded_events"];
         }
 
         return $this->apiKeyHttpPost("/" . self::API_VERSION . "/availability", $postFields);
