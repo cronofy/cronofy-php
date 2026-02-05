@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php_version: ['8.2', '8.1', '8.0','7.4','7.3']
+        php_version: ['8.5', '8.0','7.4','7.3']
 
     steps:
       - uses: actions/checkout@v2
@@ -15,7 +15,7 @@ jobs:
       - name: Setup PHP Action
         uses: shivammathur/setup-php@2.11.0
         with:
-          php-version: ${{ matrix.php_version }} 
+          php-version: ${{ matrix.php_version }}
 
       - name: Install composer
         run: make install_composer
