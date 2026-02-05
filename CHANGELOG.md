@@ -1,3 +1,7 @@
+## [1.7.4]
+* Add support for newer Availability endpoint params [#138]
+* Update CodeSniffer
+
 ## [1.7.3]
 * Improved PHPDoc code documentation
 
@@ -123,6 +127,7 @@
 [1.7.1]: https://github.com/cronofy/cronofy-php/releases/tag/v1.7.1
 [1.7.2]: https://github.com/cronofy/cronofy-php/releases/tag/v1.7.2
 [1.7.3]: https://github.com/cronofy/cronofy-php/releases/tag/v1.7.3
+[1.7.4]: https://github.com/cronofy/cronofy-php/releases/tag/v1.7.4
 
 [#32]: https://github.com/cronofy/cronofy-php/pull/76
 [#33]: https://github.com/cronofy/cronofy-php/pull/74
@@ -137,3 +142,4 @@
 [#111]: https://github.com/cronofy/cronofy-php/pull/111
 [#116]: https://github.com/cronofy/cronofy-php/pull/116
 [#126]: https://github.com/cronofy/cronofy-php/pull/126
+[#138]: https://github.com/cronofy/cronofy-php/pull/138
